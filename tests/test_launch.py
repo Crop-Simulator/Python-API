@@ -9,8 +9,8 @@ from subprocess import run
 class BlenderScriptTest(unittest.TestCase):
     def setUp(self):
         # Set up test environment
-        self.test_file = "test_data.yml"
-        self.test_output = "expected_output.png"
+        self.test_file = "tests/test_data.yml"
+        self.test_output = "tests/expected_output.png"
         self.expected_output_file = os.getcwd() + "/" + self.test_output
 
     def tearDown(self):
@@ -28,7 +28,7 @@ class BlenderScriptTest(unittest.TestCase):
             yaml.safe_dump(test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "../src/launch.py", "-i", self.test_file, "-o", self.test_output])
+        run(["python", "src/launch.py", "-i", self.test_file, "-o", self.test_output])
 
         # Verify that the output file was created
         self.assertTrue(os.path.isfile(self.expected_output_file))
@@ -43,7 +43,7 @@ class BlenderScriptTest(unittest.TestCase):
             yaml.safe_dump(test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "../src/launch.py", "-i", self.test_file, "-o", self.test_output])
+        run(["python", "src/launch.py", "-i", self.test_file, "-o", self.test_output])
 
         # Verify that the correct number of cubes were created
         collection = bpy.data.collections.get("Collection")
@@ -59,10 +59,10 @@ class BlenderScriptTest(unittest.TestCase):
             yaml.safe_dump(test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "../src/launch.py", "-i", self.test_file, "-o", self.test_output])
+        run(["python", "src/launch.py", "-i", self.test_file, "-o", self.test_output])
 
         # Verify that the rendering output matches the expected file
-        self.assertTrue(filecmp.cmp(self.expected_output_file, "expected_output.png"))
+        self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output.png"))
 
 
 if __name__ == "__main__":
