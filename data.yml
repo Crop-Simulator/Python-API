@@ -1,2 +1,4 @@
 color: 'green'
-num_crops: 10
+num_crops: 100
+num_crop_rows: 10
+num_crop_distance: 5
