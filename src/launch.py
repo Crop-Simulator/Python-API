@@ -42,13 +42,27 @@ with open(openfile, "r") as file:
     bpy.data.objects["Camera"].name = a
     bpy.data.objects[a].data.lens_unit = 'FOV'
     bpy.data.objects[a].data.angle= math.radians(100)
-    num_crops = input_file['num_crops']
     collection = bpy.data.collections.new(name="Collection")
     bpy.context.scene.collection.children.link(collection)
     
+    
+    CROP_SIZE = 0.5
+    num_crops = input_file['num_crops']
+    num_rows = input_file['num_crop_rows']
+    crop_distance = input_file['num_crop_distance']
+    split = int(num_crops/num_rows)
+    
+    row = 0
+    origin = 0
     for crop in range(num_crops):
-        loc = crop - num_crops/2 # trying to center the cubes a little
-        bpy.ops.mesh.primitive_cube_add(location=(loc, loc, loc), size=0.5)
+        if crop % split == 0:
+            row += 1
+            origin = 0
+            
+        loc = origin - num_crops/num_rows/2 # trying to center the cubes a little
+        locx = origin - num_crops/num_rows/2 - crop_distance*row
+        origin += 1
+        bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=CROP_SIZE)
         bpy.context.active_object.name = 'cube'
         cube = bpy.context.object
         for ob in cube.users_collection[:]: #unlink from all preceeding object collections
@@ -70,8 +84,6 @@ with open(openfile, "r") as file:
         ob.active_material = matr
         bpy.context.collection.objects.link(ob)
 
-
-    
 
     output_loc = args.outfile[0]
     print("CURRENT" + current_working_directory)
