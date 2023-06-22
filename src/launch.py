@@ -1,4 +1,9 @@
-import bpy,subprocess, argparse, yaml, os, math
+import argparse
+import bpy
+import math
+import os
+import subprocess
+import yaml
 
 '''
 adding parser arguments for Python CLI interface
