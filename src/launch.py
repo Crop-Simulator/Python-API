@@ -96,9 +96,7 @@ with open(openfile, "r") as file:
             
         
 
-        ob = cube.copy()
-        ob.active_material = matr
-        bpy.context.collection.objects.link(ob)
+        cube.active_material = matr
         crop_counter += 1
 
 
