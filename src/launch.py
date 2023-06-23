@@ -50,17 +50,32 @@ with open(openfile, "r") as file:
     num_crops = input_file['num_crops']
     num_rows = input_file['num_crop_rows']
     crop_distance = input_file['num_crop_distance']
+    crop_type = input_file['colors']
+    crop_percentage = input_file['percent_crop_type']
+    
     split = int(num_crops/num_rows)
     
     row = 0
     origin = 0
+    crop_type_counter = 0
+    crop_counter = 0
     for crop in range(num_crops):
+        
         if crop % split == 0:
             row += 1
             origin = 0
             
+        if crop_counter % int(num_crops*crop_percentage[crop_type_counter]) == 0 and crop != 0:
+            print(num_crops*crop_percentage[crop_type_counter])
+            crop_counter = 0
+            if not crop_type_counter >= len(crop_type) - 1:
+                print(crop_type[crop_type_counter])
+                crop_type_counter += 1
+                
+                
+            
         loc = origin - num_crops/num_rows/2 # trying to center the cubes a little
-        locx = origin - num_crops/num_rows/2 - crop_distance*row
+        locx = origin - num_crops/num_rows/2 - crop_distance*row/2
         origin += 1
         bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=CROP_SIZE)
         bpy.context.active_object.name = 'cube'
@@ -70,19 +85,22 @@ with open(openfile, "r") as file:
         collection.objects.link(cube)
         
         matr = None
-        if input_file['color'] == "red":
+        if crop_type[crop_type_counter] == "red":
             matr = bpy.data.materials.new("Red")
             matr.diffuse_color = (1,0,0,0.8)
-        elif input_file['color'] == "green":
+        elif crop_type[crop_type_counter] == "green":
             matr = bpy.data.materials.new("Green")
             matr.diffuse_color = (0,1,0,0.8)
-        elif input_file['color'] == "blue":
+        elif crop_type[crop_type_counter] == "blue":
             matr = bpy.data.materials.new("Blue")
             matr.diffuse_color = (0,0,1,0.8)
+            
+        
 
         ob = cube.copy()
         ob.active_material = matr
         bpy.context.collection.objects.link(ob)
+        crop_counter += 1
 
 
     output_loc = args.outfile[0]
