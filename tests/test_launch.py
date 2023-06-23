@@ -1,6 +1,6 @@
 import filecmp
 import unittest
-import bpy
+# import bpy
 import os
 import yaml
 from subprocess import run
