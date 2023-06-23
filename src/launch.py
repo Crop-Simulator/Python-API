@@ -2,8 +2,9 @@ import argparse
 import bpy
 import math
 import os
-import subprocess
 import yaml
+
+from segmentation import Segmentation
 
 '''
 adding parser arguments for Python CLI interface
@@ -24,7 +25,7 @@ loads yaml file data to use for presenting the 3D model
 '''
 
 current_working_directory = str(os.getcwd())
-openfile = current_working_directory + "/" + args.infile[0]
+openfile = os.path.join(current_working_directory, args.infile[0])
 print(openfile)
 input_file = None
 with open(openfile, "r") as file:
@@ -84,23 +85,34 @@ with open(openfile, "r") as file:
         collection.objects.link(cube)
         
         matr = None
+        segmentation_id = 0
         if crop_type[crop_type_counter] == "red":
             matr = bpy.data.materials.new("Red")
             matr.diffuse_color = (1,0,0,0.8)
+            segmentation_id = 1
         elif crop_type[crop_type_counter] == "green":
             matr = bpy.data.materials.new("Green")
             matr.diffuse_color = (0,1,0,0.8)
+            segmentation_id = 2
         elif crop_type[crop_type_counter] == "blue":
             matr = bpy.data.materials.new("Blue")
             matr.diffuse_color = (0,0,1,0.8)
-            
-        
+            segmentation_id = 3
 
         cube.active_material = matr
+        cube['segmentation_id'] = segmentation_id # assign segmentation id to the object
         crop_counter += 1
 
 
     output_loc = args.outfile[0]
     print("CURRENT" + current_working_directory)
-    bpy.context.scene.render.filepath = current_working_directory + '/' + output_loc
+    bpy.context.scene.render.filepath = os.path.join(current_working_directory, output_loc)
     bpy.ops.render.render(use_viewport = True, write_still=True)
+    
+    segmentation = Segmentation({
+        1: 0xffff, # Make cubes white in the segmentation map
+        2: 0xcccc,
+        3: 0x9999,
+    })
+    segmentation_filename = output_loc.replace(".png", "_seg.png") if output_loc.endswith(".png") else output_loc + "_seg.png"
+    segmentation.segment(segmentation_filename)
