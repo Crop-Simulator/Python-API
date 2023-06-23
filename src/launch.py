@@ -29,13 +29,7 @@ print(openfile)
 input_file = None
 with open(openfile, "r") as file:
     input_file = yaml.safe_load(file)
-    
-    ## Need to edit this to fit where blender is on your PC - working on a fix to work without manual change
-    myargs = ["C:/Program Files/Blender Foundation/Blender 3.3/blender",
-            "-b",
-            "C:/Users/barba/Documents/UCL/Summer Project/Python-API/test.blend",
-    ]
-    
+
     ## temporarily removing the existing cube object in the blend file
     collection1 = bpy.data.collections.get('Collection')
     cube = collection1.objects.get("Cube")
@@ -112,10 +106,3 @@ with open(openfile, "r") as file:
     print("CURRENT" + current_working_directory)
     bpy.context.scene.render.filepath = current_working_directory + '/' + output_loc
     bpy.ops.render.render(use_viewport = True, write_still=True)
-    subprocess.run(myargs, shell=True)
-    
-
-
-
-
-
