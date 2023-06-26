@@ -1,5 +1,4 @@
 import argparse
-import bpy
 
 from controllers.crop_controller import CropController
 from renderers.scene_renderer import SceneRenderer
