@@ -1,7 +1,7 @@
 import os
 import bpy
 
-from segmentation import Segmentation
+from controllers.segmentation import Segmentation
 
 class SceneRenderer:
     def __init__(self, output_file, collection):

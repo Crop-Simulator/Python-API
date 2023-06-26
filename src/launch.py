@@ -1,10 +1,9 @@
 import argparse
 import bpy
 
-from segmentation import Segmentation
-from crop_controller import CropController
-from scene_renderer import SceneRenderer
-from camera_controller import CameraController
+from controllers.crop_controller import CropController
+from renderers.scene_renderer import SceneRenderer
+from controllers.camera_controller import CameraController
 
 class LaunchAPI:
     

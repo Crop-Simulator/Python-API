@@ -1,6 +1,6 @@
 import bpy
 
-from yaml_reader import YamlReader
+from readers.yaml_reader import YamlReader
 
 class CropController:
     
