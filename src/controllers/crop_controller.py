@@ -1,11 +1,12 @@
 import bpy
 
-from readers.yaml_reader import YamlReader
+from .yaml_reader import YamlReader
 
 class CropController:
 
     def __init__(self, crop_datafile, collection):
-        crop_data = YamlReader.read_file(crop_datafile)
+        reader = YamlReader()
+        crop_data = reader.read_file(crop_datafile)
 
         self.collection_name = collection
 

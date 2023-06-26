@@ -20,7 +20,7 @@ class LaunchAPI:
         self.collection = "Cube Collection"
 
     def main(self):
-        cameracon = CameraController
+        cameracon = CameraController()
         cropcon = CropController(self.args.infile[0], self.collection)
         scenerender = SceneRenderer(self.args.outfile[0], self.collection)
         cameracon.setup_camera("camera_one", (10,0,0),
