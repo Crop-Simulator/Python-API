@@ -1,5 +1,4 @@
 import bpy
-import math
 
 from yaml_reader import YamlReader
 
@@ -22,8 +21,7 @@ class CropController:
         curr_loc = 0
         curr_crop_type = 0
         curr_crop = 0
-        num_rows = self.total_number/self.num_rows
-        num_crops = int(self.total_number*self.percentage_share[curr_crop_type])
+        num_rows = int(self.total_number/self.num_rows)
         
         for crop in range(self.total_number):
             if crop % num_rows == 0:
@@ -33,6 +31,7 @@ class CropController:
                 curr_row += 1
                 curr_loc = 0
             
+            num_crops = int(self.total_number*self.percentage_share[curr_crop_type])
             if curr_crop % num_crops == 0 and crop != 0:
                 # counts the correct number of crops have
                 # been generated based on their percentage share
@@ -45,7 +44,7 @@ class CropController:
                     curr_crop_type += 1
             
             loc = curr_loc - self.total_number/self.num_rows/2  # centers crops
-            locx = loc - self.row_widths*curr_row/2             # 
+            locx = loc - self.row_widths*curr_row/2             
             curr_loc += 1
             CROP_SIZE = 0.5
             bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=CROP_SIZE)
