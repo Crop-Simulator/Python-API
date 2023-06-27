@@ -29,7 +29,7 @@ class SegmentationTest(unittest.TestCase):
         This method tests the segmentation of a cube object.
         It asserts that the central point of the image is white and the background is black.
         """
-        collection = bpy.data.collections.get('Collection')
+        collection = bpy.data.collections.get("Collection")
         cube = collection.objects.get("Cube")
         collection.objects.unlink(cube)
         bpy.ops.mesh.primitive_cube_add()
