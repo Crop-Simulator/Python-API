@@ -2,14 +2,15 @@ import bpy
 import bpycv
 import numpy as np
 import cv2
-from typing import Dict
 
 
 class Segmentation:
-    def __init__(self, classes: Dict[int, int] = {}) -> None:
+    def __init__(self, classes=None) -> None:
         """
         classes: a dictionary of class ids to segmentation map values
         """
+        if classes is None:
+            classes = {}
         self.classes = classes
 
     def add_class(self, class_id: int, segmentation_value: int):
@@ -29,12 +30,11 @@ class Segmentation:
             if "segmentation_id" in obj:
                 if obj["segmentation_id"] in self.classes:
                     obj["inst_id"] = self.classes[obj["segmentation_id"]]
-                else:
-                    if obj["segmentation_id"] != 0:
-                        print(
-                            "WARNING: Unknown segmentation id: "
-                            + str(obj["segmentation_id"])
-                        )
+                elif obj["segmentation_id"] != 0:
+                    print(
+                        "WARNING: Unknown segmentation id: "
+                        + str(obj["segmentation_id"]),
+                    )
 
     def _render_segmentation(self):
         rendered_data = bpycv.render_data()

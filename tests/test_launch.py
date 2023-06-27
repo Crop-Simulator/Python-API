@@ -23,13 +23,13 @@ class BlenderScriptTest(unittest.TestCase):
         # Create test data YAML file
         test_data = {
             "crop": {
-                "type": ['green','red','blue'],
+                "type": ["green","red","blue"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
                 "num_rows": 2,
                 "row_widths": 5,
-            }
+            },
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
@@ -66,13 +66,13 @@ class BlenderScriptTest(unittest.TestCase):
         # Create test data YAML file
         test_data ={
             "crop": {
-                "type": ['green','red','blue'],
+                "type": ["green","red","blue"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
                 "num_rows": 2,
                 "row_widths": 5,
-            }
+            },
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
