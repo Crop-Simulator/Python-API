@@ -5,4 +5,4 @@ crop:
   total_number: 9
   num_rows: 2
   row_widths: 5
-  
+outfile: ["test.png"] 
