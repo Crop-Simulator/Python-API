@@ -73,7 +73,7 @@ class CropController:
             material.diffuse_color = (0,0,1,0.8)
             segmentation_id = 3
         return material, segmentation_id
-    
+
     def add_crop(self, crop_size, loc, locx):
         bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
         collection = bpy.data.collections[self.collection_name]
