@@ -48,12 +48,11 @@ class CropController:
             locx = loc - self.row_widths*curr_row/2
             curr_loc += 1
             crop_size = 0.5
-            
-            crop = self.add_crop(crop_size, loc, locx)
+            crop_model = self.add_crop(crop_size, loc, locx)
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-            crop.active_material = material
-            crop["segmentation_id"] = segmentation_id
+            crop_model.active_material = material
+            crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
 
