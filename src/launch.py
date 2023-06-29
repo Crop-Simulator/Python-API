@@ -1,32 +1,31 @@
-import argparse
+import typer
 
 from controllers.crop_controller import CropController
+from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
 from controllers.camera_controller import CameraController
 
-class LaunchAPI:
 
-    def __init__(self):
-        """
-        adding parser arguments for Python CLI interface
-        -------
-        example CLI command: python src/launch.py -i data.yml -o test.png
+class TyperLaunchAPI:
+    """
+    This class is used to launch the application using the Typer library.
+    """
 
-        """
-        self.parser = argparse.ArgumentParser()
-        self.parser.add_argument("-i", "--infile", nargs="+")
-        self.parser.add_argument("-o", "--outfile", nargs="+")
-        self.args = self.parser.parse_args()
-        self.collection = "Cube Collection"
+    @staticmethod
+    def typer_interface(config_file: str):
+        config = YamlReader().read_file(config_file)
+        TyperLaunchAPI.launch(config)
 
-    def main(self):
+    @staticmethod
+    def launch(config):
+        collection = "Cube Collection"
         cameracon = CameraController()
-        cropcon = CropController(self.args.infile[0], self.collection)
-        scenerender = SceneRenderer(self.args.outfile[0], self.collection)
-        cameracon.setup_camera("camera_one", (10,0,0),
-                     (1.57057,0.00174533,1.57057), "Cube Collection")
+        cropcon = CropController(config["crop"], collection)
+        scenerender = SceneRenderer(config["outfile"][0], collection)
+        cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), "Cube Collection")
         cropcon.setup_crops()
         scenerender.render_scene()
 
+
 if __name__ == "__main__":
-    LaunchAPI().main()
+    typer.run(TyperLaunchAPI.typer_interface)
