@@ -4,9 +4,6 @@ import bpy
 class CropController:
 
     def __init__(self, crop_data, collection):
-        # reader = YamlReader()
-        # crop_data = reader.read_file(crop_datafile)
-
         self.collection_name = collection
 
         self.type = crop_data["type"] # list
