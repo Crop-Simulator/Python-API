@@ -4,6 +4,7 @@ from src.controllers.camera_controller import CameraController
 
 
 class BlenderScriptTest(unittest.TestCase):
+    # more tests are needed, these are temporary for setting up unit tests
     def setUp(self):
         # Set up test environment
         self.camera_name = "Test Camera"
@@ -17,7 +18,7 @@ class BlenderScriptTest(unittest.TestCase):
         collection = self.camera_controller.setup_camera(self.camera_name, self.camera_location, self.camera_rotation, self.collection)
         # Checks that the collection is named correctly
         self.assertTrue(collection.name == self.collection)
-        
+
     def test_setup_camera_collection_scene(self):
         for collection in bpy.data.collections:
             if collection.name == self.collection:
