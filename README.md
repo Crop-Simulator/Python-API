@@ -7,7 +7,6 @@ Use the following command to run the code
 python src/launch.py data.yml
 
 ![CI](https://github.com/Crop-Simulator/Python-API/actions/workflows/python-package.yml/badge.svg)
-![CI](https://github.com/Crop-Simulator/Python-API/actions/workflows/python-package.yml/badge.svg?branch=dev)
 
 ## Install
 Use the following command to install the packages according to the requirements file
