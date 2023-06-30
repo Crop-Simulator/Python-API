@@ -1,5 +1,11 @@
 # Python-API
 
+## Launch API
+Use the following command to run the code
+```commandline
+python src/launch.py data.yml
+```
+
 ## Install
 Use the following command to install the packages according to the requirements file
 ```commandline
