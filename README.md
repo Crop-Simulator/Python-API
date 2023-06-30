@@ -1,5 +1,7 @@
 # Python-API
 
+![CI](https://github.com/Crop-Simulator/Python-API/blob/main/.github/workflows/python-package.yml/badge.svg)
+
 ## Install
 Use the following command to install the packages according to the requirements file
 ```commandline
