@@ -9,8 +9,11 @@ class SceneRenderer:
         self.collection = collection
 
     def render_scene(self):
+        print("rendering...")
         current_working_directory = str(os.getcwd())
         bpy.data.collections[self.collection]
+        scene = bpy.context.scene
+        scene.camera = bpy.context.object
         bpy.context.scene.render.filepath = os.path.join(current_working_directory, self.output_file)
         bpy.ops.render.render(use_viewport=True, write_still=True)
 
