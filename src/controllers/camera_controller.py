@@ -7,12 +7,6 @@ class CameraController:
     """
     def setup_camera(self, cam="camera_one", camera_location=(10,5,0),
                      camera_rotation=(1.57057,0.00174533,1.57057), collection_name="Collection"):
-        ## temporarily removing the existing cube object in the blend file
-        # bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
-        # bpy.ops.object.camera_add(enter_editmode=False, align="VIEW",
-        #                           location=camera_location, rotation=camera_rotation)
-
-
         bpy.ops.object.camera_add(enter_editmode=False, align="VIEW",
                                   location=camera_location, rotation=camera_rotation)
         print("getting to render")
