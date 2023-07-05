@@ -2,6 +2,7 @@ import unittest
 import yaml
 import os
 from src.controllers.crop_controller import CropController
+from src.controllers.yaml_reader import YamlReader
 
 
 class BlenderScriptTest(unittest.TestCase):
@@ -10,7 +11,7 @@ class BlenderScriptTest(unittest.TestCase):
         self.test_file = "tests/test_data.yml"
         self.test_output = "tests/test_output.png"
         self.collection = "Test Collection"
-        self.expected_material_name = "Red.001"
+        self.expected_material_name = "Red"
         self.expected_segmentation_id = 1
 
     def tearDown(self):
@@ -33,7 +34,10 @@ class BlenderScriptTest(unittest.TestCase):
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
-        crop_controller = CropController(self.test_file, self.collection)
+
+        # input_data = YamlReader().read_file(self.test_file)
+        
+        crop_controller = CropController(test_data, self.collection)
         material, segmentation_id = crop_controller.assign_crop_type("red")
         self.assertEquals(material.name, self.expected_material_name)
 
@@ -52,8 +56,10 @@ class BlenderScriptTest(unittest.TestCase):
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
+            
+        # input_data = YamlReader().read_file(self.test_file)
 
-        crop_controller = CropController(self.test_file, self.collection)
+        crop_controller = CropController(test_data, self.collection)
         material, segmentation_id = crop_controller.assign_crop_type("red")
         self.assertEquals(segmentation_id, self.expected_segmentation_id)
 

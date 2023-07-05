@@ -13,11 +13,11 @@ class BlenderScriptTest(unittest.TestCase):
         self.test_output = "tests/expected_output.png"
         self.expected_output_file = os.getcwd() + "/" + self.test_output
 
-    def tearDown(self):
-        # Clean up test environment
-        os.remove(self.test_file)
-        # os.remove(self.expected_output_file)
-        os.remove("tests/expected_output_seg.png")
+    # def tearDown(self):
+    #     # Clean up test environment
+    #     os.remove(self.test_file)
+    #     os.remove(self.expected_output_file)
+    #     os.remove("tests/expected_output_seg.png")
 
     def test_script_execution(self):
         # Create test data YAML file

@@ -1,0 +1,18 @@
+crop:
+  num_rows: 2
+  percentage_share:
+  - 0.2
+  - 0.3
+  - 0.5
+  row_widths: 5
+  size:
+  - 0.5
+  - 0.8
+  - 1.0
+  total_number: 9
+  type:
+  - green
+  - red
+  - blue
+outfile:
+- tests/expected_output.png
