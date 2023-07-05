@@ -22,7 +22,7 @@ class LaunchAPI:
     def main(self):
         cameracon = CameraController()
         cropcon = CropController(self.args.infile[0], self.collection)
-        scenerender = SceneRenderer(self.args.outfile[0], self.collection)
+        scenerender = SceneRenderer(self.args.outfile[0])
         cameracon.setup_camera("camera_one", (10,0,0),
                      (1.57057,0.00174533,1.57057), "Cube Collection")
         cropcon.setup_crops()
