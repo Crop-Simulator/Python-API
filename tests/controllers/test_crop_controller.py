@@ -36,7 +36,7 @@ class BlenderScriptTest(unittest.TestCase):
 
 
         input_data = YamlReader().read_file(self.test_file)
-        
+
         crop_controller = CropController(input_data["crop"], self.collection)
         material, segmentation_id = crop_controller.assign_crop_type("red")
         self.assertEquals(material.name, self.expected_material_name)
@@ -56,7 +56,7 @@ class BlenderScriptTest(unittest.TestCase):
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
-            
+
         input_data = YamlReader().read_file(self.test_file)
 
         crop_controller = CropController(input_data["crop"], self.collection)
