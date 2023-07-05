@@ -1,21 +1,17 @@
 import bpy
 
-from .yaml_reader import YamlReader
-
 class CropController:
 
-    def __init__(self, crop_datafile, collection):
-        reader = YamlReader()
-        crop_data = reader.read_file(crop_datafile)
-
+    def __init__(self, crop_data, collection):
         self.collection_name = collection
 
-        self.type = crop_data["crop"]["type"] # list
-        self.size = crop_data["crop"]["size"]
-        self.percentage_share = crop_data["crop"]["percentage_share"]
-        self.total_number = crop_data["crop"]["total_number"]
-        self.num_rows = crop_data["crop"]["num_rows"]
-        self.row_widths = crop_data["crop"]["row_widths"]
+        self.type = crop_data["type"]
+        self.size = crop_data["size"]
+        self.percentage_share = crop_data["percentage_share"]
+        self.total_number = crop_data["total_number"]
+        self.num_rows = crop_data["num_rows"]
+        self.row_widths = crop_data["row_widths"]
+        self.counter = 1
 
     def setup_crops(self):
         curr_row = 0
@@ -75,11 +71,13 @@ class CropController:
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc, locx):
-        bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
-        collection = bpy.data.collections[self.collection_name]
-        bpy.context.active_object.name = "cube"
-        cube = bpy.context.object
-        for ob in cube.users_collection[:]: #unlink from all preceeding object collections
-            ob.objects.unlink(cube)
-        collection.objects.link(cube)
+        # crop_size used later for adjusting crop height
+        bpy.data.collections[self.collection_name]
+        bpy.context.active_object.name = "stage11.1"
+        cube = bpy.context.scene.objects.get("stage11.1")
+        duplicated = cube.copy()
+        duplicated.data = cube.data.copy()
+        duplicated.location = (locx, loc, loc)
+        self.counter += 1
+        bpy.context.collection.objects.link(duplicated)
         return cube

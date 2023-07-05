@@ -2,7 +2,8 @@ crop:
   type: ['green','red','blue']
   size: [0.5, 0.8, 1.0]
   percentage_share: [0.2, 0.3, 0.5]
-  total_number: 9
-  num_rows: 2
+  total_number: 10
+  num_rows: 5
   row_widths: 5
-  
+
+outfile: ["test.png"] 

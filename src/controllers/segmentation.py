@@ -3,7 +3,6 @@ import bpycv
 import numpy as np
 import cv2
 
-
 class Segmentation:
     def __init__(self, classes=None) -> None:
         """

@@ -16,7 +16,7 @@ class BlenderScriptTest(unittest.TestCase):
     def tearDown(self):
         # Clean up test environment
         os.remove(self.test_file)
-        os.remove(self.expected_output_file)
+        # os.remove(self.expected_output_file)
         os.remove("tests/expected_output_seg.png")
 
     def test_script_execution(self):
@@ -30,12 +30,13 @@ class BlenderScriptTest(unittest.TestCase):
                 "num_rows": 2,
                 "row_widths": 5,
             },
+            "outfile": [self.test_output],
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "src/launch.py", "-i", self.test_file, "-o", self.test_output])
+        run(["python", "src/launch.py", self.test_file])
 
         # Verify that the output file was created
         self.assertTrue(os.path.isfile(self.expected_output_file))
@@ -51,12 +52,13 @@ class BlenderScriptTest(unittest.TestCase):
                 "num_rows": 2,
                 "row_widths": 5,
             },
+            "outfile": [self.test_output],
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "src/launch.py", "-i", self.test_file, "-o", self.test_output])
+        run(["python", "src/launch.py", self.test_file])
 
         # Verify that the rendering output matches the expected file
         self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output.png"))
