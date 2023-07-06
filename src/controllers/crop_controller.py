@@ -48,7 +48,8 @@ class CropController:
             crop_model = self.add_crop(crop_size, loc, locx)
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-            crop_model.active_material = material
+
+            # crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
@@ -60,15 +61,20 @@ class CropController:
         if crop_type == "red":
             material = bpy.data.materials.new("Red")
             material.diffuse_color = (1,0,0,0.8)
+            tex = bpy.data.textures.new("leaf", 'src/blender_assets/textures/texture5.jpg')
             segmentation_id = 1
         elif crop_type == "green":
             material = bpy.data.materials.new("Green")
             material.diffuse_color = (0,1,0,0.8)
+            tex = bpy.data.textures.new("leaf", 'src/blender_assets/textures/texture5.jpg')
             segmentation_id = 2
         elif crop_type == "blue":
             material = bpy.data.materials.new("Blue")
             material.diffuse_color = (0,0,1,0.8)
+            tex = bpy.data.textures.new("leaf", 'src/blender_assets/textures/texture5.jpg')
             segmentation_id = 3
+        slot = material.texture_slots.add()
+        slot.texture = tex
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc, locx):
