@@ -85,4 +85,32 @@ class CropController:
         # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
         #     ob.objects.unlink(cube)
         # collection.objects.link(cube)
+
+        # test the the height of crop 
+        crop_height = self.measure_crop_height(duplicated)
+
+        print("the height of crop is:", crop_height)
+
         return cube
+
+    def measure_crop_height(self, crop_object):
+        # Get the coordinates of the object's vertices
+        vertices = [v.co for v in crop_object.data.vertices]
+
+        # Get the transformation matrix of the object
+        matrix_world = crop_object.matrix_world
+
+        # Initialise min and max Y coordinates
+        min_y = float('inf')
+        max_y = float('-inf')
+
+        # Calculate the minimum and maximum Y coordinates of the transformed coordinates
+        for vertex in vertices:
+            transformed_vertex = matrix_world @ vertex
+            min_y = min(min_y, transformed_vertex.y)
+            max_y = max(max_y, transformed_vertex.y)
+
+        # Calculating the height of an object
+        crop_height = max_y - min_y
+
+        return crop_height
