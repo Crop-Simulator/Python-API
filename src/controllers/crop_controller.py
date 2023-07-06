@@ -86,7 +86,7 @@ class CropController:
         #     ob.objects.unlink(cube)
         # collection.objects.link(cube)
 
-        # test the the height of crop 
+        # test the the height of crop
         crop_height = self.measure_crop_height(duplicated)
 
         print("the height of crop is:", crop_height)
@@ -101,8 +101,8 @@ class CropController:
         matrix_world = crop_object.matrix_world
 
         # Initialise min and max Y coordinates
-        min_y = float('inf')
-        max_y = float('-inf')
+        min_y = float("inf")
+        max_y = float("-inf")
 
         # Calculate the minimum and maximum Y coordinates of the transformed coordinates
         for vertex in vertices:
