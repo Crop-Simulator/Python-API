@@ -27,13 +27,13 @@ class CameraControllerTest(unittest.TestCase):
             if collection.name == self.collection:
                 # Checks that the colelction exists in the scene
                 self.assertTrue(collection.name == self.collection)
-                
+
     def test_setup_camera_collection_location(self):
         self.camera_controller.setup_camera(self.camera_name, self.camera_location, self.camera_rotation, self.collection)
         camera_loc = bpy.data.objects[self.camera_name].location
         x, y, z = camera_loc
         self.assertEqual(self.camera_location, (x, y, z))
-        
+
     def test_setup_camera_collection_rotation(self):
         self.camera_controller.setup_camera(self.camera_name, self.camera_location, self.camera_rotation, self.collection)
         camera_rot = bpy.data.objects[self.camera_name].rotation_euler

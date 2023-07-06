@@ -63,7 +63,7 @@ class CameraControllerTest(unittest.TestCase):
         crop_controller = CropController(input_data["crop"], self.collection)
         material, segmentation_id = crop_controller.assign_crop_type("red")
         self.assertEquals(segmentation_id, self.expected_segmentation_id)
-        
+
     def test_setup_crops_total_number(self):
         # Checks right number of crops are created
         # Create test data YAML file
@@ -82,7 +82,6 @@ class CameraControllerTest(unittest.TestCase):
             yaml.safe_dump(test_data, file)
 
         input_data = YamlReader().read_file(self.test_file)
-        C = bpy.context
         crop_controller = CropController(input_data["crop"], self.collection)
         crop_controller.add_crop(0, 1, 1)
         object_count = 0
