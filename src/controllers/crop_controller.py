@@ -1,4 +1,5 @@
 import bpy
+from mathutils import Vector
 
 
 class CropController:
@@ -72,24 +73,21 @@ class CropController:
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc, locx):
-        # bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
-
         bpy.data.collections[self.collection_name]
         bpy.context.active_object.name = "stage11.1"
         cube = bpy.context.scene.objects.get("stage11.1")
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
-        duplicated.location = (locx, loc, loc)
+        duplicated.location = Vector((locx, loc, loc))
+        duplicated.scale = Vector((crop_size, crop_size, crop_size))
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
-        # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
-        #     ob.objects.unlink(cube)
-        # collection.objects.link(cube)
 
-        # test the the height of crop
+        # Measure the height of the crop
         crop_height = self.measure_crop_height(duplicated)
-
-        print("the height of crop is:", crop_height)
+        print("The height of the crop is:", crop_height)
+        # Resize the crop
+        self.resize_crop(duplicated, 0.664167)
 
         return cube
 
@@ -114,3 +112,6 @@ class CropController:
         crop_height = max_y - min_y
 
         return crop_height
+
+    def resize_crop(self, crop_object, scale):
+        crop_object.scale = Vector((scale, scale, scale))
