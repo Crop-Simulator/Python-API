@@ -72,7 +72,6 @@ class CropController:
 
     def add_crop(self, crop_size, loc, locx):
         # crop_size used later for adjusting crop height
-        bpy.data.collections[self.collection_name]
         bpy.context.active_object.name = "stage11.1"
         cube = bpy.context.scene.objects.get("stage11.1")
         duplicated = cube.copy()
