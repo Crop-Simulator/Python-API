@@ -29,3 +29,4 @@ class CameraController:
         collection = bpy.data.collections.new(name=collection_name)
         bpy.context.scene.collection.children.link(collection)     # link to the collection containing the crops
         return collection
+    

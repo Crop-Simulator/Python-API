@@ -27,12 +27,10 @@ class TyperLaunchAPI:
                 ob.select_set(True)
         bpy.ops.object.delete()
         collection = "Collection"
-        
         cameracon = CameraController()
         cropcon = CropController(config["crop"], collection)
         scenerender = SceneRenderer(config["outfile"][0], collection)
         cameracon.setup_camera("camera_one", tuple(config["camera"]["location"]), tuple(config["camera"]["rotation"]), "Collection")
-        
         cropcon.setup_crops()
         collection1 = bpy.data.collections.get("Collection")
         dupe = collection1.objects.get("stage11.1")
