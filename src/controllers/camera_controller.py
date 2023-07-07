@@ -21,7 +21,6 @@ class CameraController:
                      camera_rotation=(1.57057,0.00174533,1.57057), collection_name="Collection"):
         bpy.ops.object.camera_add(enter_editmode=False, align="VIEW",
                                   location=camera_location, rotation=camera_rotation)
-        print("getting to render")
         bpy.data.objects["Camera"].name = str(cam)
         bpy.data.objects[cam].data.lens_unit = "FOV"
         bpy.data.objects[cam].data.angle = math.radians(100) # distance of camera from the scene
