@@ -5,6 +5,7 @@ from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
 from controllers.camera_controller import CameraController
+from controllers.light_controller import LightController
 
 
 class TyperLaunchAPI:
@@ -28,13 +29,17 @@ class TyperLaunchAPI:
         bpy.ops.object.delete()
         collection = "Collection"
         cameracon = CameraController()
+        lightcon = LightController()
+        lightcon.add_light()
         cropcon = CropController(config["crop"], collection)
         scenerender = SceneRenderer(config["outfile"][0], collection)
         cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), "Collection")
         cropcon.setup_crops()
         collection1 = bpy.data.collections.get("Collection")
         dupe = collection1.objects.get("stage11.1")
+        # dupe.hide_set(True)
         collection1.objects.unlink(dupe)
+
 
         scenerender.render_scene()
 
