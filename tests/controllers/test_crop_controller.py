@@ -29,7 +29,6 @@ class CameraControllerTest(unittest.TestCase):
                 "num_rows": 2,
                 "row_widths": 5,
             },
-            "outfile": [self.test_output],
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
@@ -52,7 +51,6 @@ class CameraControllerTest(unittest.TestCase):
                 "num_rows": 2,
                 "row_widths": 5,
             },
-            "outfile": [self.test_output],
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
@@ -75,7 +73,6 @@ class CameraControllerTest(unittest.TestCase):
                 "num_rows": 2,
                 "row_widths": 5,
             },
-            "outfile": [self.test_output],
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
