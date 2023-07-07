@@ -10,7 +10,6 @@ class CameraControllerTest(unittest.TestCase):
     def setUp(self):
         # Set up test environment
         self.test_file = "tests/test_data.yml"
-        self.test_output = "tests/test_output.png"
         self.collection = "Test Collection"
         self.expected_material_name = "Red"
         self.expected_segmentation_id = 1
