@@ -16,7 +16,8 @@ Use the following command to install the packages according to the requirements 
 pip install -r requirements.txt
 ```
 ### Installing Blender
-To install Blender following [these instructions](https://docs.blender.org/manual/en/latest/getting_started/installing/index.html).
+To install Blender following [these instructions](https://docs.blender.org/manual/en/latest/getting_started/installing/index.html). 
+The build is tested on Blender 3.5 and is our recommended version.
 
 ### Updating Requirements.txt
 To update requirements.txt install [pipreqs](https://github.com/bndr/pipreqs)
