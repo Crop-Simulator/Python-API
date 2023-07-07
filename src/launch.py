@@ -1,3 +1,4 @@
+
 import typer
 import bpy
 
@@ -28,7 +29,7 @@ class TyperLaunchAPI:
         bpy.ops.object.delete()
         collection = "Collection"
         cameracon = CameraController()
-        cropcon = CropController(config["crop"], collection)
+        cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config["outfile"][0], collection)
         cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), "Collection")
         cropcon.setup_crops()

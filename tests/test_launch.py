@@ -31,6 +31,7 @@ class BlenderScriptTest(unittest.TestCase):
                 "row_widths": 5,
             },
             "outfile": [self.test_output],
+            "generation_seed": 10,
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
@@ -75,6 +76,7 @@ class BlenderScriptTest(unittest.TestCase):
                 "row_widths": 5,
             },
             "outfile": [self.test_output],
+            "generation_seed": None,
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
