@@ -7,7 +7,7 @@ crop:
   row_widths: 5
 
 camera:
-  location: [10, 0, 0]
+  location: [100, 0, 0]
   rotation: [0.785398, 0.785398, 0.785398]
 
 outfile: ["test.png"] 
