@@ -7,6 +7,10 @@ Use the following command to run the code
 python src/launch.py data.yml
 ```
 ## Install
+### Python Version
+The build is tested on [Python 3.10.2](https://www.python.org/downloads/release/python-3102/) and is our recommended Python version.
+
+### Build Setup
 Use the following command to install the packages according to the requirements file
 ```commandline
 pip install -r requirements.txt
