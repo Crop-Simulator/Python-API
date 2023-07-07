@@ -83,7 +83,7 @@ class CropController:
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
 
-        # test the the height of crop 
+        # test the the height of crop
         crop_height = self.measure_crop_height(duplicated)
         print("The height of the crop is:", crop_height)
         # Resize the crop
