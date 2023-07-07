@@ -15,19 +15,19 @@ class SceneRenderer:
         bpy.data.collections[self.collection]
         scene = bpy.context.scene
         scene.camera = bpy.context.object
-        
-        
-        
+
+
+
         sky_texture = bpy.context.scene.world.node_tree.nodes.new("ShaderNodeTexSky")
         background = bpy.context.scene.world.node_tree.nodes["Background"]
         bpy.context.scene.world.node_tree.links.new(background.inputs["Color"], sky_texture.outputs["Color"])
 
 
-        sky_texture.sky_type = 'PREETHAM'			# or 'PREETHAM' or 'HOSEK_WILKIE'
+        sky_texture.sky_type = "PREETHAM"			# or 'PREETHAM' or 'HOSEK_WILKIE'
         sky_texture.turbidity = 5.0
         sky_texture.ground_albedo = 0.4
         sky_texture.sun_direction = mathutils.Vector((1.0, 0.0, 1.0))
-        
+
         bpy.context.scene.render.filepath = os.path.join(current_working_directory, self.output_file)
         bpy.ops.render.render(use_viewport=True, write_still=True)
 

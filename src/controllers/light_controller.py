@@ -3,7 +3,7 @@ import bpy
 class LightController:
     def add_light(self):
         # create light datablock, set attributes
-        light_data = bpy.data.lights.new(name="light_2.80", type='POINT')
+        light_data = bpy.data.lights.new(name="light_2.80", type="POINT")
         light_data.energy = 50
 
         # create new object with our light datablock
@@ -12,12 +12,12 @@ class LightController:
         # link light object
         bpy.context.collection.objects.link(light_object)
 
-        # make it active 
+        # make it active
         bpy.context.view_layer.objects.active = light_object
 
         #change location
         light_object.location = (10, 5, 0)
 
         # update scene, if needed
-        dg = bpy.context.evaluated_depsgraph_get() 
+        dg = bpy.context.evaluated_depsgraph_get()
         dg.update()

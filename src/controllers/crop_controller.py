@@ -74,9 +74,9 @@ class CropController:
         material.use_nodes = True
         bsdf = material.node_tree.nodes["Principled BSDF"]
         cwd = os.getcwd()
-        texImage = material.node_tree.nodes.new('ShaderNodeTexImage')
-        texImage.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture2.jpg")
-        material.node_tree.links.new(bsdf.inputs['Base Color'], texImage.outputs['Color'])
+        texture_image = material.node_tree.nodes.new("ShaderNodeTexImage")
+        texture_image.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture2.jpg")
+        material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc, locx):
