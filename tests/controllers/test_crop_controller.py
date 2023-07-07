@@ -36,7 +36,7 @@ class CameraControllerTest(unittest.TestCase):
 
         input_data = YamlReader().read_file(self.test_file)
 
-        crop_controller = CropController(input_data["crop"], self.collection)
+        crop_controller = CropController(input_data, self.collection)
         material, segmentation_id = crop_controller.assign_crop_type("red")
         self.assertEquals(material.name, self.expected_material_name)
 
@@ -57,7 +57,7 @@ class CameraControllerTest(unittest.TestCase):
 
         input_data = YamlReader().read_file(self.test_file)
 
-        crop_controller = CropController(input_data["crop"], self.collection)
+        crop_controller = CropController(input_data, self.collection)
         material, segmentation_id = crop_controller.assign_crop_type("red")
         self.assertEquals(segmentation_id, self.expected_segmentation_id)
 
@@ -78,8 +78,8 @@ class CameraControllerTest(unittest.TestCase):
             yaml.safe_dump(test_data, file)
 
         input_data = YamlReader().read_file(self.test_file)
-        crop_controller = CropController(input_data["crop"], self.collection)
-        crop_controller.add_crop(0, 1, 1)
+        crop_controller = CropController(input_data, self.collection)
+        crop_controller.add_crop(0, 1, 1, 1)
         object_count = 0
         for collection in bpy.data.collections:
             for obj in collection.all_objects:
