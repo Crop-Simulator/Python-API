@@ -1,16 +1,19 @@
 # Python-API
-![CI](https://github.com/Crop-Simulator/Python-API/actions/workflows/python-package.yml/badge.svg)
+![CI](https://github.com/Crop-Simulator/Python-API/actions/workflows/release-build.yml/badge.svg)
 
 ## Launch API
 Use the following command to run the code
 ```commandline
 python src/launch.py data.yml
-
+```
 ## Install
 Use the following command to install the packages according to the requirements file
 ```commandline
 pip install -r requirements.txt
 ```
+### Installing Blender
+To install Blender following [these instructions](https://docs.blender.org/manual/en/latest/getting_started/installing/index.html).
+
 ### Updating Requirements.txt
 To update requirements.txt install [pipreqs](https://github.com/bndr/pipreqs)
 ```commandline
