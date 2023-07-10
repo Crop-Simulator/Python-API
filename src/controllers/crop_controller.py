@@ -1,7 +1,6 @@
 import random
 import bpy
 
-
 class CropController:
 
     def __init__(self, config, collection):
@@ -100,7 +99,4 @@ class CropController:
         duplicated.location = (loc_x, loc_y, loc_z)
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
-        # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
-        #     ob.objects.unlink(cube)
-        # collection.objects.link(cube)
         return cube
