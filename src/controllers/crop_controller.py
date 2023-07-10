@@ -91,11 +91,12 @@ class CropController:
         material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
         return material, segmentation_id
 
-    def add_crop(self, crop_size, loc_z, loc_x, loc_y):
+    def add_crop(self, crop_size, loc_x, loc_y, loc_z):
+        # bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
+
         bpy.data.collections[self.collection_name]
         bpy.context.active_object.name = "stage7.009"
         cube = bpy.context.scene.objects.get("stage7.009")
-
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
         duplicated.location = (loc_x, loc_y, loc_z)

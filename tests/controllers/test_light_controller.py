@@ -1,6 +1,5 @@
 import unittest
 import bpy
-import os
 from mathutils import Vector
 
 from src.controllers.light_controller import LightController
@@ -14,7 +13,7 @@ class LightControllerTest(unittest.TestCase):
     def test_add_light(self):
         light_controller = LightController()
         light_controller.add_light()
-        
+
         get_position = bpy.context.object.matrix_world.to_translation()
 
         # Verify that the output file was created
