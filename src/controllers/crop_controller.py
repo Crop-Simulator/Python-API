@@ -2,6 +2,7 @@ import random
 import bpy
 from mathutils import Vector
 
+
 class CropController:
 
     def __init__(self, config, collection):
@@ -101,6 +102,7 @@ class CropController:
         duplicated.scale = Vector((crop_size, crop_size, crop_size))
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
+
         # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
         #     ob.objects.unlink(cube)
         # collection.objects.link(cube)
@@ -111,6 +113,7 @@ class CropController:
 
         # Resize the crop
         self.resize_crop(duplicated, 0.664167)
+
 
         return cube
 
