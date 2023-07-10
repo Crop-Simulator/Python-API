@@ -49,8 +49,6 @@ class CropController:
             crop_model = self.add_crop(crop_size, loc, locx)
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-
-            # crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
@@ -61,15 +59,12 @@ class CropController:
         segmentation_id = 0
         if crop_type == "red":
             material = bpy.data.materials.new("Red")
-            # material.diffuse_color = (1,0,0,0.8)
             segmentation_id = 1
         elif crop_type == "green":
             material = bpy.data.materials.new("Green")
-            # material.diffuse_color = (0,1,0,0.8)
             segmentation_id = 2
         elif crop_type == "blue":
             material = bpy.data.materials.new("Blue")
-            # material.diffuse_color = (0,0,1,0.8)
             segmentation_id = 3
         material.use_nodes = True
         bsdf = material.node_tree.nodes["Principled BSDF"]
@@ -80,17 +75,13 @@ class CropController:
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc, locx):
-        # bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
-
         bpy.data.collections[self.collection_name]
-        bpy.context.active_object.name = "stage11.1"
-        cube = bpy.context.scene.objects.get("stage11.1")
+        bpy.context.active_object.name = "stage7.009"
+        cube = bpy.context.scene.objects.get("stage7.009")
+        
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
         duplicated.location = (locx, loc, loc)
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
-        # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
-        #     ob.objects.unlink(cube)
-        # collection.objects.link(cube)
         return cube
