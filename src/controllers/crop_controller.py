@@ -109,9 +109,6 @@ class CropController:
         crop_height = self.measure_crop_height(duplicated)
         print("The height of the crop is:", crop_height)
 
-        # Resize the crop
-        self.resize_crop(duplicated, 0.664167)
-
         return cube
 
     def measure_crop_height(self, crop_object):
