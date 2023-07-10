@@ -2,7 +2,6 @@ import bpy
 import math
 
 class CameraController:
-
     """
     Setup default camera angle and link it to a collection.
     """
