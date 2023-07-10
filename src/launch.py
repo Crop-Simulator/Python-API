@@ -26,6 +26,7 @@ class TyperLaunchAPI:
             if ob.name != "stage7.009":
                 ob.select_set(True)
         bpy.ops.object.delete()
+
         collection = "Collection"
         cameracon = CameraController()
         lightcon = LightController()
@@ -38,6 +39,8 @@ class TyperLaunchAPI:
         dupe = collection1.objects.get("stage7.009")
         dupe.hide_set(True)
         collection1.objects.unlink(dupe)
+        # for ob in bpy.context.scene.objects:
+        #     print(ob.name)
 
 
         scenerender.render_scene()
