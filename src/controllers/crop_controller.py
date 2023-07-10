@@ -78,7 +78,7 @@ class CropController:
         bpy.data.collections[self.collection_name]
         bpy.context.active_object.name = "stage7.009"
         cube = bpy.context.scene.objects.get("stage7.009")
-        
+
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
         duplicated.location = (locx, loc, loc)
