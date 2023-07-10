@@ -1,6 +1,7 @@
 import bpy
 import math
 
+# from mathutils import Euler
 class CameraController:
     """
     Setup default camera angle and link it to a collection.
@@ -14,6 +15,8 @@ class CameraController:
         bpy.data.objects["Camera"].name = str(cam)
         bpy.data.objects[cam].data.lens_unit = "FOV"
         bpy.data.objects[cam].data.angle = math.radians(100) # distance of camera from the scene
+        # bpy.data.objects[cam].location = (15, 1, 2)
+        # bpy.data.objects[cam].rotation_euler = Euler((1.57057, 0.00174533, 1.57057))
         collection = bpy.data.collections.new(name=collection_name)
         bpy.context.scene.collection.children.link(collection)     # link to the collection containing the crops
         return collection
