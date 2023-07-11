@@ -108,8 +108,8 @@ class CropController:
         # collection.objects.link(cube)
 
         # Measure the height of the crop
-        crop_height = self.measure_crop_height(duplicated)
-        print("The height of the crop is:", crop_height)
+        #crop_height = self.measure_crop_height(duplicated)
+        #print("The height of the crop is:", crop_height)
 
         return cube
 
