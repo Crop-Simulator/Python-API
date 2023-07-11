@@ -1,5 +1,6 @@
 import os
 import bpy
+import mathutils
 
 from controllers.segmentation import Segmentation
 
@@ -14,6 +15,7 @@ class SceneRenderer:
         bpy.data.collections[self.collection]
         scene = bpy.context.scene
         scene.camera = bpy.context.object
+
         bpy.context.scene.render.filepath = os.path.join(current_working_directory, self.output_file)
         bpy.ops.render.render(use_viewport=True, write_still=True)
 
