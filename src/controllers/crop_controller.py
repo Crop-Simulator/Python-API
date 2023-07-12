@@ -1,6 +1,7 @@
 import random
 import bpy
 
+
 class CropController:
 
     def __init__(self, config, collection):
@@ -24,7 +25,7 @@ class CropController:
         curr_loc = 0
         curr_crop_type = 0
         curr_crop = 0
-        num_rows = int(self.total_number / self.num_rows)
+        num_rows = self.num_rows
         loc_z = 0
         loc_y = 0
         loc_x = 0
@@ -50,25 +51,22 @@ class CropController:
             curr_loc += 1
             crop_size = 0.5
             crop_model = self.add_crop(crop_size, loc_z, loc_x, loc_y)
-            if loc_x+1 == self.row_widths:
+            #TODO Uncomment when different types of objects are able to be added
+            # self.add_weed(loc_x, loc_y, loc_z)
+            if loc_x + 1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
             else:
                 loc_x += 1
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-            crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
 
-    #TODO procedural_generation Implementation.
+    # TODO procedural_generation Implementation.
     def procedural_generation(self):
         random.seed(self.generation_seed)
-
-        # print(random.random())
-        # for crop in range(self.total_number):
-        #     add_crop()
 
     def assign_crop_type(self, crop_type):
         # assign material and segmentation id depending on crop type
@@ -89,14 +87,26 @@ class CropController:
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc_z, loc_x, loc_y):
-        # bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
-
-        bpy.data.collections[self.collection_name] #No sure what this does
         bpy.context.active_object.name = "stage11.1"
         cube = bpy.context.scene.objects.get("stage11.1")
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
+        loc_x = loc_x - random.uniform(-.2, .2)
+        loc_y = loc_y - random.uniform(-.2, .2)
         duplicated.location = (loc_x, loc_y, loc_z)
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
         return cube
+
+    def add_weed(self, loc_x, loc_y, loc_z):
+        if bool(random.getrandbits(1)):
+            bpy.context.active_object.name = "BagaPie_Grass_00"
+            cube = bpy.context.scene.objects.get("BagaPie_Grass_00")
+            duplicated = cube.copy()
+            duplicated.data = cube.data.copy()
+            loc_x = loc_x - random.uniform(-.2, .2)
+            loc_y = loc_y - random.uniform(-.2, .2)
+            duplicated.location = (loc_x, loc_y, loc_z)
+            self.counter += 1
+            bpy.context.collection.objects.link(duplicated)
+            return cube

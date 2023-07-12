@@ -34,9 +34,9 @@ class TyperLaunchAPI:
         scenerender = SceneRenderer(config["outfile"][0], collection)
         lightcon = LightController()
         lightcon.add_light()
-        cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), "Collection")
+        cameracon.setup_camera("camera_one", (15, 1, 0), (1.57057, 0.00174533, 1.57057), collection)
         cropcon.setup_crops()
-        collection1 = bpy.data.collections.get("Collection")
+        collection1 = bpy.data.collections.get(collection)
         dupe = collection1.objects.get("stage11.1")
         collection1.objects.unlink(dupe)
 
