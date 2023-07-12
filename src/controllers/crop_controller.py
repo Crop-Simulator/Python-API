@@ -1,5 +1,6 @@
 import random
 import bpy
+import os
 
 
 class CropController:
@@ -60,6 +61,7 @@ class CropController:
                 loc_x += 1
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
+            # crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
@@ -74,16 +76,19 @@ class CropController:
         segmentation_id = 0
         if crop_type == "red":
             material = bpy.data.materials.new("Red")
-            material.diffuse_color = (1, 0, 0, 0.8)
             segmentation_id = 1
         elif crop_type == "green":
             material = bpy.data.materials.new("Green")
-            material.diffuse_color = (0, 1, 0, 0.8)
             segmentation_id = 2
         elif crop_type == "blue":
             material = bpy.data.materials.new("Blue")
-            material.diffuse_color = (0, 0, 1, 0.8)
             segmentation_id = 3
+        material.use_nodes = True
+        bsdf = material.node_tree.nodes["Principled BSDF"]
+        cwd = os.getcwd()
+        texture_image = material.node_tree.nodes.new("ShaderNodeTexImage")
+        texture_image.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture5.jpg")
+        material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc_z, loc_x, loc_y):

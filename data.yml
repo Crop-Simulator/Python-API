@@ -2,8 +2,13 @@ crop:
   type: ['green','red','blue']
   size: [0.5, 0.8, 1.0]
   percentage_share: [0.2, 0.3, 0.5]
+<<<<<<< HEAD
   total_number: 50
   num_rows: 2
+=======
+  total_number: 20
+  num_rows: 5
+>>>>>>> bca901b3d5c94f77b9a19e308dcd9ddea2f8c982
   row_widths: 5
 generation_seed: 10
 outfile: ["test.png"] 
