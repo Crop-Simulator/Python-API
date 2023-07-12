@@ -21,8 +21,6 @@ class TyperLaunchAPI:
     @staticmethod
     def launch(config):
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
-        # for ob in bpy.context.scene.objects:
-        #     print(ob.name)
         for ob in bpy.context.scene.objects:
             if ob.name != "stage11.1":
                 ob.select_set(True)

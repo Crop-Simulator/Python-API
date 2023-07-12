@@ -58,7 +58,7 @@ class CropController:
                 loc_x += 1
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-            crop_model.active_material = material
+            # crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
