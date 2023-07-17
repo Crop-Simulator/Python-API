@@ -2,7 +2,7 @@ import random
 import bpy
 import os
 
-from controllers.segmentation import SegmentationClass
+from .segmentation import SegmentationClass
 
 class CropController:
 

@@ -2,15 +2,14 @@ import bpy
 import bpycv
 import numpy as np
 import cv2
-import enum
 
 
-class SegmentationClass(enum.Enum):
+class SegmentationClass:
     BACKGROUND = 0
     PLANT = 1
 
 
-class SegmentationColor(enum.Enum):
+class SegmentationColor:
     # Color code in [B, G, R]
     LAND_GROUND_SOIL = [255, 194, 0]
     SKY = [230, 230, 6]
