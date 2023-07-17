@@ -21,9 +21,14 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+        crops = ["stage10.009", "stage9.009", "stage8.009", "stage7.009"]
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
+        # for ob in bpy.context.scene.objects:
+        #     if ob.name != "stage7.009" and ob.name != "stage10.009":
+        #         ob.select_set(True)
+        # bpy.ops.object.delete()
         for ob in bpy.context.scene.objects:
-            if ob.name != "stage11.1":
+            if not ob.name in crops:
                 ob.select_set(True)
         bpy.ops.object.delete()
         collection = "Collection"
@@ -35,8 +40,10 @@ class TyperLaunchAPI:
         cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), "Collection")
         cropcon.setup_crops()
         collection1 = bpy.data.collections.get("Collection")
-        dupe = collection1.objects.get("stage11.1")
-        collection1.objects.unlink(dupe)
+        for ob in bpy.context.scene.objects:
+            if ob.name in crops:
+                duplicate = collection1.objects.get(ob.name)
+                collection1.objects.unlink(duplicate)
 
         scenerender.render_scene()
 

@@ -14,6 +14,18 @@ class CropController:
         self.total_number = self.crop_data["total_number"]
         self.num_rows = self.crop_data["num_rows"]
         self.row_widths = self.crop_data["row_widths"]
+        self.growth_stage = {
+            "stage10" : "stage10.009",
+            "stage9" : "stage9.009",
+            "stage8" : "stage8.009",
+            "stage7" : "stage7.009",
+            "stage6" : "stage6.009",
+            "stage5" : "stage5.009",
+            "stage4" : "stage4.009",
+            "stage3" : "stage3.009",
+            "stage2" : "stage2.009",
+            "stage1" : "stage1.009"
+        }
         try:
             self.generation_seed = config["generation_seed"]
         except KeyError:
@@ -50,7 +62,7 @@ class CropController:
                     curr_crop_type += 1
             curr_loc += 1
             crop_size = 0.5
-            crop_model = self.add_crop(crop_size, loc_z, loc_x, loc_y)
+            crop_model = self.add_crop(crop_size, self.growth_stage[self.type[curr_crop_type]],loc_z, loc_x, loc_y)
             if loc_x+1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
@@ -75,29 +87,29 @@ class CropController:
         # assign material and segmentation id depending on crop type
         material = None
         segmentation_id = 0
-        if crop_type == "red":
+        if crop_type == "stage10":
             material = bpy.data.materials.new("Red")
             segmentation_id = 1
-        elif crop_type == "green":
+        elif crop_type == "stage9":
             material = bpy.data.materials.new("Green")
             segmentation_id = 2
-        elif crop_type == "blue":
+        elif crop_type == "stage7":
             material = bpy.data.materials.new("Blue")
             segmentation_id = 3
-        material.use_nodes = True
-        bsdf = material.node_tree.nodes["Principled BSDF"]
-        cwd = os.getcwd()
-        texture_image = material.node_tree.nodes.new("ShaderNodeTexImage")
-        texture_image.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture5.jpg")
-        material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
+        # material.use_nodes = True
+        # bsdf = material.node_tree.nodes["Principled BSDF"]
+        # cwd = os.getcwd()
+        # texture_image = material.node_tree.nodes.new("ShaderNodeTexImage")
+        # texture_image.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture5.jpg")
+        # material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
         return material, segmentation_id
 
-    def add_crop(self, crop_size, loc_z, loc_x, loc_y):
+    def add_crop(self, crop_size, growth_stage, loc_z, loc_x, loc_y):
         # bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
 
         bpy.data.collections[self.collection_name] #No sure what this does
-        bpy.context.active_object.name = "stage11.1"
-        cube = bpy.context.scene.objects.get("stage11.1")
+        bpy.context.active_object.name = growth_stage
+        cube = bpy.context.scene.objects.get(growth_stage)
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
         duplicated.location = (loc_x, loc_y, loc_z)
