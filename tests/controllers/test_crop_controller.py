@@ -63,7 +63,7 @@ class CameraControllerTest(unittest.TestCase):
         crop_controller = CropController(input_data, self.collection)
         material, segmentation_id = crop_controller.assign_crop_type("stage1")
         self.assertEquals(segmentation_id, self.expected_segmentation_id)
-        
+
     def test_different_crop_types(self):
         test_data = {
             "crop": {
@@ -75,24 +75,24 @@ class CameraControllerTest(unittest.TestCase):
                 "row_widths": 5,
             },
         }
-        
+
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
         input_data = YamlReader().read_file(self.test_file)
         crop_controller = CropController(input_data, self.collection)
         crop_controller.setup_crops()
-        
+
         stage10_count = 0
         stage8_count = 0
-        
+
         # remove original models that new models were copied from
         collection1 = bpy.data.collections.get("Collection")
         for ob in bpy.context.scene.objects:
             if ob.name in ["stage10.009", "stage8.009"]:
                 duplicate = collection1.objects.get(ob.name)
                 collection1.objects.unlink(duplicate)
-        
+
         for collection in bpy.data.collections:
             for obj in collection.all_objects:
                 if "stage10" in obj.name:
@@ -100,9 +100,9 @@ class CameraControllerTest(unittest.TestCase):
                 if "stage8" in obj.name:
                     stage8_count += 1
 
-                    
+
         self.assertTrue(stage10_count == self.expected_stage_10_count and stage8_count == self.expected_stage8_count)
-        
+
 
 
 if __name__ == "__main__":

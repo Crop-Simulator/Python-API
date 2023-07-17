@@ -1,6 +1,6 @@
 import random
 import bpy
-import os
+
 
 class CropController:
 
@@ -24,7 +24,7 @@ class CropController:
             "stage4" : "stage4.009",
             "stage3" : "stage3.009",
             "stage2" : "stage2.009",
-            "stage1" : "stage1.009"
+            "stage1" : "stage1.009",
         }
         try:
             self.generation_seed = config["generation_seed"]
@@ -37,7 +37,7 @@ class CropController:
         curr_loc = 0
         curr_crop_type = 0
         curr_crop = 0
-        num_rows = int(self.total_number / self.num_rows)
+        num_rows = self.num_rows
         loc_z = 0
         loc_y = 0
         loc_x = 0
@@ -57,7 +57,7 @@ class CropController:
                 # excludes: first crop because it should always be
                 # generated and will always return 0
 
-                
+
                 curr_crop = 0
                 if not curr_crop_type >= len(self.type) - 1:
                     # checks that there are more crop types
@@ -78,13 +78,9 @@ class CropController:
 
             curr_crop += 1
 
-    #TODO procedural_generation Implementation.
+    # TODO procedural_generation Implementation.
     def procedural_generation(self):
         random.seed(self.generation_seed)
-
-        # print(random.random())
-        # for crop in range(self.total_number):
-        #     add_crop()
 
     def assign_crop_type(self, crop_type):
         # assign material and segmentation id depending on crop type
@@ -98,7 +94,22 @@ class CropController:
         cube = bpy.context.scene.objects.get(growth_stage)
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
+        loc_x = loc_x - random.uniform(-.2, .2)
+        loc_y = loc_y - random.uniform(-.2, .2)
         duplicated.location = (loc_x, loc_y, loc_z)
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
         return cube
+
+    def add_weed(self, loc_x, loc_y, loc_z):
+        if bool(random.getrandbits(1)):
+            bpy.context.active_object.name = "BagaPie_Grass_00"
+            cube = bpy.context.scene.objects.get("BagaPie_Grass_00")
+            duplicated = cube.copy()
+            duplicated.data = cube.data.copy()
+            loc_x = loc_x - random.uniform(-.2, .2)
+            loc_y = loc_y - random.uniform(-.2, .2)
+            duplicated.location = (loc_x, loc_y, loc_z)
+            self.counter += 1
+            bpy.context.collection.objects.link(duplicated)
+            return cube

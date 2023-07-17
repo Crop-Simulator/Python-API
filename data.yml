@@ -5,5 +5,5 @@ crop:
   total_number: 20
   num_rows: 5
   row_widths: 5
-
+generation_seed: 10
 outfile: ["test.png"] 

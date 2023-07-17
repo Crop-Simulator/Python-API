@@ -27,7 +27,7 @@ class TyperLaunchAPI:
         #         ob.select_set(True)
         # bpy.ops.object.delete()
         for ob in bpy.context.scene.objects:
-            if not ob.name in crops:
+            if ob.name not in crops:
                 ob.select_set(True)
         bpy.ops.object.delete()
         collection = "Collection"
@@ -35,14 +35,14 @@ class TyperLaunchAPI:
         scenerender = SceneRenderer(config["outfile"][0], collection)
         lightcon = LightController()
         lightcon.add_light()
-        
+
         cropcon.setup_crops()
         collection1 = bpy.data.collections.get("Collection")
         for ob in bpy.context.scene.objects:
             if ob.name in crops:
                 duplicate = collection1.objects.get(ob.name)
                 collection1.objects.unlink(duplicate)
-        
+
         scenerender.render_scene()
 
 
