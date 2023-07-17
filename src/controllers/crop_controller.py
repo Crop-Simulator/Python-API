@@ -8,7 +8,7 @@ class CropController:
         self.collection_name = collection
         self.counter = 1
         self.crop_data = config["crop"]
-        self.type = self.crop_data["type"]  # list
+        self.type = self.crop_data["type"]
         self.size = self.crop_data["size"]
         self.percentage_share = self.crop_data["percentage_share"]
         self.total_number = self.crop_data["total_number"]
@@ -42,6 +42,7 @@ class CropController:
         loc_y = 0
         loc_x = 0
         for crop in range(self.total_number):
+
             if crop % num_rows == 0:
                 # splits crops into rows:
                 # increases row num, when reached and
@@ -55,11 +56,14 @@ class CropController:
                 # been generated based on their percentage share
                 # excludes: first crop because it should always be
                 # generated and will always return 0
+
+                
                 curr_crop = 0
                 if not curr_crop_type >= len(self.type) - 1:
                     # checks that there are more crop types
                     # before changing to next crop type
                     curr_crop_type += 1
+
             curr_loc += 1
             crop_size = 0.5
             crop_model = self.add_crop(crop_size, self.growth_stage[self.type[curr_crop_type]],loc_z, loc_x, loc_y)
@@ -70,7 +74,6 @@ class CropController:
                 loc_x += 1
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-            # crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
@@ -85,29 +88,12 @@ class CropController:
 
     def assign_crop_type(self, crop_type):
         # assign material and segmentation id depending on crop type
-        material = None
-        segmentation_id = 0
-        if crop_type == "stage10":
-            material = bpy.data.materials.new("Red")
-            segmentation_id = 1
-        elif crop_type == "stage9":
-            material = bpy.data.materials.new("Green")
-            segmentation_id = 2
-        elif crop_type == "stage7":
-            material = bpy.data.materials.new("Blue")
-            segmentation_id = 3
-        # material.use_nodes = True
-        # bsdf = material.node_tree.nodes["Principled BSDF"]
-        # cwd = os.getcwd()
-        # texture_image = material.node_tree.nodes.new("ShaderNodeTexImage")
-        # texture_image.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture5.jpg")
-        # material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
+        material = bpy.data.materials.new(crop_type)
+        segmentation_id = list(self.growth_stage.keys()).index(crop_type)
+
         return material, segmentation_id
 
     def add_crop(self, crop_size, growth_stage, loc_z, loc_x, loc_y):
-        # bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
-
-        bpy.data.collections[self.collection_name] #No sure what this does
         bpy.context.active_object.name = growth_stage
         cube = bpy.context.scene.objects.get(growth_stage)
         duplicated = cube.copy()
