@@ -20,7 +20,8 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
-        crops = ["stage10.009", "stage9.009", "stage8.009", "stage7.009","stage6.009", "stage5.009", "stage4.009", "stage3.009", "stage2.009", "stage1.009", "stage0.009"]
+        crops = ["stage10.009", "stage9.009", "stage8.009", "stage7.009","stage6.009",
+                 "stage5.009", "stage4.009", "stage3.009", "stage2.009", "stage1.009", "stage0.009"]
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         # for ob in bpy.context.scene.objects:
         #     if ob.name != "stage7.009" and ob.name != "stage10.009":

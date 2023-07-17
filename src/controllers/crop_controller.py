@@ -65,8 +65,7 @@ class CropController:
                     curr_crop_type += 1
 
             curr_loc += 1
-            crop_size = 0.5
-            crop_model = self.add_crop(crop_size, self.growth_stage[self.type[curr_crop_type]],loc_z, loc_x, loc_y)
+            crop_model = self.add_crop(self.growth_stage[self.type[curr_crop_type]],loc_z, loc_x, loc_y)
             if loc_x+1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
@@ -89,7 +88,7 @@ class CropController:
 
         return material, segmentation_id
 
-    def add_crop(self, crop_size, growth_stage, loc_z, loc_x, loc_y):
+    def add_crop(self, growth_stage, loc_z, loc_x, loc_y):
         bpy.context.active_object.name = growth_stage
         cube = bpy.context.scene.objects.get(growth_stage)
         duplicated = cube.copy()
@@ -103,8 +102,8 @@ class CropController:
 
     def add_weed(self, loc_x, loc_y, loc_z):
         if bool(random.getrandbits(1)):
-            bpy.context.active_object.name = "BagaPie_Grass_00"
-            cube = bpy.context.scene.objects.get("BagaPie_Grass_00")
+            bpy.context.active_object.name = self.growth_stage["stage3"]
+            cube = bpy.context.scene.objects.get(self.growth_stage["stage3"])
             duplicated = cube.copy()
             duplicated.data = cube.data.copy()
             loc_x = loc_x - random.uniform(-.2, .2)
