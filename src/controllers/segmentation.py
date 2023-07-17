@@ -2,21 +2,35 @@ import bpy
 import bpycv
 import numpy as np
 import cv2
+import enum
+
+
+class SegmentationClass(enum.Enum):
+    BACKGROUND = 0
+    PLANT = 1
+
+
+class SegmentationColor(enum.Enum):
+    # Color code in [B, G, R]
+    LAND_GROUND_SOIL = [255, 194, 0]
+    SKY = [230, 230, 6]
+    PLANT = [4, 255, 204]
+
 
 class Segmentation:
-    def __init__(self, classes=None) -> None:
+    def __init__(self, color_map=None) -> None:
         """
-        classes: a dictionary of class ids to segmentation map values
+        color_map: a dictionary of class ids to segmentation map values
         """
-        if classes is None:
-            classes = {}
-        self.classes = classes
+        if color_map is None:
+            color_map = {}
+        self.color_map = color_map
 
     def add_class(self, class_id: int, segmentation_value: int):
-        self.classes[class_id] = segmentation_value
+        self.color_map[class_id] = segmentation_value
 
     def remove_class(self, class_id: int):
-        del self.classes[class_id]
+        del self.color_map[class_id]
 
     def segment(self, output_file: str):
         self._assign_classes()
@@ -27,8 +41,8 @@ class Segmentation:
     def _assign_classes(self):
         for obj in bpy.data.objects:
             if "segmentation_id" in obj:
-                if obj["segmentation_id"] in self.classes:
-                    obj["inst_id"] = self.classes[obj["segmentation_id"]]
+                if obj["segmentation_id"] in self.color_map:
+                    obj["inst_id"] = obj["segmentation_id"]
                 elif obj["segmentation_id"] != 0:
                     print(
                         "WARNING: Unknown segmentation id: "
@@ -37,8 +51,13 @@ class Segmentation:
 
     def _render_segmentation(self):
         rendered_data = bpycv.render_data()
+        # Transform the greyscale instance map to a RGB image
+        id_to_color = self.color_map
+        rendered_data["inst"] = np.array(
+            [id_to_color[inst_id] for inst_id in rendered_data["inst"].flatten()],
+        ).reshape(rendered_data["inst"].shape + (3,))
         return rendered_data
 
     def _write_segmentation(self, im, output_file: str):
         # save instance map as 16bit grey scale image
-        cv2.imwrite(output_file, np.uint16(im))
+        cv2.imwrite(output_file, im)
