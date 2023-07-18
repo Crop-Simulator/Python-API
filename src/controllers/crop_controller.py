@@ -84,7 +84,7 @@ class CropController:
     def assign_crop_type(self, crop_type):
         # assign material and segmentation id depending on crop type
         material = bpy.data.materials.new(crop_type)
-        segmentation_id = list(self.growth_stage.keys()).index(crop_type)
+        segmentation_id = list(self.growth_stage.keys()).index(crop_type) + 1
 
         return material, segmentation_id
 

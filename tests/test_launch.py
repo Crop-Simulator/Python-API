@@ -9,8 +9,8 @@ from subprocess import run
 class BlenderScriptTest(unittest.TestCase):
     def setUp(self):
         # Set up test environment
-        self.test_file = "tests/test_data.yml"
-        self.test_output = "tests/expected_output.png"
+        self.test_file = "tests/launch_test_data.yml"
+        self.test_output = "tests/expected_launch_output.png"
         self.expected_output_file = os.getcwd() + "/" + self.test_output
 
     def tearDown(self):
@@ -23,7 +23,7 @@ class BlenderScriptTest(unittest.TestCase):
         # Create test data YAML file
         test_data = {
             "crop": {
-                "type": ["green","red","blue"],
+                "type": ["stage10","stage9","stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
@@ -46,7 +46,7 @@ class BlenderScriptTest(unittest.TestCase):
         # Create test data YAML file
         test_data ={
             "crop": {
-                "type": ["green","red","blue"],
+                "type": ["stage10","stage9","stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,

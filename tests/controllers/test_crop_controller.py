@@ -13,7 +13,7 @@ class CameraControllerTest(unittest.TestCase):
         self.collection = "Test Collection"
         self.expected_material_name = "stage1"
         self.expected_object_count = 10
-        self.expected_segmentation_id = 9
+        self.expected_segmentation_id = 10
         self.expected_stage_10_count = 2
         self.expected_stage8_count = 8
 
