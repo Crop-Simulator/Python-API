@@ -9,8 +9,8 @@ from subprocess import run
 class BlenderScriptTest(unittest.TestCase):
     def setUp(self):
         # Set up test environment
-        self.test_file = "tests/launch_test_data.yml"
-        self.test_output = "tests/expected_launch_output.png"
+        self.test_file = "tests/test_data.yml"
+        self.test_output = "tests/expected_output.png"
         self.expected_output_file = os.getcwd() + "/" + self.test_output
 
     def tearDown(self):
