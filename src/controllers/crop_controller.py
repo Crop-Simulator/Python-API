@@ -1,5 +1,8 @@
 import random
 import bpy
+
+from mathutils import Vector
+
 import os
 
 
@@ -96,12 +99,52 @@ class CropController:
         cube = bpy.context.scene.objects.get("stage11.1")
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
+
+        duplicated.location = Vector((loc_x, loc_y,loc_z))
+        duplicated.scale = Vector((crop_size, crop_size, crop_size))
+
         loc_x = loc_x - random.uniform(-.2, .2)
         loc_y = loc_y - random.uniform(-.2, .2)
         duplicated.location = (loc_x, loc_y, loc_z)
+
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
+
+        # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
+        #     ob.objects.unlink(cube)
+        # collection.objects.link(cube)
+
+        # Measure the height of the crop
+        #crop_height = self.measure_crop_height(duplicated)
+        #print("The height of the crop is:", crop_height)
+
         return cube
+
+
+    def measure_crop_height(self, crop_object):
+        # Get the coordinates of the object's vertices
+        vertices = [v.co for v in crop_object.data.vertices]
+
+        # Get the transformation matrix of the object
+        matrix_world = crop_object.matrix_world
+
+        # Initialise min and max Y coordinates
+        min_y = float("inf")
+        max_y = float("-inf")
+
+        # Calculate the minimum and maximum Y coordinates of the transformed coordinates
+        for vertex in vertices:
+            transformed_vertex = matrix_world @ vertex
+            min_y = min(min_y, transformed_vertex.y)
+            max_y = max(max_y, transformed_vertex.y)
+
+        # Calculating the height of an object
+        crop_height = max_y - min_y
+
+        return crop_height
+
+    def resize_crop(self, crop_object, scale):
+        crop_object.scale = Vector((scale, scale, scale))
 
     def add_weed(self, loc_x, loc_y, loc_z):
         if bool(random.getrandbits(1)):
@@ -115,3 +158,4 @@ class CropController:
             self.counter += 1
             bpy.context.collection.objects.link(duplicated)
             return cube
+
