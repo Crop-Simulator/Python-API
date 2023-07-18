@@ -5,6 +5,7 @@ from mathutils import Vector
 from .light_controller import LightController
 from .segmentation import SegmentationClass
 
+from .segmentation import SegmentationClass
 
 class CropController:
 
@@ -119,6 +120,15 @@ class CropController:
 
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
+
+        # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
+        #     ob.objects.unlink(cube)
+        # collection.objects.link(cube)
+
+        # Measure the height of the crop
+        #crop_height = self.measure_crop_height(duplicated)
+        #print("The height of the crop is:", crop_height)
+
         return cube
 
 
