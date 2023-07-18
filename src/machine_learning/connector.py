@@ -1,59 +1,20 @@
 import base64
-
 import api
 
 
-def generate_image(api_client: api.StableDiffusionAPI, text_prompt: str):
-    txt2img_config = {
-        "enable_hr": False,
-        "denoising_strength": 0,
-        "firstphase_width": 0,
-        "firstphase_height": 0,
-        "hr_scale": 2,
-        "hr_upscaler": "string",
-        "hr_second_pass_steps": 0,
-        "hr_resize_x": 0,
-        "hr_resize_y": 0,
-        "hr_sampler_name": "string",
-        "hr_prompt": "",
-        "hr_negative_prompt": "",
-        "prompt": text_prompt,
-        "styles": ["string"],
-        "seed": -1,
-        "subseed": -1,
-        "subseed_strength": 0,
-        "seed_resize_from_h": -1,
-        "seed_resize_from_w": -1,
-        "sampler_name": "Euler",
-        "batch_size": 1,
-        "n_iter": 1,
-        "steps": 25,
-        "cfg_scale": 7,
-        "width": 400,
-        "height": 400,
-        "restore_faces": False,
-        "tiling": False,
-        "do_not_save_samples": False,
-        "do_not_save_grid": False,
-        "negative_prompt": "",
-        "eta": 0,
-        "s_min_uncond": 0,
-        "s_churn": 0,
-        "s_tmax": 0,
-        "s_tmin": 0,
-        "s_noise": 1,
-        "override_settings": {},
-        "override_settings_restore_afterwards": True,
-        "script_args": [],
-        "sampler_index": "Euler",
-        "script_name": "",
-        "send_images": True,
-        "save_images": False,
-        "alwayson_scripts": {},
-    }
+def read_segmentation_mask(path: str) -> str:
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode("utf-8")
 
-    response = api_client.txt2img(txt2img_config)
+def generate_image(api_client: api.StableDiffusionAPI, text_prompt: str, negative_prompt: str = ""):
+    txt2img_config = api.Txt2ImgConfig(prompt=text_prompt, negative_prompt=negative_prompt)
+    txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]", read_segmentation_mask("test_seg1.png"))
+    print(txt2img_config.to_dict())
+    response = api_client.txt2img(txt2img_config.to_dict())
 
+    for k, v in response.items():
+        if k != "images":
+            print(f"{k}: {v}")
     # save the images to disk
     for idx, img in enumerate(response["images"]):
         with open(f"img_{idx}.png", "wb") as f:
@@ -67,4 +28,4 @@ sharp focus, intricate texture, skin imperfections, photograph of wheat,\
 crop field, soil, sunlight, photo, photorealistic, spring, sprouting"
 
 sd_api_client = api.StableDiffusionAPI(url)
-generate_image(text_prompt)
+generate_image(sd_api_client, text_prompt)
