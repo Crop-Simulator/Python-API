@@ -1,15 +1,17 @@
+import enum
 import bpy
 import bpycv
 import numpy as np
 import cv2
+from warnings import warn
 
 
-class SegmentationClass:
+class SegmentationClass(enum.Enum):
     BACKGROUND = 0
     PLANT = 1
 
 
-class SegmentationColor:
+class SegmentationColor(enum.Enum):
     # Color code in [B, G, R]
     LAND_GROUND_SOIL = [255, 194, 0]
     SKY = [230, 230, 6]
@@ -43,9 +45,10 @@ class Segmentation:
                 if obj["segmentation_id"] in self.color_map:
                     obj["inst_id"] = obj["segmentation_id"]
                 elif obj["segmentation_id"] != 0:
-                    print(
+                    warn(
                         "WARNING: Unknown segmentation id: "
                         + str(obj["segmentation_id"]),
+                        stacklevel=2,
                     )
 
     def _render_segmentation(self):

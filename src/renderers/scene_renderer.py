@@ -29,8 +29,8 @@ class SceneRenderer:
         bpy.ops.render.render(use_viewport=True, write_still=True)
 
         segmentation = Segmentation({
-            SegmentationClass.BACKGROUND: SegmentationColor.LAND_GROUND_SOIL, # Background; land;ground;soil
-            SegmentationClass.PLANT: SegmentationColor.PLANT, # Plant
+            SegmentationClass.BACKGROUND.value: SegmentationColor.LAND_GROUND_SOIL.value, # Background; land;ground;soil
+            SegmentationClass.PLANT.value: SegmentationColor.PLANT.value, # Plant
         })
         segmentation_filename = self.output_file.replace(".png", "_seg.png") if self.output_file.endswith(".png") else self.output_file + "_seg.png"
         segmentation.segment(segmentation_filename)

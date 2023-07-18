@@ -77,13 +77,13 @@ class CropController:
         segmentation_id = 0
         if crop_type == "red":
             material = bpy.data.materials.new("Red")
-            segmentation_id = SegmentationClass.PLANT
+            segmentation_id = SegmentationClass.PLANT.value
         elif crop_type == "green":
             material = bpy.data.materials.new("Green")
-            segmentation_id = SegmentationClass.PLANT
+            segmentation_id = SegmentationClass.PLANT.value
         elif crop_type == "blue":
             material = bpy.data.materials.new("Blue")
-            segmentation_id = SegmentationClass.PLANT
+            segmentation_id = SegmentationClass.PLANT.value
         material.use_nodes = True
         bsdf = material.node_tree.nodes["Principled BSDF"]
         cwd = os.getcwd()
