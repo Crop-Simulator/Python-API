@@ -5,6 +5,7 @@ from mathutils import Vector
 
 import os
 
+from .segmentation import SegmentationClass
 
 class CropController:
 
@@ -79,13 +80,13 @@ class CropController:
         segmentation_id = 0
         if crop_type == "red":
             material = bpy.data.materials.new("Red")
-            segmentation_id = 1
+            segmentation_id = SegmentationClass.PLANT.value
         elif crop_type == "green":
             material = bpy.data.materials.new("Green")
-            segmentation_id = 2
+            segmentation_id = SegmentationClass.PLANT.value
         elif crop_type == "blue":
             material = bpy.data.materials.new("Blue")
-            segmentation_id = 3
+            segmentation_id = SegmentationClass.PLANT.value
         material.use_nodes = True
         bsdf = material.node_tree.nodes["Principled BSDF"]
         cwd = os.getcwd()
