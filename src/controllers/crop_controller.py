@@ -1,6 +1,9 @@
 import random
 import bpy
+
 from mathutils import Vector
+
+import os
 
 
 class CropController:
@@ -26,7 +29,7 @@ class CropController:
         curr_loc = 0
         curr_crop_type = 0
         curr_crop = 0
-        num_rows = int(self.total_number / self.num_rows)
+        num_rows = self.num_rows
         loc_z = 0
         loc_y = 0
         loc_x = 0
@@ -52,25 +55,23 @@ class CropController:
             curr_loc += 1
             crop_size = 0.5
             crop_model = self.add_crop(crop_size, loc_z, loc_x, loc_y)
-            if loc_x+1 == self.row_widths:
+            #TODO Uncomment when different types of objects are able to be added
+            # self.add_weed(loc_x, loc_y, loc_z)
+            if loc_x + 1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
             else:
                 loc_x += 1
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-            crop_model.active_material = material
+            # crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
 
-    #TODO procedural_generation Implementation.
+    # TODO procedural_generation Implementation.
     def procedural_generation(self):
         random.seed(self.generation_seed)
-
-        # print(random.random())
-        # for crop in range(self.total_number):
-        #     add_crop()
 
     def assign_crop_type(self, crop_type):
         # assign material and segmentation id depending on crop type
@@ -78,28 +79,34 @@ class CropController:
         segmentation_id = 0
         if crop_type == "red":
             material = bpy.data.materials.new("Red")
-            material.diffuse_color = (1, 0, 0, 0.8)
             segmentation_id = 1
         elif crop_type == "green":
             material = bpy.data.materials.new("Green")
-            material.diffuse_color = (0, 1, 0, 0.8)
             segmentation_id = 2
         elif crop_type == "blue":
             material = bpy.data.materials.new("Blue")
-            material.diffuse_color = (0, 0, 1, 0.8)
             segmentation_id = 3
+        material.use_nodes = True
+        bsdf = material.node_tree.nodes["Principled BSDF"]
+        cwd = os.getcwd()
+        texture_image = material.node_tree.nodes.new("ShaderNodeTexImage")
+        texture_image.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture5.jpg")
+        material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
         return material, segmentation_id
 
     def add_crop(self, crop_size, loc_z, loc_x, loc_y):
-        # bpy.ops.mesh.primitive_cube_add(location=(locx, loc, loc), size=crop_size)
-
-        bpy.data.collections[self.collection_name] #No sure what this does
         bpy.context.active_object.name = "stage11.1"
         cube = bpy.context.scene.objects.get("stage11.1")
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
+
         duplicated.location = Vector((loc_x, loc_y,loc_z))
         duplicated.scale = Vector((crop_size, crop_size, crop_size))
+
+        loc_x = loc_x - random.uniform(-.2, .2)
+        loc_y = loc_y - random.uniform(-.2, .2)
+        duplicated.location = (loc_x, loc_y, loc_z)
+
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
 
@@ -112,6 +119,7 @@ class CropController:
         #print("The height of the crop is:", crop_height)
 
         return cube
+
 
     def measure_crop_height(self, crop_object):
         # Get the coordinates of the object's vertices
@@ -137,3 +145,17 @@ class CropController:
 
     def resize_crop(self, crop_object, scale):
         crop_object.scale = Vector((scale, scale, scale))
+
+    def add_weed(self, loc_x, loc_y, loc_z):
+        if bool(random.getrandbits(1)):
+            bpy.context.active_object.name = "BagaPie_Grass_00"
+            cube = bpy.context.scene.objects.get("BagaPie_Grass_00")
+            duplicated = cube.copy()
+            duplicated.data = cube.data.copy()
+            loc_x = loc_x - random.uniform(-.2, .2)
+            loc_y = loc_y - random.uniform(-.2, .2)
+            duplicated.location = (loc_x, loc_y, loc_z)
+            self.counter += 1
+            bpy.context.collection.objects.link(duplicated)
+            return cube
+

@@ -6,6 +6,7 @@ from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
 from controllers.camera_controller import CameraController
+from controllers.light_controller import LightController
 
 
 class TyperLaunchAPI:
@@ -21,8 +22,6 @@ class TyperLaunchAPI:
     @staticmethod
     def launch(config):
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
-        # for ob in bpy.context.scene.objects:
-        #     print(ob.name)
         for ob in bpy.context.scene.objects:
             if ob.name != "stage11.1":
                 ob.select_set(True)
@@ -31,9 +30,11 @@ class TyperLaunchAPI:
         cameracon = CameraController()
         cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config["outfile"][0], collection)
-        cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), "Collection")
+        lightcon = LightController()
+        lightcon.add_light()
+        cameracon.setup_camera("camera_one", (15, 1, 0), (1.57057, 0.00174533, 1.57057), collection)
         cropcon.setup_crops()
-        collection1 = bpy.data.collections.get("Collection")
+        collection1 = bpy.data.collections.get(collection)
         dupe = collection1.objects.get("stage11.1")
         collection1.objects.unlink(dupe)
 
