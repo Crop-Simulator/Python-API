@@ -11,13 +11,13 @@ class SoilController:
 
     def calculate_soil_conditions(self):
 
-        if self.soil_type == 'sandy':
+        if self.soil_type == "sandy":
             moisture_content_in_soil = 0.05 * self.precipitation - 0.01 * self.temperature
             ph_level_in_soil = 6.0
-        elif self.soil_type == 'loamy':
+        elif self.soil_type == "loamy":
             moisture_content_in_soil = 0.07 * self.precipitation - 0.01 * self.temperature
             ph_level_in_soil = 6.5
-        elif self.soil_type == 'clay':
+        elif self.soil_type == "clay":
             moisture_content_in_soil = 0.09 * self.precipitation - 0.01 * self.temperature
             ph_level_in_soil = 7.0
         else:
@@ -25,4 +25,4 @@ class SoilController:
             moisture_content_in_soil = 0.0
             ph_level_in_soil = 7.0
 
-        return {'moisture_content_in_soil': moisture_content_in_soil, 'ph_level_in_soil': ph_level_in_soil}
+        return {"moisture_content_in_soil": moisture_content_in_soil, "ph_level_in_soil": ph_level_in_soil}
