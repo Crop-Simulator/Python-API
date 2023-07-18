@@ -5,8 +5,6 @@ from mathutils import Vector
 from .light_controller import LightController
 from .segmentation import SegmentationClass
 
-from .segmentation import SegmentationClass
-
 class CropController:
 
     def __init__(self, config, collection):
