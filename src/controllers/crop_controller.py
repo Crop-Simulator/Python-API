@@ -1,6 +1,7 @@
 import random
 import bpy
 
+from .light_controller import LightController
 
 class CropController:
 
@@ -31,8 +32,24 @@ class CropController:
         except KeyError:
             self.generation_seed = None
         self.procedural_generation()
-
+        
     def setup_crops(self):
+        for obj in bpy.context.scene.objects:
+            if obj.name not in self.growth_stage.values():
+                obj.select_set(True)
+        bpy.ops.object.delete()
+        
+        lightcon = LightController()
+        lightcon.add_light()
+        self.setup_crop_positions()
+        
+        collection = bpy.data.collections.get(self.collection_name)
+        for obj in bpy.context.scene.objects:
+            if obj.name in self.growth_stage.values():
+                duplicate = collection.objects.get(obj.name)
+                collection.objects.unlink(duplicate)
+
+    def setup_crop_positions(self):
         curr_row = 0
         curr_loc = 0
         curr_crop_type = 0

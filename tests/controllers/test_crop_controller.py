@@ -10,22 +10,28 @@ class CameraControllerTest(unittest.TestCase):
     def setUp(self):
         # Set up test environment
         self.test_file = "tests/test_data.yml"
-        self.collection = "Test Collection"
-        self.expected_material_name = "stage1"
+        self.collection = "Collection"
         self.expected_object_count = 10
-        self.expected_segmentation_id = 10
-        self.expected_stage_10_count = 2
-        self.expected_stage8_count = 8
+        self.expected_segmentation_id = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        self.expected_stage_10_crops_num = 2
+        self.expected_stage_8_crops_num = 8
+        self.expected_material_name = ["stage1", "stage2", "stage3", "stage4", "stage5",
+                                       "stage6", "stage7", "stage8", "stage9", "stage10"]
+        self.num_crops_per_stage = {
+            "stage10": 0,
+            "stage8": 0,
+        }
 
     def tearDown(self):
         # Clean up test environment
-        os.remove(self.test_file)
+        if os.path.exists(self.test_file):
+            os.remove(self.test_file)
 
     def test_setup_crops_material_name(self):
         # Create test data YAML file
         test_data = {
             "crop": {
-                "type": ["stage10","stage9","stage8"],
+                "type": ["stage10", "stage9", "stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
@@ -36,18 +42,18 @@ class CameraControllerTest(unittest.TestCase):
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
-
         input_data = YamlReader().read_file(self.test_file)
-
         crop_controller = CropController(input_data, self.collection)
-        material, segmentation_id = crop_controller.assign_crop_type("stage1")
-        self.assertEquals(material.name, self.expected_material_name)
+        for i in range(1, 11):
+            stage = "stage" + str(i)
+            material, segmentation_id = crop_controller.assign_crop_type(stage)
+            self.assertEqual(material.name, self.expected_material_name[i - 1])
 
     def test_setup_crops_material_seg_id(self):
         # Create test data YAML file
         test_data = {
             "crop": {
-                "type": ["stage10","stage9","stage8"],
+                "type": ["stage10", "stage9", "stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
@@ -61,13 +67,15 @@ class CameraControllerTest(unittest.TestCase):
         input_data = YamlReader().read_file(self.test_file)
 
         crop_controller = CropController(input_data, self.collection)
-        material, segmentation_id = crop_controller.assign_crop_type("stage1")
-        self.assertEquals(segmentation_id, self.expected_segmentation_id)
+        for i in range(1, 11):
+            stage = "stage" + str(i)
+            material, segmentation_id = crop_controller.assign_crop_type(stage)
+            self.assertEqual(segmentation_id, self.expected_segmentation_id[i - 1])
 
-    def test_different_crop_types(self):
+    def test_stage_crop_num_correct(self):
         test_data = {
             "crop": {
-                "type": ["stage10","stage8"],
+                "type": ["stage10", "stage8"],
                 "size": [0.5, 0.8],
                 "percentage_share": [0.2, 0.8],
                 "total_number": 10,
@@ -83,26 +91,14 @@ class CameraControllerTest(unittest.TestCase):
         crop_controller = CropController(input_data, self.collection)
         crop_controller.setup_crops()
 
-        stage10_count = 0
-        stage8_count = 0
-
-        # remove original models that new models were copied from
-        collection1 = bpy.data.collections.get("Collection")
-        for ob in bpy.context.scene.objects:
-            if ob.name in ["stage10.009", "stage8.009"]:
-                duplicate = collection1.objects.get(ob.name)
-                collection1.objects.unlink(duplicate)
-
         for collection in bpy.data.collections:
             for obj in collection.all_objects:
-                if "stage10" in obj.name:
-                    stage10_count += 1
-                if "stage8" in obj.name:
-                    stage8_count += 1
+                obj = obj.name.split('.', 1)[0]
+                if obj in self.num_crops_per_stage.keys():
+                    self.num_crops_per_stage[obj] += 1
 
-
-        self.assertTrue(stage10_count == self.expected_stage_10_count and stage8_count == self.expected_stage8_count)
-
+        self.assertTrue(self.num_crops_per_stage["stage10"] == self.expected_stage_10_crops_num)
+        self.assertTrue(self.num_crops_per_stage["stage8"] == self.expected_stage_8_crops_num)
 
 
 if __name__ == "__main__":

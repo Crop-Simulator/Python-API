@@ -19,7 +19,7 @@ class SceneRenderer:
         scene.camera = bpy.context.object
 
         cameracon = CameraController()
-        cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), "Collection")
+        cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), self.collection)
 
         sky_texture = bpy.context.scene.world.node_tree.nodes.new("ShaderNodeTexSky")
         background = bpy.context.scene.world.node_tree.nodes["Background"]
