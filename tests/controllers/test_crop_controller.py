@@ -3,6 +3,7 @@ import yaml
 import bpy
 import os
 from src.controllers.crop_controller import CropController
+from src.controllers.segmentation import SegmentationClass
 from src.controllers.yaml_reader import YamlReader
 
 
@@ -12,7 +13,7 @@ class CameraControllerTest(unittest.TestCase):
         self.test_file = "tests/test_data.yml"
         self.collection = "Collection"
         self.expected_object_count = 10
-        self.expected_segmentation_id = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        self.expected_segmentation_id = SegmentationClass.PLANT.value
         self.expected_stage_10_crops_num = 2
         self.expected_stage_8_crops_num = 8
         self.expected_material_name = ["stage1", "stage2", "stage3", "stage4", "stage5",
@@ -70,7 +71,7 @@ class CameraControllerTest(unittest.TestCase):
         for i in range(1, 11):
             stage = "stage" + str(i)
             material, segmentation_id = crop_controller.assign_crop_type(stage)
-            self.assertEqual(segmentation_id, self.expected_segmentation_id[i - 1])
+            self.assertEqual(segmentation_id, self.expected_segmentation_id)
 
     def test_stage_crop_num_correct(self):
         test_data = {
@@ -93,9 +94,9 @@ class CameraControllerTest(unittest.TestCase):
 
         for collection in bpy.data.collections:
             for obj in collection.all_objects:
-                obj = obj.name.split('.', 1)[0]
-                if obj in self.num_crops_per_stage.keys():
-                    self.num_crops_per_stage[obj] += 1
+                obj_name = obj.name.split(".", 1)[0]
+                if obj_name in self.num_crops_per_stage.keys():
+                    self.num_crops_per_stage[obj_name] += 1
 
         self.assertTrue(self.num_crops_per_stage["stage10"] == self.expected_stage_10_crops_num)
         self.assertTrue(self.num_crops_per_stage["stage8"] == self.expected_stage_8_crops_num)

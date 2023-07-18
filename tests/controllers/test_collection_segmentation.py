@@ -35,7 +35,7 @@ class SegmentationTest(unittest.TestCase):
         bpy.ops.mesh.primitive_cube_add()
         o = bpy.context.active_object
         o["segmentation_id"] = 1
-        segmentation = Segmentation({1: 0xffff})
+        segmentation = Segmentation({0: [0, 0, 0], 1: [255, 255, 255]})
         segmentation_filename = self.output_file
         segmentation.segment(segmentation_filename)
         im = cv2.imread(segmentation_filename)

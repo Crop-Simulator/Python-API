@@ -1,12 +1,16 @@
 import random
 import bpy
+from mathutils import Vector
 
 from .light_controller import LightController
+from .segmentation import SegmentationClass
+
 
 class CropController:
 
     def __init__(self, config, collection):
         self.collection_name = collection
+        self.crop_size = 0.5
         self.counter = 1
         self.crop_data = config["crop"]
         self.type = self.crop_data["type"]
@@ -32,17 +36,17 @@ class CropController:
         except KeyError:
             self.generation_seed = None
         self.procedural_generation()
-        
+
     def setup_crops(self):
         for obj in bpy.context.scene.objects:
             if obj.name not in self.growth_stage.values():
                 obj.select_set(True)
         bpy.ops.object.delete()
-        
+
         lightcon = LightController()
         lightcon.add_light()
         self.setup_crop_positions()
-        
+
         collection = bpy.data.collections.get(self.collection_name)
         for obj in bpy.context.scene.objects:
             if obj.name in self.growth_stage.values():
@@ -82,8 +86,8 @@ class CropController:
                     curr_crop_type += 1
 
             curr_loc += 1
-            crop_model = self.add_crop(self.growth_stage[self.type[curr_crop_type]],loc_z, loc_x, loc_y)
-            if loc_x+1 == self.row_widths:
+            crop_model = self.add_crop(self.crop_size, self.growth_stage[self.type[curr_crop_type]], [loc_x, loc_y, loc_z])
+            if loc_x + 1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
             else:
@@ -101,21 +105,47 @@ class CropController:
     def assign_crop_type(self, crop_type):
         # assign material and segmentation id depending on crop type
         material = bpy.data.materials.new(crop_type)
-        segmentation_id = list(self.growth_stage.keys()).index(crop_type) + 1
-
+        segmentation_id = SegmentationClass.PLANT.value
         return material, segmentation_id
 
-    def add_crop(self, growth_stage, loc_z, loc_x, loc_y):
+    def add_crop(self, crop_size, growth_stage, loc):
         bpy.context.active_object.name = growth_stage
         cube = bpy.context.scene.objects.get(growth_stage)
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
-        loc_x = loc_x - random.uniform(-.2, .2)
-        loc_y = loc_y - random.uniform(-.2, .2)
-        duplicated.location = (loc_x, loc_y, loc_z)
+        loc[0] - random.uniform(-.2, .2)
+        loc[1] - random.uniform(-.2, .2)
+        duplicated.location = (loc[0], loc[1], loc[2])
+
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
         return cube
+
+
+    def measure_crop_height(self, crop_object):
+        # Get the coordinates of the object's vertices
+        vertices = [v.co for v in crop_object.data.vertices]
+
+        # Get the transformation matrix of the object
+        matrix_world = crop_object.matrix_world
+
+        # Initialise min and max Y coordinates
+        min_y = float("inf")
+        max_y = float("-inf")
+
+        # Calculate the minimum and maximum Y coordinates of the transformed coordinates
+        for vertex in vertices:
+            transformed_vertex = matrix_world @ vertex
+            min_y = min(min_y, transformed_vertex.y)
+            max_y = max(max_y, transformed_vertex.y)
+
+        # Calculating the height of an object
+        crop_height = max_y - min_y
+
+        return crop_height
+
+    def resize_crop(self, crop_object, scale):
+        crop_object.scale = Vector((scale, scale, scale))
 
     def add_weed(self, loc_x, loc_y, loc_z):
         if bool(random.getrandbits(1)):
@@ -129,3 +159,4 @@ class CropController:
             self.counter += 1
             bpy.context.collection.objects.link(duplicated)
             return cube
+
