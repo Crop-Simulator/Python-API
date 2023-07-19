@@ -24,8 +24,8 @@ class StableDiffusionAPI:
             resp_data = response.json()
             return resp_data
         else:
-            raise Exception(
-                f"Request failed with status code {response.status_code}: {response.text}"
+            raise requests.exceptions.HTTPError(
+                f"Request failed with status code {response.status_code}: {response.text}",
             )
 
 
@@ -91,7 +91,7 @@ class Txt2ImgConfig:
                 print(f"Unknown txt2img config key: {key}")
 
     def add_alwayson_script(
-        self, script_name: str, sampler_name: str, script_args: str, sampler_index: str
+        self, script_name: str, sampler_name: str, script_args: str, sampler_index: str,
     ):
         self.config["alwayson_scripts"][script_name] = {
             "sampler_name": sampler_name,
@@ -107,7 +107,7 @@ class Txt2ImgConfig:
                 "input_image": input_image,
                 "processor_res": 512,
                 "resize_mode": 1, # 1 = "inner fit", 2 = "outer fit"
-            }]
+            }],
         }
 
     def to_dict(self) -> dict:
