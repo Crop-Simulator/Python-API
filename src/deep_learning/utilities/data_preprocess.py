@@ -1,9 +1,9 @@
 
 import cv2
 import os
+import logging
 
-
-def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "png",) -> None:
+def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "jpg",) -> None:
     """
         Extracts frames from a video file at a specified frame interval and saves them as PNG images.
 
@@ -19,43 +19,51 @@ def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, ou
             None
     """
 
+    logger = logging.getLogger("data_preprocess.extract_frames")
+
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
     # Open the video file
     video = cv2.VideoCapture(video_path)
+    if not video.isOpened():
+        logger.error(f"Failed to open video file {video_path}")
+    else:
+        logger.info(f"Opened video file {video_path}")
 
-    # Initialize frame counter and output counter
-    frame_count = 0
+    # Initialize counters
+    frame_number = 0
     output_count = 1
 
     while video.isOpened():
-        # Read the next frame
+        # Read the next desired frame
+        video.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
         success, frame = video.read()
 
         if not success:
             break
 
-        # Extract frames at the desired intervals
-        if frame_count % frame_interval == 0:
-            # Generate the output file path
-            output_path = os.path.join(output_dir, f"{output_count}_frame_{frame_count}.{output_format}")
+        # Generate the output file path
+        output_path = os.path.join(output_dir, f"{output_count}_frame_{frame_number}.{output_format}")
 
-            # Save the frame
-            cv2.imwrite(output_path, frame)
+        # Save the frame
+        cv2.imwrite(output_path, frame)
+        logger.debug(f"Saved frame {output_count}_frame_{frame_number}.{output_format}")
 
-            # Increment the output counter
-            output_count += 1
-
-        # Increment the frame counter
-        frame_count += 1
+        # Increment the counters
+        output_count += 1
+        frame_number += frame_interval
 
     # Release the video capture and close the window
     video.release()
     cv2.destroyAllWindows()
+    logger.info(f"Finished extracting video {video_path}")
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(level=logging.DEBUG)
+
     # Example usage
     video_path = "../demo_data/barley_10_days_old.mp4"
     output_dir = "../demo_data/test_extract"
