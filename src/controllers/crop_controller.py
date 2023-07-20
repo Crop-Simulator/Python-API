@@ -1,24 +1,35 @@
 import random
 import bpy
-
 from mathutils import Vector
 
-import os
-
+from .light_controller import LightController
 from .segmentation import SegmentationClass
 
 class CropController:
 
     def __init__(self, config, collection):
         self.collection_name = collection
+        self.crop_size = 0.5
         self.counter = 1
         self.crop_data = config["crop"]
-        self.type = self.crop_data["type"]  # list
+        self.type = self.crop_data["type"]
         self.size = self.crop_data["size"]
         self.percentage_share = self.crop_data["percentage_share"]
         self.total_number = self.crop_data["total_number"]
         self.num_rows = self.crop_data["num_rows"]
         self.row_widths = self.crop_data["row_widths"]
+        self.growth_stage = {
+            "stage10" : "stage10.009",
+            "stage9" : "stage9.009",
+            "stage8" : "stage8.009",
+            "stage7" : "stage7.009",
+            "stage6" : "stage6.009",
+            "stage5" : "stage5.009",
+            "stage4" : "stage4.009",
+            "stage3" : "stage3.009",
+            "stage2" : "stage2.009",
+            "stage1" : "stage1.009",
+        }
         try:
             self.generation_seed = config["generation_seed"]
         except KeyError:
@@ -26,6 +37,22 @@ class CropController:
         self.procedural_generation()
 
     def setup_crops(self):
+        for obj in bpy.context.scene.objects:
+            if obj.name not in self.growth_stage.values():
+                obj.select_set(True)
+        bpy.ops.object.delete()
+
+        lightcon = LightController()
+        lightcon.add_light()
+        self.setup_crop_positions()
+
+        collection = bpy.data.collections.get(self.collection_name)
+        for obj in bpy.context.scene.objects:
+            if obj.name in self.growth_stage.values():
+                duplicate = collection.objects.get(obj.name)
+                collection.objects.unlink(duplicate)
+
+    def setup_crop_positions(self):
         curr_row = 0
         curr_loc = 0
         curr_crop_type = 0
@@ -35,6 +62,7 @@ class CropController:
         loc_y = 0
         loc_x = 0
         for crop in range(self.total_number):
+
             if crop % num_rows == 0:
                 # splits crops into rows:
                 # increases row num, when reached and
@@ -48,16 +76,16 @@ class CropController:
                 # been generated based on their percentage share
                 # excludes: first crop because it should always be
                 # generated and will always return 0
+
+
                 curr_crop = 0
                 if not curr_crop_type >= len(self.type) - 1:
                     # checks that there are more crop types
                     # before changing to next crop type
                     curr_crop_type += 1
+
             curr_loc += 1
-            crop_size = 0.5
-            crop_model = self.add_crop(crop_size, loc_z, loc_x, loc_y)
-            #TODO Uncomment when different types of objects are able to be added
-            # self.add_weed(loc_x, loc_y, loc_z)
+            crop_model = self.add_crop(self.crop_size, self.growth_stage[self.type[curr_crop_type]], [loc_x, loc_y, loc_z])
             if loc_x + 1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
@@ -65,7 +93,6 @@ class CropController:
                 loc_x += 1
             material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
 
-            # crop_model.active_material = material
             crop_model["segmentation_id"] = segmentation_id
 
             curr_crop += 1
@@ -76,37 +103,18 @@ class CropController:
 
     def assign_crop_type(self, crop_type):
         # assign material and segmentation id depending on crop type
-        material = None
-        segmentation_id = 0
-        if crop_type == "red":
-            material = bpy.data.materials.new("Red")
-            segmentation_id = SegmentationClass.PLANT.value
-        elif crop_type == "green":
-            material = bpy.data.materials.new("Green")
-            segmentation_id = SegmentationClass.PLANT.value
-        elif crop_type == "blue":
-            material = bpy.data.materials.new("Blue")
-            segmentation_id = SegmentationClass.PLANT.value
-        material.use_nodes = True
-        bsdf = material.node_tree.nodes["Principled BSDF"]
-        cwd = os.getcwd()
-        texture_image = material.node_tree.nodes.new("ShaderNodeTexImage")
-        texture_image.image = bpy.data.images.load(cwd+"\\src\\blender_assets\\textures\\textures\\texture5.jpg")
-        material.node_tree.links.new(bsdf.inputs["Base Color"], texture_image.outputs["Color"])
+        material = bpy.data.materials.new(crop_type)
+        segmentation_id = SegmentationClass.PLANT.value
         return material, segmentation_id
 
-    def add_crop(self, crop_size, loc_z, loc_x, loc_y):
-        bpy.context.active_object.name = "stage11.1"
-        cube = bpy.context.scene.objects.get("stage11.1")
+    def add_crop(self, crop_size, growth_stage, loc):
+        bpy.context.active_object.name = growth_stage
+        cube = bpy.context.scene.objects.get(growth_stage)
         duplicated = cube.copy()
         duplicated.data = cube.data.copy()
-
-        duplicated.location = Vector((loc_x, loc_y,loc_z))
-        duplicated.scale = Vector((crop_size, crop_size, crop_size))
-
-        loc_x = loc_x - random.uniform(-.2, .2)
-        loc_y = loc_y - random.uniform(-.2, .2)
-        duplicated.location = (loc_x, loc_y, loc_z)
+        loc[0] - random.uniform(-.2, .2)
+        loc[1] - random.uniform(-.2, .2)
+        duplicated.location = (loc[0], loc[1], loc[2])
 
         self.counter += 1
         bpy.context.collection.objects.link(duplicated)
@@ -149,8 +157,8 @@ class CropController:
 
     def add_weed(self, loc_x, loc_y, loc_z):
         if bool(random.getrandbits(1)):
-            bpy.context.active_object.name = "BagaPie_Grass_00"
-            cube = bpy.context.scene.objects.get("BagaPie_Grass_00")
+            bpy.context.active_object.name = self.growth_stage["stage3"]
+            cube = bpy.context.scene.objects.get(self.growth_stage["stage3"])
             duplicated = cube.copy()
             duplicated.data = cube.data.copy()
             loc_x = loc_x - random.uniform(-.2, .2)

@@ -3,6 +3,7 @@ import yaml
 import bpy
 import os
 from src.controllers.crop_controller import CropController
+from src.controllers.segmentation import SegmentationClass
 from src.controllers.yaml_reader import YamlReader
 
 
@@ -10,19 +11,28 @@ class CameraControllerTest(unittest.TestCase):
     def setUp(self):
         # Set up test environment
         self.test_file = "tests/test_data.yml"
-        self.collection = "Test Collection"
-        self.expected_material_name = "Red"
-        self.expected_segmentation_id = 1
+        self.collection = "Collection"
+        self.expected_object_count = 10
+        self.expected_segmentation_id = SegmentationClass.PLANT.value
+        self.expected_stage_10_crops_num = 2
+        self.expected_stage_8_crops_num = 8
+        self.expected_material_name = ["stage1", "stage2", "stage3", "stage4", "stage5",
+                                       "stage6", "stage7", "stage8", "stage9", "stage10"]
+        self.num_crops_per_stage = {
+            "stage10": 0,
+            "stage8": 0,
+        }
 
     def tearDown(self):
         # Clean up test environment
-        os.remove(self.test_file)
+        if os.path.exists(self.test_file):
+            os.remove(self.test_file)
 
     def test_setup_crops_material_name(self):
         # Create test data YAML file
         test_data = {
             "crop": {
-                "type": ["green","red","blue"],
+                "type": ["stage10", "stage9", "stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
@@ -33,18 +43,18 @@ class CameraControllerTest(unittest.TestCase):
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
-
         input_data = YamlReader().read_file(self.test_file)
-
         crop_controller = CropController(input_data, self.collection)
-        material, segmentation_id = crop_controller.assign_crop_type("red")
-        self.assertEquals(material.name, self.expected_material_name)
+        for i in range(1, 11):
+            stage = "stage" + str(i)
+            material, segmentation_id = crop_controller.assign_crop_type(stage)
+            self.assertEqual(material.name, self.expected_material_name[i - 1])
 
     def test_setup_crops_material_seg_id(self):
         # Create test data YAML file
         test_data = {
             "crop": {
-                "type": ["green","red","blue"],
+                "type": ["stage10", "stage9", "stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
@@ -58,36 +68,38 @@ class CameraControllerTest(unittest.TestCase):
         input_data = YamlReader().read_file(self.test_file)
 
         crop_controller = CropController(input_data, self.collection)
-        material, segmentation_id = crop_controller.assign_crop_type("red")
-        self.assertEquals(segmentation_id, self.expected_segmentation_id)
+        for i in range(1, 11):
+            stage = "stage" + str(i)
+            material, segmentation_id = crop_controller.assign_crop_type(stage)
+            self.assertEqual(segmentation_id, self.expected_segmentation_id)
 
-    def test_setup_crops_total_number(self):
-        # Checks right number of crops are created
-        # Create test data YAML file
+    def test_stage_crop_num_correct(self):
         test_data = {
             "crop": {
-                "type": ["green","red","blue"],
-                "size": [0.5, 0.8, 1.0],
-                "percentage_share": [0.2, 0.3, 0.5],
-                "total_number": 9,
+                "type": ["stage10", "stage8"],
+                "size": [0.5, 0.8],
+                "percentage_share": [0.2, 0.8],
+                "total_number": 10,
                 "num_rows": 2,
                 "row_widths": 5,
             },
         }
+
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
         input_data = YamlReader().read_file(self.test_file)
         crop_controller = CropController(input_data, self.collection)
-        crop_controller.add_crop(0, 1, 1, 1)
-        object_count = 0
+        crop_controller.setup_crops()
+
         for collection in bpy.data.collections:
             for obj in collection.all_objects:
-                print("obj: ", obj.name)
-                object_count += 1
-        # Objects: camera, light, 1 crop and 1 original crop
-        # check later
-        self.assertEqual(object_count, 8)
+                obj_name = obj.name.split(".", 1)[0]
+                if obj_name in self.num_crops_per_stage.keys():
+                    self.num_crops_per_stage[obj_name] += 1
+
+        self.assertTrue(self.num_crops_per_stage["stage10"] == self.expected_stage_10_crops_num)
+        self.assertTrue(self.num_crops_per_stage["stage8"] == self.expected_stage_8_crops_num)
 
 
 if __name__ == "__main__":

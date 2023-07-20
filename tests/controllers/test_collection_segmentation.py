@@ -43,3 +43,7 @@ class SegmentationTest(unittest.TestCase):
         self.assertListEqual(im[im.shape[0] // 2, im.shape[1] // 2].tolist(), [255, 255, 255])
         # assert the background is black
         self.assertListEqual(im[0, 0].tolist(), [0, 0, 0])
+
+
+if __name__ == "__main__":
+    unittest.main()

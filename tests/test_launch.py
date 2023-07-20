@@ -23,7 +23,7 @@ class BlenderScriptTest(unittest.TestCase):
         # Create test data YAML file
         test_data = {
             "crop": {
-                "type": ["green","red","blue"],
+                "type": ["stage10","stage9","stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
@@ -46,7 +46,7 @@ class BlenderScriptTest(unittest.TestCase):
         # Create test data YAML file
         test_data ={
             "crop": {
-                "type": ["green","red","blue"],
+                "type": ["stage10","stage9","stage8"],
                 "size": [0.5, 0.8, 1.0],
                 "percentage_share": [0.2, 0.3, 0.5],
                 "total_number": 9,
