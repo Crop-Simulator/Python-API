@@ -1,6 +1,23 @@
 import bpy
+import mathutils
 
 class LightController:
+    def __init__(self, sky_type="PREETHAM", turbidity=5.0, ground_albedo=0.4, sun_direction=mathutils.Vector((-1.0, 0.0, 0.0))):
+        self.sky_type = sky_type
+        self.turbidity = turbidity
+        self.ground_albedo = ground_albedo
+        self.sun_direction = sun_direction
+        
+    def add_sky(self):
+        sky_texture = bpy.context.scene.world.node_tree.nodes.new("ShaderNodeTexSky")
+        background = bpy.context.scene.world.node_tree.nodes["Background"]
+        bpy.context.scene.world.node_tree.links.new(background.inputs["Color"], sky_texture.outputs["Color"])
+
+        sky_texture.sky_type = self.sky_type			# 'PREETHAM' or 'HOSEK_WILKIE' or 
+        sky_texture.turbidity = self.turbidity
+        sky_texture.ground_albedo = self.ground_albedo
+        sky_texture.sun_direction = self.sun_direction
+        
     def add_light(self, light_location=(10, 5, 0)):
         # create light datablock, set attributes
         light_data = bpy.data.lights.new(name="light", type="POINT")
@@ -19,3 +36,9 @@ class LightController:
         # update scene
         dg = bpy.context.evaluated_depsgraph_get()
         dg.update()
+        
+    def change_sky_type(self, sky_type):
+        self.sky_type = sky_type
+        
+    def change_sun_direction(self, sun_direction):
+        self.sun_direction = sun_direction

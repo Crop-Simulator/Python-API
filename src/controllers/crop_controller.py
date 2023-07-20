@@ -44,6 +44,7 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
+        
         self.setup_crop_positions()
 
         collection = bpy.data.collections.get(self.collection_name)
