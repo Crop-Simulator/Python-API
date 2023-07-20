@@ -166,5 +166,6 @@ class CropController:
             duplicated.location = (loc_x, loc_y, loc_z)
             self.counter += 1
             bpy.context.collection.objects.link(duplicated)
+            cube["segmentation_id"] = SegmentationClass.WEED.value
             return cube
 

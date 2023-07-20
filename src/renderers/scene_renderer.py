@@ -36,6 +36,7 @@ class SceneRenderer:
         segmentation = Segmentation({
             SegmentationClass.BACKGROUND.value: SegmentationColor.LAND_GROUND_SOIL.value, # Background; land;ground;soil
             SegmentationClass.PLANT.value: SegmentationColor.PLANT.value, # Plant
+            SegmentationClass.WEED.value: SegmentationColor.GRASS.value,
         })
         segmentation_filename = self.output_file.replace(".png", "_seg.png") if self.output_file.endswith(".png") else self.output_file + "_seg.png"
         segmentation.segment(segmentation_filename)
