@@ -20,8 +20,10 @@ class TyperLaunchAPI:
     @staticmethod
     def launch(config):
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
-
         collection = "Collection"
+        # Set the unit system to metric
+        bpy.context.scene.unit_settings.system = "METRIC"
+        bpy.context.scene.unit_settings.scale_length = 1.0  # Set the scale to 1.0 for metric units
         cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config["outfile"][0], collection)
         cropcon.setup_crops()
