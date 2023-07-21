@@ -18,17 +18,27 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/pip
+            blender.tar.xz
+            docker/data
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-blender-${{ hashFiles('**/blender.tar.xz') }}-sdmodel-${{ hashFiles('**/docker/data') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-blender-
+            ${{ runner.os }}-sdmodel-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff pytest
+          pip install pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - uses: chartboost/ruff-action@v1
-
       - name: Set up Blender
         run: |
           # Download Blender
-          curl -L https://download.blender.org/release/Blender3.5/blender-3.5.0-linux-x64.tar.xz --output blender.tar.xz
+            curl -L -z blender.tar.xz https://download.blender.org/release/Blender3.5/blender-3.5.0-linux-x64.tar.xz --output blender.tar.xz
           # Extract Blender
           tar -xf blender.tar.xz
           # Move Blender to desired location
