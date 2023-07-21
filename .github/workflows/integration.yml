@@ -59,4 +59,4 @@ jobs:
       - name: Upload output images to the PR
         uses: actions/upload-artifact@v2
         with:
-          path: *.png
+          path: "*.png"
