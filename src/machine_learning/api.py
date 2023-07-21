@@ -90,14 +90,6 @@ class Txt2ImgConfig:
             else:
                 print(f"Unknown txt2img config key: {key}")
 
-    def add_alwayson_script(
-        self, script_name: str, sampler_name: str, script_args: str, sampler_index: str,
-    ):
-        self.config["alwayson_scripts"][script_name] = {
-            "sampler_name": sampler_name,
-            "script_args": script_args,
-            "sampler_index": sampler_index,
-        }
 
     def add_controlnet_segmentation(self, model: str, input_image: str):
         self.config["alwayson_scripts"]["controlnet"] = {
