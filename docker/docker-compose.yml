@@ -39,4 +39,3 @@ services:
     deploy: {}
     environment:
       - CLI_ARGS=--no-half --precision full --allow-code --enable-insecure-extension-access --api
-      - DISABLE_CONTROLNET=TRUE

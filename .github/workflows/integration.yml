@@ -64,6 +64,8 @@ jobs:
         run: docker compose --profile auto-cpu up -d --build && sleep 10
       - name: Running connector
         run: python -m src.machine_learning.connector
+        env:
+          DISABLE_CONTROLNET: "TRUE"
       - name: Reading output images as base64
         run: bash -c 'for f in output/*.png; do base64 $f; done'
       - name: Upload output images to the PR
