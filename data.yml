@@ -7,3 +7,6 @@ crop:
   row_widths: 5
 generation_seed: 10
 outfile: ["test.png"] 
+resolution: 
+  x: 512
+  y: 512
