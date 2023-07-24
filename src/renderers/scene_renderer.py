@@ -11,8 +11,9 @@ class SceneRenderer:
         self.collection = collection
         self.cameracon = CameraController()
         self.lightcon = LightController()
-        self.render_resolution_x = configs["resolution"]["x"]
-        self.render_resolution_y = configs["resolution"]["y"]
+        self.resolution_data = configs["resolution"]
+        self.render_resolution_x = self.resolution_data["x"]
+        self.render_resolution_y = self.resolution_data["y"]
 
     def render_scene(self):
         print("rendering...")

@@ -22,6 +22,11 @@ class BlenderScriptTest(unittest.TestCase):
         },
         "outfile": [test_output],
         "generation_seed": 10,
+        "resolution": {
+            "x": 512,
+            "y": 512,
+        },
+
     }
 
     @classmethod
