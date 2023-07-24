@@ -67,8 +67,8 @@ jobs:
         env:
           DISABLE_CONTROLNET: "TRUE"
       - name: Reading output images as base64
-        run: bash -c 'for f in output/*.png; do base64 $f; done'
-      - name: Upload output images to the PR
+        run: bash -c 'for f in *.png; do base64 $f; done'
+      - name: Upload output images
         uses: actions/upload-artifact@v2
         with:
           path: "*.png"
