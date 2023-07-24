@@ -65,7 +65,7 @@ jobs:
       - name: Running connector
         run: python -m src.machine_learning.connector
       - name: Reading output images as base64
-        run: bash -c 'for f in output/*.png; do base64 $f >; done'
+        run: bash -c 'for f in output/*.png; do base64 $f; done'
       - name: Upload output images to the PR
         uses: actions/upload-artifact@v2
         with:
