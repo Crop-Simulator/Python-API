@@ -8,9 +8,35 @@ from src.controllers.yaml_reader import YamlReader
 
 
 class CameraControllerTest(unittest.TestCase):
+    # Set up test environment
+    test_file = "tests/test_data.yml"
+    test_output = "tests/expected_output.png"
+    test_data = {
+        "crop": {
+            "type": ["stage10", "stage9", "stage8"],
+            "size": [0.5, 0.8, 1.0],
+            "percentage_share": [0.2, 0.3, 0.5],
+            "total_number": 9,
+            "num_rows": 2,
+            "row_widths": 5,
+        },
+        "outfile": [test_output],
+        "generation_seed": 10,
+    }
+
+    @classmethod
+    def setUpClass(cls):
+        bpy.ops.wm.read_homefile()
+
+    @classmethod
+    def tearDownClass(cls):
+        # Clean up test environment
+        os.remove(cls.test_file)
+
     def setUp(self):
-        # Set up test environment
-        self.test_file = "tests/test_data.yml"
+        # Create test data YAML file
+        with open(self.test_file, "w") as file:
+            yaml.safe_dump(self.test_data, file)
         self.collection = "Collection"
         self.expected_object_count = 10
         self.expected_segmentation_id = SegmentationClass.PLANT.value
@@ -23,26 +49,7 @@ class CameraControllerTest(unittest.TestCase):
             "stage8": 0,
         }
 
-    def tearDown(self):
-        # Clean up test environment
-        if os.path.exists(self.test_file):
-            os.remove(self.test_file)
-
     def test_setup_crops_material_name(self):
-        # Create test data YAML file
-        test_data = {
-            "crop": {
-                "type": ["stage10", "stage9", "stage8"],
-                "size": [0.5, 0.8, 1.0],
-                "percentage_share": [0.2, 0.3, 0.5],
-                "total_number": 9,
-                "num_rows": 2,
-                "row_widths": 5,
-            },
-        }
-        with open(self.test_file, "w") as file:
-            yaml.safe_dump(test_data, file)
-
         input_data = YamlReader().read_file(self.test_file)
         crop_controller = CropController(input_data, self.collection)
         for i in range(1, 11):
@@ -51,22 +58,7 @@ class CameraControllerTest(unittest.TestCase):
             self.assertEqual(material.name, self.expected_material_name[i - 1])
 
     def test_setup_crops_material_seg_id(self):
-        # Create test data YAML file
-        test_data = {
-            "crop": {
-                "type": ["stage10", "stage9", "stage8"],
-                "size": [0.5, 0.8, 1.0],
-                "percentage_share": [0.2, 0.3, 0.5],
-                "total_number": 9,
-                "num_rows": 2,
-                "row_widths": 5,
-            },
-        }
-        with open(self.test_file, "w") as file:
-            yaml.safe_dump(test_data, file)
-
         input_data = YamlReader().read_file(self.test_file)
-
         crop_controller = CropController(input_data, self.collection)
         for i in range(1, 11):
             stage = "stage" + str(i)
@@ -74,6 +66,7 @@ class CameraControllerTest(unittest.TestCase):
             self.assertEqual(segmentation_id, self.expected_segmentation_id)
 
     def test_stage_crop_num_correct(self):
+        # Special changed input values compared to other tests
         test_data = {
             "crop": {
                 "type": ["stage10", "stage8"],
@@ -84,7 +77,6 @@ class CameraControllerTest(unittest.TestCase):
                 "row_widths": 5,
             },
         }
-
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
 
