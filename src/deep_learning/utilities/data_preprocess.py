@@ -1,12 +1,11 @@
 import cv2
 import os
 import logging
-from typing import Tuple
 
 
 def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "jpg") -> None:
     """
-        Extracts frames from a video file at a specified frame interval and saves them as PNG images.
+        Extracts frames from a video file at a specified frame interval and saves them as images.
 
         Args:
             video_path (str): The path to the input video file.
@@ -61,7 +60,7 @@ def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, ou
     logger.info(f"Finished extracting video {video_path}")
 
 
-def slice_image_square(image, chunk_size_x: int = 512, chunk_size_y: int = 512):
+def slice_image(image, chunk_size_x: int = 512, chunk_size_y: int = 512):
     """
         Divide a larger image into smaller chunks side by side.
     """
@@ -86,7 +85,7 @@ def slice_image_square(image, chunk_size_x: int = 512, chunk_size_y: int = 512):
     for y in range(y_chunks):
         for x in range(x_chunks):
             # Extract chunk
-            chunk = image[y * chunk_size_y:(y + 1) * chunk_size_y - 1, x * chunk_size_x:(x + 1) * chunk_size_x - 1]
+            chunk = image[y * chunk_size_y:(y + 1) * chunk_size_y, x * chunk_size_x:(x + 1) * chunk_size_x]
             chunks.append(chunk)
 
     return chunks
