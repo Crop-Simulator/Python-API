@@ -61,7 +61,7 @@ jobs:
         run: docker compose --profile download up --build
       - name: Running stable-diffusion-webui
         working-directory: docker
-        run: docker compose --profile auto-cpu up -d --build && sleep 10 && docker logs stable-diffusion-webui
+        run: docker compose --profile auto-cpu up -d --build && sleep 10
       - name: Running connector
         run: python -m src.machine_learning.connector
       - name: Reading output images as base64
