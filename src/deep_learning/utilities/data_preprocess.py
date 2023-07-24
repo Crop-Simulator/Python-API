@@ -1,9 +1,10 @@
-
 import cv2
 import os
 import logging
+from typing import Tuple
 
-def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "jpg",) -> None:
+
+def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "jpg") -> None:
     """
         Extracts frames from a video file at a specified frame interval and saves them as PNG images.
 
@@ -60,12 +61,47 @@ def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, ou
     logger.info(f"Finished extracting video {video_path}")
 
 
-if __name__ == "__main__":
+def slice_image_square(image, chunk_size_x: int = 512, chunk_size_y: int = 512):
+    """
+        Divide a larger image into smaller chunks side by side.
+    """
+    logger = logging.getLogger("data_preprocess.slice_image_square")
 
-    logging.basicConfig(level=logging.DEBUG)
+    image_size_x, image_size_y = image.shape[1], image.shape[0]
 
-    # Example usage
-    video_path = "../demo_data/barley_10_days_old.mp4"
-    output_dir = "../demo_data/test_extract"
-    frame_interval = 600  # Extract 1 frame per 600 frames
-    extract_frames(video_path, output_dir, frame_interval)
+    if (image_size_x == chunk_size_x) and (image_size_y == chunk_size_y):
+        return [image]
+
+    if (image_size_x < chunk_size_x) or (image_size_y < chunk_size_y):
+        logger.warning(
+            f"Image not sliced: original image size ({image_size_x},{image_size_y}) is smaller than chunk size ({chunk_size_x},{chunk_size_y}).")
+        return [image]
+
+    # Calculate the number of chunks in x and y directions
+    x_chunks = image_size_x // chunk_size_x
+    y_chunks = image_size_y // chunk_size_y
+
+    # Loop over the image and save each chunk
+    chunks = []
+    for y in range(y_chunks):
+        for x in range(x_chunks):
+            # Extract chunk
+            chunk = image[y * chunk_size_y:(y + 1) * chunk_size_y - 1, x * chunk_size_x:(x + 1) * chunk_size_x - 1]
+            chunks.append(chunk)
+
+    return chunks
+
+
+def scale_image_to_fill(image, fill_size_x: int = 512, fill_size_y: int = 512):
+    image_size_x, image_size_y = image.shape[1], image.shape[0]
+
+    if image_size_x / image_size_y >= fill_size_x / fill_size_y:
+        # Resize such that new_image_size_y equals fill_size_y, so that new_image_size_x >= fill_size_x
+        new_image_size_y = fill_size_y
+        new_image_size_x = int(new_image_size_y * image_size_x / image_size_y)
+    else:
+        # Resize such that image_size_x equals fill_size_x
+        new_image_size_x = fill_size_x
+        new_image_size_y = int(new_image_size_x * image_size_y / image_size_x)
+
+    return cv2.resize(image, (new_image_size_x, new_image_size_y))
