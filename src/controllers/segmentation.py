@@ -9,6 +9,7 @@ from warnings import warn
 class SegmentationClass(enum.Enum):
     BACKGROUND = 0
     PLANT = 1
+    WEED = 2
 
 
 class SegmentationColor(enum.Enum):
@@ -16,6 +17,7 @@ class SegmentationColor(enum.Enum):
     LAND_GROUND_SOIL = [255, 194, 0]
     SKY = [230, 230, 6]
     PLANT = [4, 255, 204]
+    GRASS = [7, 250, 4]
 
 
 class Segmentation:
