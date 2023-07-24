@@ -61,7 +61,7 @@ jobs:
         run: docker compose --profile download up --build
       - name: Running stable-diffusion-webui
         working-directory: docker
-        run: docker compose --profile auto-cpu up -d --build && sleep 10
+        run: docker compose --profile auto-cpu up -d --build && sleep 20
       - name: Running connector
         run: python -m src.machine_learning.connector
         env:
