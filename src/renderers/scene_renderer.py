@@ -1,34 +1,27 @@
 import os
 import bpy
-import mathutils
 
 from controllers.segmentation import Segmentation, SegmentationColor, SegmentationClass
-
 from controllers.camera_controller import CameraController
+from controllers.light_controller import LightController
 
 class SceneRenderer:
     def __init__(self, output_file, collection):
         self.output_file = output_file
         self.collection = collection
+        self.cameracon = CameraController()
+        self.lightcon = LightController()
 
     def render_scene(self):
         print("rendering...")
         current_working_directory = str(os.getcwd())
         bpy.data.collections[self.collection]
-        scene = bpy.context.scene
-        scene.camera = bpy.context.object
 
-        cameracon = CameraController()
-        cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), self.collection)
 
-        sky_texture = bpy.context.scene.world.node_tree.nodes.new("ShaderNodeTexSky")
-        background = bpy.context.scene.world.node_tree.nodes["Background"]
-        bpy.context.scene.world.node_tree.links.new(background.inputs["Color"], sky_texture.outputs["Color"])
+        self.lightcon.add_light()
+        self.lightcon.add_sky()
+        self.cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), self.collection)
 
-        sky_texture.sky_type = "PREETHAM"			# or 'PREETHAM' or 'HOSEK_WILKIE'
-        sky_texture.turbidity = 5.0
-        sky_texture.ground_albedo = 0.4
-        sky_texture.sun_direction = mathutils.Vector((1.0, 0.0, 1.0))
 
         bpy.context.scene.render.filepath = os.path.join(current_working_directory, self.output_file)
         bpy.ops.render.render(use_viewport=True, write_still=True)
