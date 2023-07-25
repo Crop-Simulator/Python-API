@@ -6,7 +6,7 @@ from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
 from controllers.camera_controller import CameraController
-
+from controllers.weather_controller import WeatherController
 
 class TyperLaunchAPI:
     """
@@ -20,6 +20,14 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+        planting_date = config["planting_date"]
+        lat = config["latitude"]
+        lon = config["longitude"]
+        barley_type = config["barley_type"]
+        weather_controller = WeatherController("2b8fb3c4f62844189b7edec1063d92f9")
+        weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
+        print(weather_data)
+
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         # for ob in bpy.context.scene.objects:
         #     print(ob.name)
