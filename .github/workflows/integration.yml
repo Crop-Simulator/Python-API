@@ -25,7 +25,7 @@ jobs:
             ~/.cache/pip
             blender.tar.xz
             docker/data
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-blender-${{ hashFiles('blender.tar.xz') }}-sdmodel-${{ hashFiles('docker/data') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-blender-${{ hashFiles('blender.tar.xz') }}-sdmodel-${{ hashFiles('docker/machine_learning/download/checksums.sha256') }}
           restore-keys: |
             ${{ runner.os }}-pip-
             ${{ runner.os }}-blender-
