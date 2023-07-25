@@ -2,9 +2,9 @@ import unittest
 import numpy as np
 import shutil
 from pathlib import Path
-from src.deep_learning.utilities.data_preprocess import *
+from src.machine_learning.utilities.data_preprocess import *
 
-class DeepLearningTrainingTest(unittest.TestCase):
+class TrainingTest(unittest.TestCase):
 
 
     def test_extract_frames(self):
