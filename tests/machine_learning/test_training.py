@@ -48,7 +48,7 @@ class TrainingTest(unittest.TestCase):
 
         # Delete the test video and frames
         folder_path = os.path.join(os.path.dirname(__file__), "tmp")
-        shutil.rmtree(folder_path)
+        shutil.rmtree(folder_path, ignore_errors=True)
 
     def test_slice_image(self) -> None:
 
