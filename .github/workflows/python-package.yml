@@ -11,8 +11,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10"]
-    env:
-      WEATHER_API: ${{ secrets.WEATHER_API }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -48,6 +46,9 @@ jobs:
           sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libegl-dev
           sudo apt install libwayland-dev wayland-protocols libxkbcommon-dev libdbus-1-dev linux-libc-dev
       - name: Run Unittest
+        with:  
+          secrets: |
+            "WEATHER_API=${{secrets.WEATHER_API}}"
         run: |
           ls
           python -m unittest
