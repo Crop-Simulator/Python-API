@@ -6,11 +6,14 @@ from controllers.camera_controller import CameraController
 from controllers.light_controller import LightController
 
 class SceneRenderer:
-    def __init__(self, output_file, collection):
-        self.output_file = output_file
+    def __init__(self, configs, collection):
+        self.output_file = configs["outfile"][0]
         self.collection = collection
         self.cameracon = CameraController()
         self.lightcon = LightController()
+        self.resolution_data = configs["resolution"]
+        self.render_resolution_x = self.resolution_data["x"]
+        self.render_resolution_y = self.resolution_data["y"]
 
     def render_scene(self):
         print("rendering...")
@@ -23,6 +26,8 @@ class SceneRenderer:
         self.cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), self.collection)
 
 
+        bpy.context.scene.render.resolution_x = self.render_resolution_x
+        bpy.context.scene.render.resolution_y = self.render_resolution_y
         bpy.context.scene.render.filepath = os.path.join(current_working_directory, self.output_file)
         bpy.ops.render.render(use_viewport=True, write_still=True)
 
