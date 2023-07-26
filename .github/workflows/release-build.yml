@@ -25,6 +25,8 @@ jobs:
           pip install ruff pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - uses: chartboost/ruff-action@v1
+        with:
+          args: "--exclude docker"
 
       - name: Set up Blender
         run: |

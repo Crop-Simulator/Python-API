@@ -1,97 +1,63 @@
 import filecmp
 import unittest
-# import bpy
+import bpy
 import os
 import yaml
 from subprocess import run
 
 
 class BlenderScriptTest(unittest.TestCase):
-    def setUp(self):
-        # Set up test environment
-        self.test_file = "tests/test_data.yml"
-        self.test_output = "tests/expected_output.png"
-        self.expected_output_file = os.getcwd() + "/" + self.test_output
+    # Set up test environment
+    test_file = "tests/test_data.yml"
+    test_output = "tests/expected_output.png"
+    expected_output_file = os.getcwd() + "/" + test_output
+    test_data = {
+        "crop": {
+            "type": ["stage10", "stage9", "stage8"],
+            "size": [0.5, 0.8, 1.0],
+            "percentage_share": [0.2, 0.3, 0.5],
+            "total_number": 9,
+            "num_rows": 2,
+            "row_widths": 5,
+        },
+        
+        "outfile": [test_output],
+        "planting_date": "2023-02-01",
+        "latitude": 35.6895,
+        "longitude": 139.6917,
+        "barley_type": "spring",
+        "generation_seed": 10,
+    }
 
-    def tearDown(self):
-        # Clean up test environment
-        os.remove(self.test_file)
-        os.remove(self.expected_output_file)
-        os.remove("tests/expected_output_seg.png")
-
-    def test_script_execution(self):
+    @classmethod
+    def setUpClass(cls):
         # Create test data YAML file
-        test_data = {
-            "crop": {
-                "type": ["green","red","blue"],
-                "size": [0.5, 0.8, 1.0],
-                "percentage_share": [0.2, 0.3, 0.5],
-                "total_number": 9,
-                "num_rows": 2,
-                "row_widths": 5,
-            },
-            "planting_date": "2023-02-01",
-            "latitude": 35.6895,
-            "longitude": 139.6917,
-            "barley_type": "spring",
-            "outfile": [self.test_output],
-            "generation_seed": 10,
-        }
-        with open(self.test_file, "w") as file:
-            yaml.safe_dump(test_data, file)
+        with open(cls.test_file, "w") as file:
+            yaml.safe_dump(cls.test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "src/launch.py", self.test_file])
+        run(["python", "src/launch.py", cls.test_file])
 
+    @classmethod
+    def tearDownClass(cls):
+        # Clean up test environment
+        os.remove(cls.test_file)
+        os.remove(cls.expected_output_file)
+        os.remove("tests/expected_output_seg.png")
+
+    def test_unit_system_metric(self):
+        # Check if the unit system is now set to metric
+        self.assertEqual(bpy.context.scene.unit_settings.system, "METRIC")
+
+    def test_scale_length_one(self):
+        # Check if the scale length is set to 1.0
+        self.assertEqual(bpy.context.scene.unit_settings.scale_length, 1.0)
+
+    def test_script_execution(self):
         # Verify that the output file was created
         self.assertTrue(os.path.isfile(self.expected_output_file))
 
-    # def test_cubes_created(self):
-    #     # Create test data YAML file
-    #     test_data = {
-    # #     "crop": {
-            #     "type": ['green','red','blue'],
-            #     "size": [0.5, 0.8, 1.0],
-            #     "percentage_share": [0.2, 0.3, 0.5],
-            #     "total_number": 9,
-            #     "num_rows": 2,
-            #     "row_widths": 5,
-            # }
-    #     }
-    #     with open(self.test_file, "w") as file:
-    #         yaml.safe_dump(test_data, file)
-    #
-    #     # Execute the script with simulated command-line arguments
-    #     run(["python", "src/launch.py", "-i", self.test_file, "-o", self.test_output])
-    #
-    #     # Verify that the correct number of cubes were created
-    #     collection = bpy.data.collections.get("Collection")
-    #     self.assertEqual(len(collection.objects), test_data["num_crops"])
-
     def test_render_output(self):
-        # Create test data YAML file
-        test_data ={
-            "crop": {
-                "type": ["green","red","blue"],
-                "size": [0.5, 0.8, 1.0],
-                "percentage_share": [0.2, 0.3, 0.5],
-                "total_number": 9,
-                "num_rows": 2,
-                "row_widths": 5,
-            },
-            "planting_date": "2023-02-01",
-            "latitude": 35.6895,
-            "longitude": 139.6917,
-            "barley_type": "spring",
-            "outfile": [self.test_output],
-            "generation_seed": None,
-        }
-        with open(self.test_file, "w") as file:
-            yaml.safe_dump(test_data, file)
-
-        # Execute the script with simulated command-line arguments
-        run(["python", "src/launch.py", self.test_file])
-
         # Verify that the rendering output matches the expected file
         self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output.png"))
 

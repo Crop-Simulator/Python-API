@@ -1,0 +1,74 @@
+name: ML Build
+
+on:
+  pull_request:
+    branches:
+      ['dev', 'main']
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/pip
+            blender.tar.xz
+            docker/data/models
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-blender-${{ hashFiles('blender.tar.xz') }}-sdmodel-${{ hashFiles('docker/machine_learning/download/checksums.sha256') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-blender-
+            ${{ runner.os }}-sdmodel-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Set up Blender
+        run: |
+          # Download Blender
+            curl -L -z blender.tar.xz https://download.blender.org/release/Blender3.5/blender-3.5.0-linux-x64.tar.xz --output blender.tar.xz
+          # Extract Blender
+          tar -xf blender.tar.xz
+          # Move Blender to desired location
+          mv blender-3.5.0-linux-x64 $HOME/blender
+          # Add Blender directory to PATH
+          echo "export PATH=\$HOME/blender:\$PATH" >> $HOME/.bashrc
+          # Refresh the current shell
+          source $HOME/.bashrc || true
+      - name: Verify Blender directory contents
+        run: ls $HOME/blender
+      - name: Verify Blender installation
+        run: $HOME/blender/blender --version
+      - name: Install additional dependencies for Blender rendering
+        run: |
+          sudo apt update
+          sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libegl-dev
+          sudo apt install libwayland-dev wayland-protocols libxkbcommon-dev libdbus-1-dev linux-libc-dev
+      - name: Downloading Stable Diffusion models
+        working-directory: docker
+        run: docker compose --profile download up --build
+      - name: Running stable-diffusion-webui
+        working-directory: docker
+        run: docker compose --profile auto-cpu up -d --build && sleep 20
+      - name: Running connector
+        run: python -m src.machine_learning.connector
+        env:
+          DISABLE_CONTROLNET: "TRUE"
+      - name: Reading output images as base64
+        run: bash -c 'for f in *.png; do base64 $f; done'
+      - name: Upload output images
+        uses: actions/upload-artifact@v2
+        with:
+          path: "*.png"
