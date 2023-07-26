@@ -11,7 +11,8 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10"]
-
+    env:
+      WEATHER_API: ${{ secrets.WEATHER_API }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}

@@ -36,21 +36,13 @@ class WeatherController:
     def get_weather_for_growth_period(self, barley_type, planting_date, lat, lon):
         planting_date = datetime.strptime(planting_date, "%Y-%m-%d")
         if barley_type == "spring":
-            harvest_date = planting_date + timedelta(days=180)  # Approx. 6 months
+            harvest_date = planting_date + timedelta(days=1)  # Approx. 6 months
         elif barley_type == "winter":
-            harvest_date = planting_date + timedelta(days=270)  # Approx. 9 months
+            harvest_date = planting_date + timedelta(days=2)  # Approx. 9 months
         return self.get_historical_weather(planting_date.strftime("%Y-%m-%d"), harvest_date.strftime("%Y-%m-%d"), lat, lon)
 
 
-# yaml_reader = YamlReader()
-# data = yaml_reader.read_file('Python-API/data.yml')
-# planting_date = data['planting_date']
-# lat = data['latitude']
-# lon = data['longitude']
-# barley_type = data['barley_type']
-
-
-# api_key = "2b8fb3c4f62844189b7edec1063d92f9"
-# weather_controller = WeatherController(api_key)
-# weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
-# print(weather_data)
+api_key = "f9590b70bfae4938a98e0cbd86aa2877"
+weather_controller = WeatherController(api_key)
+weather_data = weather_controller.get_weather_for_growth_period('spring', '2023-02-01', 35.6895  , 139.6917  )
+print(weather_data)

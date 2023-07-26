@@ -1,6 +1,7 @@
 
 import typer
 import bpy
+import os
 
 from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
@@ -24,7 +25,9 @@ class TyperLaunchAPI:
         lat = config["latitude"]
         lon = config["longitude"]
         barley_type = config["barley_type"]
-        weather_controller = WeatherController("2b8fb3c4f62844189b7edec1063d92f9")
+        # api_key = os.environ['WEATHER_API']
+        # weather_controller = WeatherController(api_key)
+        weather_controller = WeatherController("f9590b70bfae4938a98e0cbd86aa2877")
         weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
         print(weather_data)
 
