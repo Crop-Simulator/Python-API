@@ -8,7 +8,7 @@ class CameraController:
         self.camera_location = camera_location
         self.camera_rotation = camera_rotation
         self.collection_name = collection_name
-        self.camera_name = "camera_one"
+        self.camera_name = camera_name
         self.camera = bpy.ops.object.camera_add(enter_editmode=False, align="VIEW",
                                   location=self.camera_location, rotation=self.camera_rotation)
     """
@@ -29,8 +29,7 @@ class CameraController:
 
     def update_camera(self, angle_rotation = (0, 0, 0), distance = 10.0):
         # update camera rotation and distance
-        scene = bpy.context.scene
-        camera_direction = scene.camera.location - mathutils.Vector(angle_rotation)
+        camera_direction = bpy.data.objects[self.camera_name].location - mathutils.Vector(angle_rotation)
         rotation = camera_direction.to_track_quat("Z", "Y")
-        scene.camera.rotation_euler = rotation.to_euler()
-        scene.camera.location = rotation @ mathutils.Vector((0, 0, distance))
+        bpy.data.objects[self.camera_name].rotation_euler = rotation.to_euler()
+        bpy.data.objects[self.camera_name].location = rotation @ mathutils.Vector((0, 0, distance))

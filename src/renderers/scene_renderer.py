@@ -24,7 +24,7 @@ class SceneRenderer:
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
-        self.cameracon.update_camera(distance = 10, crop_location=(2,5,10))
+        self.cameracon.update_camera(distance = 5, angle_rotation=(100,150,100))
 
 
         bpy.context.scene.render.resolution_x = self.render_resolution_x
