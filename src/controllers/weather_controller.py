@@ -1,7 +1,6 @@
 import requests
 from datetime import datetime, timedelta
 
-
 class WeatherController:
     HTTP_STATUS_OK = 200
 
@@ -36,9 +35,9 @@ class WeatherController:
     def get_weather_for_growth_period(self, barley_type, planting_date, lat, lon):
         planting_date = datetime.strptime(planting_date, "%Y-%m-%d")
         if barley_type == "spring":
-            harvest_date = planting_date + timedelta(days=1)  # Approx. 6 months
+            harvest_date = planting_date + timedelta(days=180)  # Approx. 6 months
         elif barley_type == "winter":
-            harvest_date = planting_date + timedelta(days=2)  # Approx. 9 months
+            harvest_date = planting_date + timedelta(days=270)  # Approx. 9 months
         return self.get_historical_weather(planting_date.strftime("%Y-%m-%d"), harvest_date.strftime("%Y-%m-%d"), lat, lon)
 
 
