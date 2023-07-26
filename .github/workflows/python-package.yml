@@ -49,6 +49,5 @@ jobs:
         run: |
           ls
           python -m unittest
-        with:  
-          secrets: |
-            "WEATHER_API=${{secrets.WEATHER_API}}"
+        env:  
+          WEATHER_API=${{secrets.WEATHER_API}}
