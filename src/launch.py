@@ -1,7 +1,6 @@
 
 import typer
 import bpy
-import os
 
 from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
