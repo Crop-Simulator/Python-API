@@ -2,7 +2,6 @@ import bpy
 import math
 import mathutils
 
-# from mathutils import Euler
 class CameraController:
     def __init__(self, camera_name, camera_location, camera_rotation, collection_name):
         self.camera_location = camera_location
