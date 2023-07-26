@@ -9,7 +9,7 @@ class SceneRenderer:
     def __init__(self, configs, collection):
         self.output_file = configs["outfile"][0]
         self.collection = collection
-        self.cameracon = CameraController()
+        self.cameracon = CameraController("Photo Taker", (10,0,0), (1.57057,0.00174533,1.57057), self.collection)
         self.lightcon = LightController()
         self.resolution_data = configs["resolution"]
         self.render_resolution_x = self.resolution_data["x"]
@@ -23,7 +23,8 @@ class SceneRenderer:
 
         self.lightcon.add_light()
         self.lightcon.add_sky()
-        self.cameracon.setup_camera("camera_one", (10,0,0), (1.57057,0.00174533,1.57057), self.collection)
+        self.cameracon.setup_camera()
+        self.cameracon.update_camera(distance = 5, angle_rotation=(100,150,100))
 
 
         bpy.context.scene.render.resolution_x = self.render_resolution_x
