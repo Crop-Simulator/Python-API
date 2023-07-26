@@ -50,4 +50,4 @@ jobs:
           ls
           python -m unittest
         env:  
-          WEATHER_API=${{secrets.WEATHER_API}}
+          WEATHER_API: ${{secrets.WEATHER_API}}
