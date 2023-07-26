@@ -1,12 +1,13 @@
 crop:
-  type: ["stage10", "stage4", "stage8"]
+  type: ["stage10", "stage6", "stage8"]
   size: [0.5, 0.8]
   percentage_share: [0.2, 0.2, 0.6]
   total_number: 20
   num_rows: 5
   row_widths: 5
 generation_seed: 10
-outfile: ["test.png"] 
+num_images: 1
+outfile: ["test"] 
 resolution: 
   x: 512
   y: 512

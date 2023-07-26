@@ -5,6 +5,9 @@ __pycache__
 .idea/
 .vscode/
 
+# Unwanted images
+output_images/
+
 # Distribution / packaging 
 .Python build/ 
 develop-eggs/ 

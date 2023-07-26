@@ -1,6 +1,7 @@
 
 import typer
 import bpy
+import time
 
 from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
@@ -19,6 +20,9 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+
+        start_time = time.time()
+
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
         # Set the unit system to metric
@@ -28,8 +32,11 @@ class TyperLaunchAPI:
         scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
 
-
         scenerender.render_scene()
+
+        end_time = time.time()
+        total_time = end_time - start_time
+        print(total_time)
 
 
 if __name__ == "__main__":
