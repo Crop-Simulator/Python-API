@@ -4,6 +4,7 @@ from mathutils import Vector
 
 from .light_controller import LightController
 from .segmentation import SegmentationClass
+from .ground_controller import GroundController
 
 class CropController:
 
@@ -29,6 +30,7 @@ class CropController:
             "stage3" : "stage3.009",
             "stage2" : "stage2.009",
             "stage1" : "stage1.009",
+            "ground" : "stage9.ground"
         }
         try:
             self.generation_seed = config["generation_seed"]
@@ -44,6 +46,8 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
+        groundcon = GroundController()
+        groundcon.get_ground_stages()
 
         self.setup_crop_positions()
 

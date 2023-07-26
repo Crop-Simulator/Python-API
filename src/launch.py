@@ -7,6 +7,7 @@ from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
 
 
+
 class TyperLaunchAPI:
     """
     This class is used to launch the application using the Typer library.
@@ -27,6 +28,7 @@ class TyperLaunchAPI:
         cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
+
 
 
         scenerender.render_scene()

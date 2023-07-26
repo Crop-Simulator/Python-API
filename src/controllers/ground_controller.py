@@ -1,4 +1,5 @@
 import bpy
+import mathutils
 
 class GroundController:
     def __init__(self):
@@ -10,4 +11,6 @@ class GroundController:
         ground_stages = [obj for obj in bpy.data.objects if obj.name.startswith('stage') and obj.name.endswith('.ground')]
         for obj in ground_stages:
             self.collection.objects.link(obj)
-            obj.location = (0, 0, 0)
+            obj.location = (1, 0.5, -5)
+            obj.scale = mathutils.Vector((1, 3, 1))
+        
