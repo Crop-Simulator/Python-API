@@ -10,3 +10,5 @@ outfile: ["test.png"]
 resolution: 
   x: 512
   y: 512
+ground_color: "yellow"
+ground_type: "sandy"
