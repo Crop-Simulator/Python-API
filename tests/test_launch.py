@@ -27,6 +27,11 @@ class BlenderScriptTest(unittest.TestCase):
         "longitude": 139.6917,
         "barley_type": "spring",
         "generation_seed": 10,
+        "resolution": {
+            "x": 512,
+            "y": 512,
+        },
+
     }
 
     @classmethod

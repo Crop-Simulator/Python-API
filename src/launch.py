@@ -39,7 +39,7 @@ class TyperLaunchAPI:
         bpy.context.scene.unit_settings.system = "METRIC"
         bpy.context.scene.unit_settings.scale_length = 1.0  # Set the scale to 1.0 for metric units
         cropcon = CropController(config, collection)
-        scenerender = SceneRenderer(config["outfile"][0], collection)
+        scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
 
 
