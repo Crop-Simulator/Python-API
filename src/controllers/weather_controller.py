@@ -42,7 +42,3 @@ class WeatherController:
         return self.get_historical_weather(planting_date.strftime("%Y-%m-%d"), harvest_date.strftime("%Y-%m-%d"), lat, lon)
 
 
-api_key = "f9590b70bfae4938a98e0cbd86aa2877"
-weather_controller = WeatherController(api_key)
-weather_data = weather_controller.get_weather_for_growth_period("spring", "2023-02-01", 35.6895  , 139.6917  )
-print(weather_data)
