@@ -1,0 +1,41 @@
+version: '3.9'
+
+x-base_service: &base_service
+    ports:
+      - "${WEBUI_PORT:-7860}:7860"
+    volumes:
+      - &v1 ./data:/data
+      - &v2 ./output:/output
+    stop_signal: SIGKILL
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+              - driver: nvidia
+                device_ids: ['0']
+                capabilities: [compute, utility]
+
+name: webui-docker
+
+services:
+  download:
+    build: ./machine_learning/download/
+    profiles: ["download"]
+    volumes:
+      - *v1
+
+  auto: &automatic
+    <<: *base_service
+    profiles: ["auto"]
+    build: ./machine_learning/stable_diffusion_webui
+    image: sd-auto:62
+    environment:
+      - CLI_ARGS=--allow-code --medvram --xformers --enable-insecure-extension-access --api
+
+  auto-cpu:
+    <<: *automatic
+    profiles: ["auto-cpu"]
+    deploy: {}
+    environment:
+      - CLI_ARGS=--no-half --precision full --allow-code --enable-insecure-extension-access --api
