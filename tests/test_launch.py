@@ -20,7 +20,7 @@ class BlenderScriptTest(unittest.TestCase):
             "num_rows": 2,
             "row_widths": 5,
         },
-        
+
         "outfile": [test_output],
         "planting_date": "2023-02-01",
         "latitude": 35.6895,

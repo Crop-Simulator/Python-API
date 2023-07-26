@@ -31,7 +31,7 @@ import re
 import os.path
 import sys
 
-DEFAULT_FILEPATH = '/data/config/auto/config.json'
+DEFAULT_FILEPATH = "/data/config/auto/config.json"
 
 DEFAULT_OUTDIRS = {
   "outdir_samples": "",
@@ -53,14 +53,14 @@ DEFAULT_OTHER = {
 def dict_to_json_file(target_file: str, data: dict):
   """Write dictionary to specified json file"""
 
-  with open(target_file, 'w') as f:
+  with open(target_file, "w") as f:
     json.dump(data, f)
 
 def json_file_to_dict(config_file: str) -> dict|None:
    """Load json file into a dictionary. Return None if file does not exist."""
 
    if os.path.isfile(config_file):
-    with open(config_file, 'r') as f:
+    with open(config_file, "r") as f:
       return json.load(f)
    else:
       return None
@@ -94,7 +94,7 @@ def check_and_replace_config(config_file: str, target_file: str = None):
   # Write results to file
   dict_to_json_file(target_file or config_file, data)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
   if len(sys.argv) > 1:
     check_and_replace_config(*sys.argv[1:])
   else:
