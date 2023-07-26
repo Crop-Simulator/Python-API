@@ -19,6 +19,17 @@ class SceneRenderer:
 
     def render_scene(self):
         print("rendering...")
+        bpy.data.scenes[0].render.engine = "CYCLES"
+
+        # Set the device_type
+        bpy.context.preferences.addons[
+            "cycles"
+        ].preferences.compute_device_type = "CUDA" # or "OPENCL"
+
+        # Set the device and feature set
+        bpy.context.scene.cycles.device = "GPU"
+        
+        
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/output_images"
         bpy.data.collections[self.collection]
@@ -37,7 +48,13 @@ class SceneRenderer:
             bpy.context.scene.render.resolution_x = self.render_resolution_x
             bpy.context.scene.render.resolution_y = self.render_resolution_y
             bpy.context.scene.render.filepath = os.path.join(image_directory, current_file)
-            bpy.ops.render.render(use_viewport=True, write_still=True)
+            # bpy.ops.render.render(use_viewport=True, write_still=True)
+            
+            bpy.context.preferences.addons["cycles"].preferences.get_devices()
+            print(bpy.context.preferences.addons["cycles"].preferences.compute_device_type)
+            for d in bpy.context.preferences.addons["cycles"].preferences.devices:
+                d["use"] = 1 # Using all devices, include GPU and CPU
+                print(d["name"], d["use"])
 
             segmentation = Segmentation({
                 SegmentationClass.BACKGROUND.value: SegmentationColor.LAND_GROUND_SOIL.value, # Background; land;ground;soil

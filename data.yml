@@ -6,7 +6,7 @@ crop:
   num_rows: 5
   row_widths: 5
 generation_seed: 10
-num_images: 1
+num_images: 100
 outfile: ["test"] 
 resolution: 
   x: 512
