@@ -20,8 +20,10 @@ class CameraControllerTest(unittest.TestCase):
             "num_rows": 2,
             "row_widths": 5,
         },
-        "outfile": [test_output],
-        "generation_seed": 10,
+        "resolution": {
+            "x": 512,
+            "y": 512,
+        },
     }
 
     @classmethod
@@ -76,6 +78,10 @@ class CameraControllerTest(unittest.TestCase):
                 "num_rows": 2,
                 "row_widths": 5,
             },
+            "resolution": {
+                "x": 512,
+                "y": 512,
+        },
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)

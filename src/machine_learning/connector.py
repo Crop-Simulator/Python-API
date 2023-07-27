@@ -1,7 +1,7 @@
 import base64
+import os
 
-from . import api
-
+from .api import StableDiffusionAPI, Txt2ImgConfig
 
 def read_segmentation_mask(path: str) -> str:
     """
@@ -17,7 +17,7 @@ def read_segmentation_mask(path: str) -> str:
         return base64.b64encode(f.read()).decode("utf-8")
 
 
-def generate_image(api_client: api.StableDiffusionAPI, text_prompt: str, negative_prompt: str = ""):
+def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_prompt: str = "", disable_controlnet: bool = False, **kwargs):
     """
     Generates an image from a given text prompt using the Stable Diffusion API.
 
@@ -30,10 +30,11 @@ def generate_image(api_client: api.StableDiffusionAPI, text_prompt: str, negativ
         None
     """
     # Create a Txt2ImgConfig object with the given text prompt and negative prompt
-    txt2img_config = api.Txt2ImgConfig(prompt=text_prompt, negative_prompt=negative_prompt)
+    txt2img_config = Txt2ImgConfig(prompt=text_prompt, negative_prompt=negative_prompt, **kwargs)
 
     # Add a controlnet segmentation to the Txt2ImgConfig object
-    txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]", read_segmentation_mask("test_seg1.png"))
+    if not disable_controlnet:
+        txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]", read_segmentation_mask("test_seg1.png"))
 
     # Print the Txt2ImgConfig object as a dictionary
     print(txt2img_config.to_dict())
@@ -58,6 +59,9 @@ if __name__ == "__main__":
     text_prompt = "best quality, 4k, 8k, ultra highres, raw photo in hdr,\
     sharp focus, intricate texture, skin imperfections, photograph of wheat,\
     crop field, soil, sunlight, photo, photorealistic, spring, sprouting"
+    disable_controlnet = os.environ.get("DISABLE_CONTROLNET", "false").lower() == "true"
+    width = int(os.environ.get("WIDTH", "512"))
+    height = int(os.environ.get("HEIGHT", "512"))
 
-    sd_api_client = api.StableDiffusionAPI(url)
-    generate_image(sd_api_client, text_prompt)
+    sd_api_client = StableDiffusionAPI(url)
+    generate_image(sd_api_client, text_prompt, disable_controlnet=disable_controlnet, width=width, height=height)
