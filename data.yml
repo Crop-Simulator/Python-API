@@ -5,6 +5,13 @@ crop:
   total_number: 20
   num_rows: 5
   row_widths: 5
+
+outfile: ["test.png"] 
+
+planting_date: '2023-02-01'  
+latitude: 35.6895  
+longitude: 139.6917  
+barley_type: 'spring' #spring or winter
 generation_seed: 10
 outfile: ["test.png"] 
 resolution: 
