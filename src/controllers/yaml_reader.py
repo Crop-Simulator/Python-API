@@ -9,7 +9,6 @@ class YamlReader:
     loads yaml file data to use for presenting the 3D model
     """
     def read_file(self, file):
-        print(file)
         current_working_directory = str(os.getcwd())
         openfile = os.path.join(current_working_directory, file)
         with open(openfile, "r") as file:

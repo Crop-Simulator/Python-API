@@ -4,8 +4,12 @@ from mathutils import Vector
 
 from src.controllers.light_controller import LightController
 
+
 class LightControllerTest(unittest.TestCase):
-    # TODO: fix infinite build on GitHub Actions
+    @classmethod
+    def setUpClass(cls):
+        bpy.ops.wm.read_homefile()
+
     def setUp(self):
         # Set up test environment
         self.light_position = (10, 5, 0)
@@ -37,6 +41,7 @@ class LightControllerTest(unittest.TestCase):
         light_controller.change_sky_type(self.changed_sky_type)
         get_sky_type = bpy.context.scene.world.node_tree.nodes[self.expected_sky_texture].sky_type
         self.assertTrue(get_sky_type, self.changed_sky_type)
+
 
 if __name__ == "__main__":
     unittest.main()

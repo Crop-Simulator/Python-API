@@ -5,10 +5,14 @@ import cv2
 
 from src.controllers.segmentation import Segmentation
 
+
 class SegmentationTest(unittest.TestCase):
     """
     This class contains unit tests for the Segmentation class.
     """
+    @classmethod
+    def setUpClass(cls):
+        bpy.ops.wm.read_homefile()
 
     def setUp(self):
         """
@@ -24,7 +28,7 @@ class SegmentationTest(unittest.TestCase):
         """
         os.remove(self.output_file)
 
-    def test(self):
+    def test_segmentation_colours(self):
         """
         This method tests the segmentation of a cube object.
         It asserts that the central point of the image is white and the background is black.
