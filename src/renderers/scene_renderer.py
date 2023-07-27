@@ -16,23 +16,15 @@ class SceneRenderer:
         self.render_resolution_x = self.resolution_data["x"]
         self.render_resolution_y = self.resolution_data["y"]
         self.num_images = configs["num_images"]
+        self.render_samples = 10
 
     def render_scene(self):
-        print("rendering...")
-        bpy.data.scenes[0].render.engine = "CYCLES"
-
-        # Set the device_type
-        bpy.context.preferences.addons[
-            "cycles"
-        ].preferences.compute_device_type = "CUDA" # or "OPENCL"
-
-        # Set the device and feature set
-        bpy.context.scene.cycles.device = "GPU"
-        
-        
+        print("rendering...")        
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/output_images"
         bpy.data.collections[self.collection]
+        self.lightcon.add_light()
+        self.lightcon.add_sky()
         self.cameracon.setup_camera()
 
         for i in range(self.num_images):
@@ -40,21 +32,15 @@ class SceneRenderer:
             angle_y = random.randint(0, 1000)
             angle_z = random.randint(0, 1000)
             distance = random.randint(5, 15)
-            self.cameracon.update_camera(distance = distance, angle_rotation=(angle_x,angle_y,angle_z))
+            self.cameracon.update_camera(distance = distance, angle_rotation=(0,0,90))
 
             current_file = self.output_file + str(i)
-
-
+            
+            # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
             bpy.context.scene.render.resolution_y = self.render_resolution_y
             bpy.context.scene.render.filepath = os.path.join(image_directory, current_file)
-            # bpy.ops.render.render(use_viewport=True, write_still=True)
-            
-            bpy.context.preferences.addons["cycles"].preferences.get_devices()
-            print(bpy.context.preferences.addons["cycles"].preferences.compute_device_type)
-            for d in bpy.context.preferences.addons["cycles"].preferences.devices:
-                d["use"] = 1 # Using all devices, include GPU and CPU
-                print(d["name"], d["use"])
+            bpy.ops.render.render(use_viewport=True, write_still=True)
 
             segmentation = Segmentation({
                 SegmentationClass.BACKGROUND.value: SegmentationColor.LAND_GROUND_SOIL.value, # Background; land;ground;soil
