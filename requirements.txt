@@ -6,3 +6,4 @@ opencv_python==4.7.0.72
 PyYAML==6.0
 Requests==2.31.0
 typer==0.9.0
+python-dotenv==1.0.0

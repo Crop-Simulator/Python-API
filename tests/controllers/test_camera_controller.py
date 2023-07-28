@@ -5,6 +5,10 @@ from src.controllers.camera_controller import CameraController
 
 class CameraControllerTest(unittest.TestCase):
     # more tests are needed, these are temporary for setting up unit tests
+    @classmethod
+    def setUpClass(cls):
+        bpy.ops.wm.read_homefile()
+
     def setUp(self):
         # Set up test environment
         self.camera_name = "Test Camera"
@@ -16,6 +20,8 @@ class CameraControllerTest(unittest.TestCase):
 
     def test_setup_camera_collection_name(self):
         # Create camera controller instance
+        # self.camera_controller.setup_camera(self.camera_name, self.camera_location, self.camera_rotation,
+        #                                     self.collection)
         self.camera_controller.setup_camera()
         # Checks that the collection is named correctly
         # 0th index is the existing collection in the file called "Collection"
@@ -26,7 +32,7 @@ class CameraControllerTest(unittest.TestCase):
         collection = self.camera_controller.setup_camera()
         for collection in bpy.data.collections:
             if collection.name == self.collection:
-                # Checks that the colelction exists in the scene
+                # Checks that the collection exists in the scene
                 self.assertTrue(collection.name == self.collection)
 
     def test_setup_camera_collection_location(self):

@@ -19,7 +19,7 @@ class SceneRenderer:
         self.render_samples = 10
 
     def render_scene(self):
-        print("rendering...")        
+        print("rendering...")
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/output_images"
         bpy.data.collections[self.collection]
@@ -28,14 +28,14 @@ class SceneRenderer:
         self.cameracon.setup_camera()
 
         for i in range(self.num_images):
-            angle_x = random.randint(0, 1000)
-            angle_y = random.randint(0, 1000)
-            angle_z = random.randint(0, 1000)
-            distance = random.randint(5, 15)
-            self.cameracon.update_camera(distance = distance, angle_rotation=(0,0,90))
+            x = random.randint(0, 1000)
+            y = random.randint(0, 1000)
+            z = random.randint(0, 1000)
+            distance = random.randint(5, 10)
+            self.cameracon.update_camera(distance = distance, angle_rotation=(x,y,z))
 
             current_file = self.output_file + str(i)
-            
+
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
             bpy.context.scene.render.resolution_y = self.render_resolution_y
