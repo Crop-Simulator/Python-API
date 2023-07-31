@@ -1,5 +1,6 @@
 import base64
 import os
+import time
 
 from .api import StableDiffusionAPI, Txt2ImgConfig
 
@@ -34,10 +35,10 @@ def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_pr
 
     # Add a controlnet segmentation to the Txt2ImgConfig object
     if not disable_controlnet:
-        txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]", read_segmentation_mask("test_seg1.png"))
+        txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]", read_segmentation_mask("test_seg.png"))
 
     # Print the Txt2ImgConfig object as a dictionary
-    print(txt2img_config.to_dict())
+    # print(txt2img_config.to_dict())
 
     # Generate the image using the Stable Diffusion API client
     response = api_client.txt2img(txt2img_config.to_dict())
@@ -64,4 +65,11 @@ if __name__ == "__main__":
     height = int(os.environ.get("HEIGHT", "512"))
 
     sd_api_client = StableDiffusionAPI(url)
-    generate_image(sd_api_client, text_prompt, disable_controlnet=disable_controlnet, width=width, height=height)
+    for i in range(3):
+        try:
+            generate_image(sd_api_client, text_prompt, disable_controlnet=disable_controlnet, width=width, height=height)
+            break
+        except Exception as e:
+            print(e)
+            time.sleep(10)
+
