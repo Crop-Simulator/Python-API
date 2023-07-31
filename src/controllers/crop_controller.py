@@ -15,6 +15,7 @@ class CropController:
         self.crop_data = config["crop"]
         self.type = self.crop_data["type"]
         self.size = self.crop_data["size"]
+        self.groundtype = config["ground_type"]
         self.percentage_share = self.crop_data["percentage_share"]
         self.total_number = self.crop_data["total_number"]
         self.num_rows = self.crop_data["num_rows"]
@@ -46,6 +47,8 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
+        crop_controller = CropController(config, 'collection')
+        print(crop_controller.groundtype)
         groundcon = GroundController()
         groundcon.get_ground_stages()
 
