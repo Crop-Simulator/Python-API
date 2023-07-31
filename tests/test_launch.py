@@ -24,7 +24,7 @@ class BlenderScriptTest(unittest.TestCase):
             "num_images": 1,
             "directory" : "test",
             "outfile": [test_output],
-        },        
+        },
         "planting_date": "2023-02-01",
         "latitude": 35.6895,
         "longitude": 139.6917,
@@ -36,7 +36,7 @@ class BlenderScriptTest(unittest.TestCase):
         },
 
     }
-    
+
     @classmethod
     def setUpClass(cls):
         # Create test data YAML file
