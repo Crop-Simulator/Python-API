@@ -8,20 +8,22 @@ from controllers.light_controller import LightController
 
 class SceneRenderer:
     def __init__(self, configs, collection):
-        self.output_file = configs["outfile"][0]
         self.collection = collection
         self.cameracon = CameraController("Photo Taker", (10,0,0), (1.57057,0.00174533,1.57057), self.collection)
         self.lightcon = LightController()
         self.resolution_data = configs["resolution"]
         self.render_resolution_x = self.resolution_data["x"]
         self.render_resolution_y = self.resolution_data["y"]
-        self.num_images = configs["num_images"]
+        self.output_configs = configs["output"]
+        self.num_images = self.output_configs["num_images"]
+        self.directory = self.output_configs["directory"]
+        self.output_file = self.output_configs["file_name"][0]
         self.render_samples = 10
 
     def render_scene(self):
         print("rendering...")
         current_working_directory = str(os.getcwd())
-        image_directory = current_working_directory + "/output_images"
+        image_directory = current_working_directory + "/" + self.directory + "/" + self.output_file
         bpy.data.collections[self.collection]
         self.lightcon.add_light()
         self.lightcon.add_sky()

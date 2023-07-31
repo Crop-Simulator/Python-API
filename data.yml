@@ -10,9 +10,11 @@ planting_date: '2023-02-01'
 latitude: 35.6895  
 longitude: 139.6917  
 barley_type: 'spring' #spring or winter
-generation_seed: 10
-num_images: 20
-outfile: ["test"] 
+generation_seed: 1
+output:
+  num_images: 20
+  directory: ''
+  file_name: 'barley'
 resolution: 
   x: 512
   y: 512

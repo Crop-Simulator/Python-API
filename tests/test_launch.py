@@ -8,8 +8,8 @@ from subprocess import run
 
 class BlenderScriptTest(unittest.TestCase):
     # Set up test environment
-    test_file = "tests/test_data.yml"
-    test_output = "tests/expected_output.png"
+    test_file = "test_data.yml"
+    test_output = "expected_output.png"
     expected_output_file = os.getcwd() + "/" + test_output
     test_data = {
         "crop": {
@@ -20,8 +20,11 @@ class BlenderScriptTest(unittest.TestCase):
             "num_rows": 2,
             "row_widths": 5,
         },
-
-        "outfile": [test_output],
+        "output" : {
+            "num_images": 1,
+            "directory" : "test",
+            "outfile": [test_output],
+        },        
         "planting_date": "2023-02-01",
         "latitude": 35.6895,
         "longitude": 139.6917,
@@ -33,7 +36,7 @@ class BlenderScriptTest(unittest.TestCase):
         },
 
     }
-
+    
     @classmethod
     def setUpClass(cls):
         # Create test data YAML file
