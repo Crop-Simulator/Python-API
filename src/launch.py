@@ -28,7 +28,7 @@ class TyperLaunchAPI:
         cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
-
+        cropcon.set_crop_health()
 
 
         scenerender.render_scene()

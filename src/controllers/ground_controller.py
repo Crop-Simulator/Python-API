@@ -3,11 +3,11 @@ import mathutils
 import os
 
 class GroundController:
-    def __init__(self,config):
+    def __init__(self, config):
         self.collection_name = 'GroundStages'
         self.collection = bpy.data.collections.new(self.collection_name)
         bpy.context.scene.collection.children.link(self.collection)
-        self.groundtype = config["ground_type"]
+        self.ground_type = config['ground_type']
 
     def get_ground_stages(self):
         ground_stages = [obj for obj in bpy.data.objects if obj.name.startswith('stage') and obj.name.endswith('.ground')]
@@ -16,9 +16,7 @@ class GroundController:
             obj.location = (1, 0.5, -5)
             obj.scale = mathutils.Vector((1, 1, 1))
         
-        print
-        
-        file_path = "src/blender_assets/textures/textures/soil_texture.jpg"
+        file_path = "src/blender_assets/textures/textures/loam.png"
         texture_image = bpy.data.images.load(file_path)
         material = bpy.data.materials.new(name="Texture_Material")
         material.use_nodes = True

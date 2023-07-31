@@ -9,13 +9,13 @@ from .ground_controller import GroundController
 class CropController:
 
     def __init__(self, config, collection):
+        self.config = config
         self.collection_name = collection
         self.crop_size = 0.5
         self.counter = 1
         self.crop_data = config["crop"]
         self.type = self.crop_data["type"]
         self.size = self.crop_data["size"]
-        self.groundtype = config["ground_type"]
         self.percentage_share = self.crop_data["percentage_share"]
         self.total_number = self.crop_data["total_number"]
         self.num_rows = self.crop_data["num_rows"]
@@ -47,9 +47,9 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
-        crop_controller = CropController(config, 'collection')
-        print(crop_controller.groundtype)
-        groundcon = GroundController()
+        
+        groundcon = GroundController(self.config)
+        print(self.config['ground_type'])
         groundcon.get_ground_stages()
 
         self.setup_crop_positions()
@@ -177,3 +177,26 @@ class CropController:
             cube["segmentation_id"] = SegmentationClass.WEED.value
             return cube
 
+    def set_crop_health(self):
+        barley_stages = [obj for obj in bpy.data.objects if obj.name.startswith('stage10')]
+        for obj in barley_stages:
+
+            # Create a new material
+            material = bpy.data.materials.new(name="Barley_Material")
+            material.use_nodes = True
+            bsdf = material.node_tree.nodes["Principled BSDF"]
+            
+            # Create a texture node and load the image
+            tex_image = material.node_tree.nodes.new('ShaderNodeTexImage')
+            tex_image.image = bpy.data.images.load("src/blender_assets/textures/textures/loam.png")
+
+            # Connect the texture node to the BSDF node
+            material.node_tree.links.new(bsdf.inputs['Base Color'], tex_image.outputs['Color'])
+
+            # Assign it to object
+            if obj.data.materials:
+                # assign to 1st material slot
+                obj.data.materials[0] = material
+            else:
+                # no slots
+                obj.data.materials.append(material)
