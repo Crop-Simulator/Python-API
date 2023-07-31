@@ -65,7 +65,7 @@ if __name__ == "__main__":
     height = int(os.environ.get("HEIGHT", "512"))
 
     sd_api_client = StableDiffusionAPI(url)
-    for i in range(3):
+    for _i in range(3):
         try:
             generate_image(sd_api_client, text_prompt, disable_controlnet=disable_controlnet, width=width, height=height)
             break
