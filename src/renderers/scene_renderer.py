@@ -23,8 +23,7 @@ class SceneRenderer:
     def render_scene(self):
         print("rendering...")
         current_working_directory = str(os.getcwd())
-        image_directory = current_working_directory + "\\" + self.directory
-        print("IMAGE DIRECTORY", image_directory)
+        image_directory = current_working_directory + "/" + self.directory
         bpy.data.collections[self.collection]
         self.lightcon.add_light()
         self.lightcon.add_sky()

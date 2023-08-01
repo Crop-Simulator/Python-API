@@ -11,7 +11,7 @@ class BlenderScriptTest(unittest.TestCase):
     test_file = "test_data.yml"
     test_output = "expected_output"
     test_directory = "tests"
-    expected_output_file = os.getcwd() + "\\" + test_directory + "\\" + test_output + "0.png"
+    expected_output_file = os.getcwd() + "/" + test_directory + "/" + test_output + "0.png"
     test_data = {
         "crop": {
             "type": ["stage10", "stage9", "stage8"],
