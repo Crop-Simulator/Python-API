@@ -8,7 +8,6 @@ import time
 from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
-from controllers.weather_controller import WeatherController
 load_dotenv()
 
 class TyperLaunchAPI:
@@ -23,11 +22,11 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
-        planting_date = config["planting_date"]
-        lat = config["latitude"]
-        lon = config["longitude"]
-        barley_type = config["barley_type"]
-        api_key = os.environ["WEATHER_API"]
+        config["planting_date"]
+        config["latitude"]
+        config["longitude"]
+        config["barley_type"]
+        os.environ["WEATHER_API"]
         # weather_controller = WeatherController(api_key)
 
         # weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
