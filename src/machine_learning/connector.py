@@ -1,6 +1,5 @@
 import base64
 import os
-import time
 
 from .api import StableDiffusionAPI, Txt2ImgConfig
 
