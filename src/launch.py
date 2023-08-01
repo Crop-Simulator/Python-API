@@ -1,13 +1,10 @@
 import typer
 import bpy
 from dotenv.main import load_dotenv
-import os
-
 
 from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
-from controllers.weather_controller import WeatherController
 load_dotenv()
 
 class TyperLaunchAPI:
@@ -22,16 +19,16 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+        """"
+        Commented out while we wait for IBM's API key Tests also need to be written
         planting_date = config["planting_date"]
         lat = config["latitude"]
         lon = config["longitude"]
         barley_type = config["barley_type"]
         api_key = os.environ["WEATHER_API"]
-        print(api_key)
         weather_controller = WeatherController(api_key)
-
         weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
-        print(weather_data)
+        """
 
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
