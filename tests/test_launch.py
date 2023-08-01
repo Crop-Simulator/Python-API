@@ -9,8 +9,9 @@ from subprocess import run
 class BlenderScriptTest(unittest.TestCase):
     # Set up test environment
     test_file = "test_data.yml"
-    test_output = "expected_output.png"
-    expected_output_file = os.getcwd() + "/" + test_output
+    test_output = "expected_output"
+    test_directory = "tests"
+    expected_output_file = os.getcwd() + "\\" + test_directory + "\\" + test_output + "0.png"
     test_data = {
         "crop": {
             "type": ["stage10", "stage9", "stage8"],
@@ -22,8 +23,8 @@ class BlenderScriptTest(unittest.TestCase):
         },
         "output" : {
             "num_images": 1,
-            "directory" : "test",
-            "outfile": [test_output],
+            "directory" : test_directory,
+            "file_name": [test_output],
         },
         "planting_date": "2023-02-01",
         "latitude": 35.6895,
@@ -51,7 +52,7 @@ class BlenderScriptTest(unittest.TestCase):
         # Clean up test environment
         os.remove(cls.test_file)
         os.remove(cls.expected_output_file)
-        os.remove("tests/expected_output_seg.png")
+        os.remove("tests/expected_output0_seg.png")
 
     def test_unit_system_metric(self):
         # Check if the unit system is now set to metric
@@ -67,7 +68,7 @@ class BlenderScriptTest(unittest.TestCase):
 
     def test_render_output(self):
         # Verify that the rendering output matches the expected file
-        self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output.png"))
+        self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output0.png"))
 
 
 if __name__ == "__main__":

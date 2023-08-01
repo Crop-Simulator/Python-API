@@ -28,11 +28,10 @@ class TyperLaunchAPI:
         lon = config["longitude"]
         barley_type = config["barley_type"]
         api_key = os.environ["WEATHER_API"]
-        print(api_key)
-        weather_controller = WeatherController(api_key)
+        # weather_controller = WeatherController(api_key)
 
-        weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
-        print(weather_data)
+        # weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
+
 
 
         start_time = time.time()
