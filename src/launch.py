@@ -27,11 +27,11 @@ class TyperLaunchAPI:
         lon = config["longitude"]
         barley_type = config["barley_type"]
         api_key = os.environ["WEATHER_API"]
-        print(api_key)
+        """"
+        Commented out while we wait for IBM's API key Tests also need to be written
         weather_controller = WeatherController(api_key)
-
         weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
-        print(weather_data)
+        """
 
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
