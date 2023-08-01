@@ -1,7 +1,6 @@
 import typer
 import bpy
 from dotenv.main import load_dotenv
-import os
 
 import time
 
@@ -22,7 +21,7 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
-        
+
         start_time = time.time()
         """"
         Commented out while we wait for IBM's API key Tests also need to be written
