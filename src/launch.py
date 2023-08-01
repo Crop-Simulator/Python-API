@@ -47,7 +47,7 @@ class TyperLaunchAPI:
         scenerender.render_scene()
         end_time = time.time()
         total_time = end_time - start_time
-        print(total_time)
+        print("Time taken to run:", total_time)
 
 
 if __name__ == "__main__":
