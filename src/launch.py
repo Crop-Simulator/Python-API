@@ -22,18 +22,18 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
-        config["planting_date"]
-        config["latitude"]
-        config["longitude"]
-        config["barley_type"]
-        os.environ["WEATHER_API"]
-        # weather_controller = WeatherController(api_key)
-
-        # weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
-
-
-
+        
         start_time = time.time()
+        """"
+        Commented out while we wait for IBM's API key Tests also need to be written
+        planting_date = config["planting_date"]
+        lat = config["latitude"]
+        lon = config["longitude"]
+        barley_type = config["barley_type"]
+        api_key = os.environ["WEATHER_API"]
+        weather_controller = WeatherController(api_key)
+        weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
+        """
 
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
@@ -44,8 +44,8 @@ class TyperLaunchAPI:
         scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
 
-        scenerender.render_scene()
 
+        scenerender.render_scene()
         end_time = time.time()
         total_time = end_time - start_time
         print(total_time)
@@ -53,3 +53,4 @@ class TyperLaunchAPI:
 
 if __name__ == "__main__":
     typer.run(TyperLaunchAPI.typer_interface)
+
