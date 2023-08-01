@@ -12,8 +12,8 @@ longitude: 139.6917
 barley_type: 'spring' #spring or winter
 generation_seed: 1
 output:
-  num_images: 20
-  directory: ''
+  num_images: 5
+  directory: 'output_images'
   file_name: 'barley'
 resolution: 
   x: 512

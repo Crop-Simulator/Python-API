@@ -24,7 +24,7 @@ class BlenderScriptTest(unittest.TestCase):
         "output" : {
             "num_images": 1,
             "directory" : test_directory,
-            "file_name": [test_output],
+            "file_name": test_output,
         },
         "planting_date": "2023-02-01",
         "latitude": 35.6895,

@@ -17,7 +17,7 @@ class SceneRenderer:
         self.output_configs = configs["output"]
         self.num_images = self.output_configs["num_images"]
         self.directory = self.output_configs["directory"]
-        self.output_file = self.output_configs["file_name"][0]
+        self.output_file = self.output_configs["file_name"]
         self.render_samples = 10
 
     def render_scene(self):
