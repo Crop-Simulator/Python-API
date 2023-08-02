@@ -38,6 +38,11 @@ class CropController:
         except KeyError:
             self.generation_seed = None
         self.procedural_generation()
+        self.crop_health = {
+            "Healthy": (0.2, 0.8, 0.2, 1),   # Bright green in RGBA
+            "Slightly Unhealthy": (0.6, 0.8, 0.2, 1), # Yellow in RGBA
+            "Dead": (0.6, 0.4, 0.2, 1)       # Brown in RGBA
+        }
 
     def setup_crops(self):
         for obj in bpy.context.scene.objects:
@@ -94,6 +99,11 @@ class CropController:
 
             curr_loc += 1
             crop_model = self.add_crop(self.crop_size, self.growth_stage[self.type[curr_crop_type]], [loc_x, loc_y, loc_z])
+            
+            # Set crop health randomly (for demonstration purposes)
+            health_status = random.choice(["Healthy", "Dead", "Slightly Unhealthy"])
+            self.set_crop_health(crop_model, health_status)
+            
             if loc_x + 1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
@@ -177,26 +187,18 @@ class CropController:
             cube["segmentation_id"] = SegmentationClass.WEED.value
             return cube
 
-    def set_crop_health(self):
-        barley_stages = [obj for obj in bpy.data.objects if obj.name.startswith('stage10')]
-        for obj in barley_stages:
+    def set_crop_health(self, crop_object, health_status):
+        color = self.crop_health[health_status]
 
-            # Create a new material
-            material = bpy.data.materials.new(name="Barley_Material")
-            material.use_nodes = True
-            bsdf = material.node_tree.nodes["Principled BSDF"]
+        # Create a new material
+        material = bpy.data.materials.new(name=f"{health_status}_Material")
+        material.diffuse_color = color
+
+        # Assign it to object
+        if crop_object.data.materials:
+            # assign to 1st material slot
+            crop_object.data.materials[0] = material
+        else:
+            # no slots
+            crop_object.data.materials.append(material)
             
-            # Create a texture node and load the image
-            tex_image = material.node_tree.nodes.new('ShaderNodeTexImage')
-            tex_image.image = bpy.data.images.load("src/blender_assets/textures/textures/loam.png")
-
-            # Connect the texture node to the BSDF node
-            material.node_tree.links.new(bsdf.inputs['Base Color'], tex_image.outputs['Color'])
-
-            # Assign it to object
-            if obj.data.materials:
-                # assign to 1st material slot
-                obj.data.materials[0] = material
-            else:
-                # no slots
-                obj.data.materials.append(material)
