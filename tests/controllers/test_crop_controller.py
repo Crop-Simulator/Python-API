@@ -78,6 +78,7 @@ class CameraControllerTest(unittest.TestCase):
                 "num_rows": 2,
                 "row_widths": 5,
             },
+
             "resolution": {
                 "x": 512,
                 "y": 512,

@@ -2,6 +2,8 @@ import typer
 import bpy
 from dotenv.main import load_dotenv
 
+import time
+
 from controllers.crop_controller import CropController
 from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
@@ -19,6 +21,8 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+
+        start_time = time.time()
         """"
         Commented out while we wait for IBM's API key Tests also need to be written
         planting_date = config["planting_date"]
@@ -41,7 +45,11 @@ class TyperLaunchAPI:
 
 
         scenerender.render_scene()
+        end_time = time.time()
+        total_time = end_time - start_time
+        print("Time taken to run:", total_time)
 
 
 if __name__ == "__main__":
     typer.run(TyperLaunchAPI.typer_interface)
+
