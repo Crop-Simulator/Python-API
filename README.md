@@ -9,6 +9,17 @@ python src/launch.py data.yml
 ## Install
 ### Python Version
 The build is tested on [Python 3.10.2](https://www.python.org/downloads/release/python-3102/) and is our recommended Python version.
+We use [pyenv](https://github.com/pyenv/pyenv) to manage our Python versions. 
+
+### Pyenv Setup
+- For UNIX/macOS, follow [these instructions](https://github.com/pyenv/pyenv#installation) to set up pyenv locally.
+- For Windows, we recommend using the officially endorsed [pyenv fork](https://github.com/pyenv-win/pyenv-win#installation). 
+
+Once installed, use the following command in commandline to install the supported Python version.
+```commandline
+pyenv install 3.10.2
+```
+After the Python version has been installed, type `pyenv local` and ensure the output is 3.10.2
 
 ### Build Setup
 Use the following command to install the packages according to the requirements file
