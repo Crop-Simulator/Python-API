@@ -45,7 +45,7 @@ class BlenderScriptTest(unittest.TestCase):
             yaml.safe_dump(cls.test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "src/launch.py", cls.test_file])
+        run(["poetry", "run", "python", "src/launch.py", cls.test_file])
 
     @classmethod
     def tearDownClass(cls):
