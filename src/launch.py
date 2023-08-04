@@ -1,12 +1,16 @@
 import typer
 import bpy
 from dotenv.main import load_dotenv
-
 import time
+import sys
+import os
 
-from controllers.crop_controller import CropController
-from controllers.yaml_reader import YamlReader
-from renderers.scene_renderer import SceneRenderer
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+from src.controllers.crop_controller import CropController
+from src.controllers.yaml_reader import YamlReader
+from src.renderers.scene_renderer import SceneRenderer
 load_dotenv()
 
 class TyperLaunchAPI:

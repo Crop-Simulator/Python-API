@@ -3,7 +3,6 @@ import bpy
 import math
 
 from .light_controller import LightController
-from .segmentation import SegmentationClass
 from src.objects.barley import Barley
 from src.objects.weed import Weed
 
@@ -49,8 +48,8 @@ class CropController:
         lightcon.add_light()
 
         self.setup_crop_positions()
-        
-       
+
+
 
         collection = bpy.data.collections.get(self.collection_name)
         for obj in bpy.context.scene.objects:
@@ -79,7 +78,7 @@ class CropController:
             crop_model = self.add_crop(self.crop_size, self.crop_type[curr_crop_type], location)
             self.all_crops.append(crop_model) # add crop objects to manipulate later
             self.add_weed(location)
-            
+
             if location[0] + 1 >= self.number_of_rows:
                 location[1] += 1
                 location[0] = 0
@@ -109,9 +108,9 @@ class CropController:
             loc[0] = loc[0] - random.uniform(-.2, .2)
             loc[1] = loc[1] - random.uniform(-.2, .2)
             weed.set_location([loc[0], loc[1], loc[2]])
-            
+
             self.counter += 1
             bpy.context.collection.objects.link(weed.weed_object)
 
             return weed
-   
+

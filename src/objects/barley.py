@@ -20,10 +20,10 @@ class Barley:
             "stage2" : "stage2.009",
             "stage1" : "stage1.009",
         }
-        
+
         self.crop_type = SegmentationClass.PLANT.value
-        self.barley_object = self.set_model_stage("stage9")
-        
+        self.barley_object = self.set_model_stage(self.stage)
+
     def set_model_stage(self, stage):
         bpy.context.active_object.name = self.growth_stage[stage]
         duplicate = bpy.context.scene.objects.get(self.growth_stage[stage])
@@ -31,14 +31,14 @@ class Barley:
         barley_stage.data = duplicate.data.copy()
         barley_stage["segmentation_id"] = self.crop_type
         return barley_stage
-    
+
     def set_location(self, location):
         self.barley_object.location = location
-    
+
     def set_height(self, scale):
         self.barley_object.scale = Vector((scale, scale, scale))
-        
-        
+
+
     def measure_height(self, crop_object):
         # Get the coordinates of the object's vertices
         vertices = [v.co for v in crop_object.data.vertices]

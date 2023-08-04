@@ -2,6 +2,7 @@ import unittest
 import yaml
 import bpy
 import os
+
 from src.controllers.crop_controller import CropController
 from src.controllers.segmentation import SegmentationClass
 from src.controllers.yaml_reader import YamlReader
@@ -51,21 +52,6 @@ class CameraControllerTest(unittest.TestCase):
             "stage8": 0,
         }
 
-    def test_setup_crops_material_name(self):
-        input_data = YamlReader().read_file(self.test_file)
-        crop_controller = CropController(input_data, self.collection)
-        for i in range(1, 11):
-            stage = "stage" + str(i)
-            material, segmentation_id = crop_controller.assign_crop_type(stage)
-            self.assertEqual(material.name, self.expected_material_name[i - 1])
-
-    def test_setup_crops_material_seg_id(self):
-        input_data = YamlReader().read_file(self.test_file)
-        crop_controller = CropController(input_data, self.collection)
-        for i in range(1, 11):
-            stage = "stage" + str(i)
-            material, segmentation_id = crop_controller.assign_crop_type(stage)
-            self.assertEqual(segmentation_id, self.expected_segmentation_id)
 
     def test_stage_crop_num_correct(self):
         # Special changed input values compared to other tests

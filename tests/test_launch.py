@@ -3,8 +3,9 @@ import unittest
 import bpy
 import os
 import yaml
-from subprocess import run
+from pathlib import Path
 
+from subprocess import run
 
 class BlenderScriptTest(unittest.TestCase):
     # Set up test environment
@@ -45,7 +46,8 @@ class BlenderScriptTest(unittest.TestCase):
             yaml.safe_dump(cls.test_data, file)
 
         # Execute the script with simulated command-line arguments
-        run(["python", "src/launch.py", cls.test_file])
+        root_dir =  Path(__file__).parent.parent
+        run(["python", "src/launch.py", cls.test_file], cwd = root_dir)
 
     @classmethod
     def tearDownClass(cls):
