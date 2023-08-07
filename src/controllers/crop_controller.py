@@ -31,7 +31,7 @@ class CropController:
             "stage3" : "stage3.009",
             "stage2" : "stage2.009",
             "stage1" : "stage1.009",
-            "ground" : "stage9.ground"
+            "ground" : "stage9.ground",
         }
         try:
             self.generation_seed = config["generation_seed"]
@@ -41,7 +41,7 @@ class CropController:
         self.crop_health = {
             "Healthy": (0.2, 0.8, 0.2, 1),   # Bright green in RGBA
             "Slightly Unhealthy": (0.6, 0.8, 0.2, 1), # Yellow in RGBA
-            "Dead": (0.6, 0.4, 0.2, 1)       # Brown in RGBA
+            "Dead": (0.6, 0.4, 0.2, 1),       # Brown in RGBA
         }
 
     def setup_crops(self):
@@ -52,9 +52,9 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
-        
+
         groundcon = GroundController(self.config)
-        print(self.config['ground_type'])
+        print(self.config["ground_type"])
         groundcon.get_ground_stages()
 
         self.setup_crop_positions()
@@ -99,11 +99,11 @@ class CropController:
 
             curr_loc += 1
             crop_model = self.add_crop(self.crop_size, self.growth_stage[self.type[curr_crop_type]], [loc_x, loc_y, loc_z])
-            
+
             # Set crop health randomly (for demonstration purposes)
             health_status = random.choice(["Healthy", "Dead", "Slightly Unhealthy"])
             self.set_crop_health(crop_model, health_status)
-            
+
             if loc_x + 1 == self.row_widths:
                 loc_y += 1
                 loc_x = 0
@@ -201,4 +201,4 @@ class CropController:
         else:
             # no slots
             crop_object.data.materials.append(material)
-            
+

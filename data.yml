@@ -10,4 +10,4 @@ outfile: ["test.png"]
 resolution: 
   x: 512
   y: 512
-ground_type: "sandy"
+ground_type: "loam"
