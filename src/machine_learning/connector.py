@@ -29,7 +29,8 @@ def encode_image(f) -> str:
     return base64.b64encode(f.read()).decode("utf-8")
 
 
-def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_prompt: str = "", disable_controlnet: bool = False, segmentation_mask: str = None, **kwargs):
+def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_prompt: str = "",
+                   disable_controlnet: bool = False, segmentation_mask: str = None, **kwargs):
     """
     Generates an image from a given text prompt using the Stable Diffusion API.
 
@@ -53,7 +54,7 @@ def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_pr
     for k, v in response.items():
         if k != "images":
             print(f"{k}: {v}")
-    
+
     return response["images"]
 
 

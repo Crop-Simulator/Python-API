@@ -51,7 +51,8 @@ class MyHandler(FileSystemEventHandler):
             height = int(os.environ.get("HEIGHT", "512"))
 
             sd_api_client = StableDiffusionAPI(url)
-            images = generate_image(sd_api_client, text_prompt, disable_controlnet=disable_controlnet, segmentation_mask=encoded_seg, width=width, height=height)
+            images = generate_image(sd_api_client, text_prompt,
+                                    disable_controlnet=disable_controlnet, segmentation_mask=encoded_seg, width=width, height=height)
 
             print(f"Generated {len(images)} images")
             # Save the generated images to disk
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         observer.start()
         print(f"Watching directory {path} for new image pairs...")
     except FileNotFoundError as e:
-        e.strerror += f". The given path is \"{path}\""
+        e.strerror += f'. The given path is "{path}"'
         raise e
     try:
         while True:
