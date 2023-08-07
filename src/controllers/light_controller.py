@@ -2,7 +2,7 @@ import bpy
 import mathutils
 
 class LightController:
-    def __init__(self, sky_type="PREETHAM", turbidity=5.0, ground_albedo=0.4, sun_direction=(-1.0, 0.0, 0.0)):
+    def __init__(self, sky_type="PREETHAM", turbidity=5.0, ground_albedo=0.4, sun_direction=(0.0, 0.0, 0.1)):
         self.sky_type = sky_type
         self.turbidity = turbidity
         self.ground_albedo = ground_albedo
