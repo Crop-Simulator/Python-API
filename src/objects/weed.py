@@ -17,3 +17,6 @@ class Weed:
 
     def set_location(self, location):
         self.weed_object.location = location
+
+    def get_location(self):
+        return self.weed_object.location
