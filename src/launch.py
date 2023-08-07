@@ -9,7 +9,6 @@ from controllers.yaml_reader import YamlReader
 from renderers.scene_renderer import SceneRenderer
 load_dotenv()
 
-
 class TyperLaunchAPI:
     """
     This class is used to launch the application using the Typer library.

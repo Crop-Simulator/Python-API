@@ -1,23 +1,9 @@
 crop:
-<<<<<<< HEAD
-  type: ["stage10", "stage4", "stage8"]
-  size: [0.5, 0.8] 
-=======
   type: ["stage10", "stage7", "stage8"]
   size: [0.5, 0.8]
->>>>>>> 6bce6d05a18e7cc3c62bea8eabc2df8a57c2051c
   percentage_share: [0.2, 0.2, 0.6]
   total_number: 100
   num_rows: 5
-<<<<<<< HEAD
-  row_widths: 5 
-generation_seed: 10
-outfile: ["test.png"] 
-resolution: 
-  x: 512
-  y: 512
-ground_type: "loam"
-=======
   row_widths: 5
 
 planting_date: '2023-02-01'  
@@ -32,4 +18,3 @@ output:
 resolution: 
   x: 512
   y: 512
->>>>>>> 6bce6d05a18e7cc3c62bea8eabc2df8a57c2051c
