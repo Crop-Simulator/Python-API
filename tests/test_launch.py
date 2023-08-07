@@ -35,7 +35,7 @@ class BlenderScriptTest(unittest.TestCase):
             "x": 512,
             "y": 512,
         },
-        ground_type: "loam"
+        "ground_type": "loam",
 
     }
 
