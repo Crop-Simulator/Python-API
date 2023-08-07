@@ -18,3 +18,4 @@ output:
 resolution: 
   x: 512
   y: 512
+ground_type: "loam"
