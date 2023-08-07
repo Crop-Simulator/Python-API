@@ -169,4 +169,41 @@ class CropController:
             bpy.context.collection.objects.link(duplicated)
             cube["segmentation_id"] = SegmentationClass.WEED.value
             return cube
+        
+    def move_cursor_and_snap_selected_to_cursor(x, y, z):
+     # Save the current area type
+     original_area_type = bpy.context.area.type
+
+     # Switch to 3D view area
+     bpy.context.window.scene = bpy.data.scenes[0]
+     bpy.context.area.type = 'VIEW_3D'
+
+     # Setting the cursor position
+     bpy.context.scene.cursor.location = (x, y, z)
+
+     # Adsorption of selected objects to the cursor position
+     for obj in bpy.context.selected_objects:
+         bpy.context.view_layer.objects.active = obj
+         obj.select_set(True)
+         bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
+         obj.select_set(False)
+
+     # Switch back to the original area
+     bpy.context.area.type = original_area_type
+
+     print("The objects have been attached to the cursor position.")
+
+ 
+
+ 
+
+    
+
+
+
+   
+
+    
+
+        
 

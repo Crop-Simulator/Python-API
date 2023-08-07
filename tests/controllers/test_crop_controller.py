@@ -99,6 +99,14 @@ class CameraControllerTest(unittest.TestCase):
 
         self.assertTrue(self.num_crops_per_stage["stage10"] == self.expected_stage_10_crops_num)
         self.assertTrue(self.num_crops_per_stage["stage8"] == self.expected_stage_8_crops_num)
+    
+    def test_move_cursor_and_snap_selected_to_cursor(self):
+        x_distance = 3.0
+        y_distance = 4.0
+        z_distance = 5.0
+
+       # Call the previous method here to test the operation of moving and attaching objects
+        move_cursor_and_snap_selected_to_cursor(x_distance, y_distance, z_distance)
 
 
 if __name__ == "__main__":
