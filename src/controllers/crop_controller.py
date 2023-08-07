@@ -20,6 +20,7 @@ class CropController:
         self.number_of_rows = self.crop_data["num_rows"]
         self.row_widths = self.crop_data["row_widths"]
         self.all_crops = []
+        self.weed_spacing = .2
         self.growth_stage = {
             "stage10" : "stage10.009",
             "stage9" : "stage9.009",
@@ -49,8 +50,6 @@ class CropController:
 
         self.setup_crop_positions()
 
-
-
         collection = bpy.data.collections.get(self.collection_name)
         for obj in bpy.context.scene.objects:
             if obj.name in self.growth_stage.values():
@@ -78,7 +77,6 @@ class CropController:
             crop_model = self.add_crop(self.crop_size, self.crop_type[curr_crop_type], location)
             self.all_crops.append(crop_model) # add crop objects to manipulate later
             self.add_weed(location)
-
             if location[0] + 1 >= self.number_of_rows:
                 location[1] += 1
                 location[0] = 0
@@ -87,7 +85,6 @@ class CropController:
 
             curr_crop += 1
 
-    # TODO procedural_generation Implementation.
     def procedural_generation(self):
         random.seed(self.generation_seed)
 
@@ -96,21 +93,16 @@ class CropController:
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         barley.set_location([loc[0], loc[1], loc[2]])
-
         self.counter += 1
         bpy.context.collection.objects.link(barley.barley_object)
-
         return barley
 
     def add_weed(self, loc):
         if bool(random.getrandbits(1)):
             weed = Weed()
-            loc[0] = loc[0] - random.uniform(-.2, .2)
-            loc[1] = loc[1] - random.uniform(-.2, .2)
+            loc[0] = loc[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
+            loc[1] = loc[1] - random.uniform(-self.weed_spacing, self.weed_spacing)
             weed.set_location([loc[0], loc[1], loc[2]])
-
             self.counter += 1
             bpy.context.collection.objects.link(weed.weed_object)
-
             return weed
-
