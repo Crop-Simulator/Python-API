@@ -106,23 +106,23 @@ class CameraControllerTest(unittest.TestCase):
         y_distance = 4.0
         z_distance = 5.0
 
-        # 创建模拟的Blender上下文
+        # Create a simulated Blender context
         mock_context = MagicMock()
         mock_context.area.type = 'VIEW_3D'
         mock_context.window.scene = bpy.data.scenes[0]
         mock_context.scene.cursor.location = (0, 0, 0)
         mock_context.selected_objects = [bpy.data.objects.new("Cube", None)]
 
-        # 创建 CropController 并传入参数
+        # Create a CropController and pass in the parameters.
         input_data = YamlReader().read_file(self.test_file)
         crop_controller = CropController(input_data, "Collection")
-        # 将模拟的上下文赋值给CropController
+        # Assign the simulated context to the CropController
         crop_controller.context = mock_context
 
-        # 调用方法，测试移动和吸附物体的操作
+        # Call methods to test the operation of moving and attaching objects
         crop_controller.move_cursor_and_snap_selected_to_cursor(x_distance, y_distance, z_distance)
 
-        # 获取选中的物体，并验证其位置是否符合预期
+        # Get the selected object and verify that its position is as expected
         for obj in mock_context.selected_objects:
             self.assertEqual(obj.location.x, x_distance)
             self.assertEqual(obj.location.y, y_distance)

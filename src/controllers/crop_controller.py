@@ -172,27 +172,27 @@ class CropController:
             return cube
 
     def move_cursor_and_snap_selected_to_cursor(self, x, y, z):
-        # 保存当前的area类型
+        # Save the current area type
         original_area_type = self.context.area.type
 
-        # 切换到3D视图area
+        # Switch to 3D viewarea
         self.context.window.scene = bpy.data.scenes[0]
         self.context.area.type = "VIEW_3D"
 
-        # 设置游标位置
+        # Setting the cursor position
         self.context.scene.cursor.location = (x, y, z)
 
-        # 模拟吸附选中物体到游标位置的操作
+        # Simulates the operation of adsorbing a selected object to the cursor position.
         self.simulate_snap_selected_to_cursor()
 
-        # 切换回原始的area
+        # Switch back to the original area
         self.context.area.type = original_area_type
 
         print("The objects have been attached to the cursor position.")
 
     def simulate_snap_selected_to_cursor(self):
-        # 在这里模拟吸附选中物体到游标位置的操作
-        # 这里可以根据需要修改选中的物体的位置，以模拟吸附效果
+        # the method can simulate the operation of adsorbing the selected object to the cursor position.
+        # the method can modify the position of the selected objects as needed to simulate the adsorption effect.
         for obj in self.context.selected_objects:
             obj.location = self.context.scene.cursor.location
 
