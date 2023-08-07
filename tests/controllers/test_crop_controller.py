@@ -108,7 +108,7 @@ class CameraControllerTest(unittest.TestCase):
 
         # Create a simulated Blender context
         mock_context = MagicMock()
-        mock_context.area.type = 'VIEW_3D'
+        mock_context.area.type = "VIEW_3D"
         mock_context.window.scene = bpy.data.scenes[0]
         mock_context.scene.cursor.location = (0, 0, 0)
         mock_context.selected_objects = [bpy.data.objects.new("Cube", None)]
@@ -127,10 +127,10 @@ class CameraControllerTest(unittest.TestCase):
             self.assertEqual(obj.location.x, x_distance)
             self.assertEqual(obj.location.y, y_distance)
             self.assertEqual(obj.location.z, z_distance)
-        
-    
-    
-    
+
+
+
+
 
 
 if __name__ == "__main__":
