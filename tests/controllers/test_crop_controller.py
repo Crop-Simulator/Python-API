@@ -2,6 +2,7 @@ import unittest
 import yaml
 import bpy
 import os
+from unittest.mock import MagicMock
 from src.controllers.crop_controller import CropController
 from src.controllers.segmentation import SegmentationClass
 from src.controllers.yaml_reader import YamlReader
@@ -99,14 +100,37 @@ class CameraControllerTest(unittest.TestCase):
 
         self.assertTrue(self.num_crops_per_stage["stage10"] == self.expected_stage_10_crops_num)
         self.assertTrue(self.num_crops_per_stage["stage8"] == self.expected_stage_8_crops_num)
-    
+
     def test_move_cursor_and_snap_selected_to_cursor(self):
         x_distance = 3.0
         y_distance = 4.0
         z_distance = 5.0
 
-       # Call the previous method here to test the operation of moving and attaching objects
-        move_cursor_and_snap_selected_to_cursor(x_distance, y_distance, z_distance)
+        # 创建模拟的Blender上下文
+        mock_context = MagicMock()
+        mock_context.area.type = 'VIEW_3D'
+        mock_context.window.scene = bpy.data.scenes[0]
+        mock_context.scene.cursor.location = (0, 0, 0)
+        mock_context.selected_objects = [bpy.data.objects.new("Cube", None)]
+
+        # 创建 CropController 并传入参数
+        input_data = YamlReader().read_file(self.test_file)
+        crop_controller = CropController(input_data, "Collection")
+        # 将模拟的上下文赋值给CropController
+        crop_controller.context = mock_context
+
+        # 调用方法，测试移动和吸附物体的操作
+        crop_controller.move_cursor_and_snap_selected_to_cursor(x_distance, y_distance, z_distance)
+
+        # 获取选中的物体，并验证其位置是否符合预期
+        for obj in mock_context.selected_objects:
+            self.assertEqual(obj.location.x, x_distance)
+            self.assertEqual(obj.location.y, y_distance)
+            self.assertEqual(obj.location.z, z_distance)
+        
+    
+    
+    
 
 
 if __name__ == "__main__":

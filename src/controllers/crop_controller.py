@@ -18,6 +18,7 @@ class CropController:
         self.total_number = self.crop_data["total_number"]
         self.num_rows = self.crop_data["num_rows"]
         self.row_widths = self.crop_data["row_widths"]
+        self.context = bpy.context
         self.growth_stage = {
             "stage10" : "stage10.009",
             "stage9" : "stage9.009",
@@ -169,41 +170,43 @@ class CropController:
             bpy.context.collection.objects.link(duplicated)
             cube["segmentation_id"] = SegmentationClass.WEED.value
             return cube
-        
-    def move_cursor_and_snap_selected_to_cursor(x, y, z):
-     # Save the current area type
-     original_area_type = bpy.context.area.type
 
-     # Switch to 3D view area
-     bpy.context.window.scene = bpy.data.scenes[0]
-     bpy.context.area.type = 'VIEW_3D'
+    def move_cursor_and_snap_selected_to_cursor(self, x, y, z):
+        # 保存当前的area类型
+        original_area_type = self.context.area.type
 
-     # Setting the cursor position
-     bpy.context.scene.cursor.location = (x, y, z)
+        # 切换到3D视图area
+        self.context.window.scene = bpy.data.scenes[0]
+        self.context.area.type = "VIEW_3D"
 
-     # Adsorption of selected objects to the cursor position
-     for obj in bpy.context.selected_objects:
-         bpy.context.view_layer.objects.active = obj
-         obj.select_set(True)
-         bpy.ops.view3d.snap_selected_to_cursor(use_offset=False)
-         obj.select_set(False)
+        # 设置游标位置
+        self.context.scene.cursor.location = (x, y, z)
 
-     # Switch back to the original area
-     bpy.context.area.type = original_area_type
+        # 模拟吸附选中物体到游标位置的操作
+        self.simulate_snap_selected_to_cursor()
 
-     print("The objects have been attached to the cursor position.")
+        # 切换回原始的area
+        self.context.area.type = original_area_type
 
- 
+        print("The objects have been attached to the cursor position.")
 
- 
-
-    
+    def simulate_snap_selected_to_cursor(self):
+        # 在这里模拟吸附选中物体到游标位置的操作
+        # 这里可以根据需要修改选中的物体的位置，以模拟吸附效果
+        for obj in self.context.selected_objects:
+            obj.location = self.context.scene.cursor.location
 
 
 
-   
 
-    
 
-        
+
+
+
+
+
+
+
+
+
 
