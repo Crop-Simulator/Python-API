@@ -18,7 +18,6 @@ class GroundControllerTest(unittest.TestCase):
         bpy.ops.object.delete()
 
     def test_ground_controller(self):
-        # Sample config to test the GroundController
         config = {
             "ground_type": "sandy",
             "crop": {
@@ -30,9 +29,9 @@ class GroundControllerTest(unittest.TestCase):
         ground_controller = GroundController(config)
         ground_controller.get_ground_stages()
 
-        # Now, we test if the material is properly set
         ground = bpy.data.objects["stage9.ground"]
-        self.assertIn("Texture_Material", ground.data.materials)
+        self.assertTrue(any(mat.name == "Texture_Material" for mat in ground.data.materials))
+
 
 
 
