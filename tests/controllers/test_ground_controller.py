@@ -19,7 +19,7 @@ class GroundControllerTest(unittest.TestCase):
 
     def test_ground_controller(self):
         config = {
-            "ground_type": "sandy",
+            "ground_type": "loam",
             "crop": {
                 "total_number": 10,
                 "num_rows": 5,
