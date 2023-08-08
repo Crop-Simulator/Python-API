@@ -36,7 +36,6 @@ class BlenderScriptTest(unittest.TestCase):
             "y": 512,
         },
         "ground_type": "loam",
-
     }
 
     @classmethod

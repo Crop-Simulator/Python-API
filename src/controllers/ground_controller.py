@@ -7,6 +7,10 @@ class GroundController:
         self.collection = bpy.data.collections.new(self.collection_name)
         bpy.context.scene.collection.children.link(self.collection)
         self.ground_type = config["ground_type"]
+        self.crop_data = config["crop"]
+        self.total_number = self.crop_data["total_number"]
+        self.num_rows = self.crop_data["num_rows"]
+        self.row_widths = self.crop_data["row_widths"]
 
     def get_texture_file(self):
         base_dir = "src/blender_assets/textures/textures/"
@@ -18,12 +22,14 @@ class GroundController:
             return base_dir == "brown_soil.jpg"
         else:
             raise ValueError(f"Unknown ground type {self.ground_type}")
+
     def get_ground_stages(self):
         ground_stages = [obj for obj in bpy.data.objects if obj.name.startswith("stage") and obj.name.endswith(".ground")]
+        # ground_size = self.total_number/self.num_rows*self.row_widths
         for obj in ground_stages:
             self.collection.objects.link(obj)
             obj.location = (1, 0.5, -5)
-            obj.scale = mathutils.Vector((1, 1, 1))
+            obj.scale = mathutils.Vector((10, 10, 1))
 
         file_path = self.get_texture_file()
         texture_image = bpy.data.images.load(file_path)

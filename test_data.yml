@@ -1,0 +1,29 @@
+barley_type: spring
+crop:
+  num_rows: 2
+  percentage_share:
+  - 0.2
+  - 0.3
+  - 0.5
+  row_widths: 5
+  size:
+  - 0.5
+  - 0.8
+  - 1.0
+  total_number: 9
+  type:
+  - stage10
+  - stage9
+  - stage8
+generation_seed: 10
+ground_type: loam
+latitude: 35.6895
+longitude: 139.6917
+output:
+  directory: tests
+  file_name: expected_output
+  num_images: 1
+planting_date: '2023-02-01'
+resolution:
+  x: 512
+  y: 512

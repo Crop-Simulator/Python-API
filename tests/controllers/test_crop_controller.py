@@ -7,7 +7,7 @@ from src.controllers.segmentation import SegmentationClass
 from src.controllers.yaml_reader import YamlReader
 
 
-class CameraControllerTest(unittest.TestCase):
+class CropControllerTest(unittest.TestCase):
     # Set up test environment
     test_file = "tests/test_data.yml"
     test_output = "tests/expected_output.png"
@@ -24,6 +24,7 @@ class CameraControllerTest(unittest.TestCase):
             "x": 512,
             "y": 512,
         },
+        "ground_type": "loam",
     }
 
     @classmethod
@@ -83,6 +84,7 @@ class CameraControllerTest(unittest.TestCase):
                 "x": 512,
                 "y": 512,
         },
+            "ground_type": "loam",
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)
