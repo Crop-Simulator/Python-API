@@ -1,24 +1,33 @@
 import unittest
 import bpy
+import os
+import yaml
 from src.controllers.ground_controller import GroundController
 
 
 class GroundControllerTest(unittest.TestCase):
-
+    test_file = "tests/test_data.yml"
+    test_output = "tests/expected_output.png"
+    test_data = {
+        "crop": {
+            "type": ["stage10", "stage9", "stage8"],
+            "size": [0.5, 0.8, 1.0],
+            "percentage_share": [0.2, 0.3, 0.5],
+            "total_number": 9,
+            "num_rows": 2,
+            "row_widths": 5,
+        },
+        "ground_type": "loam",
+    }
     @classmethod
     def setUpClass(cls):
-        bpy.ops.mesh.primitive_plane_add(size=2, enter_editmode=False, align="WORLD", location=(0, 0, 0))
-        plane = bpy.context.active_object
-        plane.name = "stage9.ground"
+        bpy.ops.wm.read_homefile()
 
-    @classmethod
-    def tearDownClass(cls):
-        bpy.ops.object.select_all(action="DESELECT")
-        bpy.data.objects["stage9.ground"].select_set(True)
-        bpy.ops.object.delete()
-
-    def test_ground_controller(self):
-        config = {
+    def setUp(self):
+        # Create test data YAML file
+        with open(self.test_file, "w") as file:
+            yaml.safe_dump(self.test_data, file)
+        self.config = {
             "ground_type": "loam",
             "crop": {
                 "total_number": 10,
@@ -26,12 +35,22 @@ class GroundControllerTest(unittest.TestCase):
                 "row_widths": 2,
             },
         }
-        ground_controller = GroundController(config)
-        ground_controller.get_ground_stages()
+        self.controller = GroundController(self.config)
 
-        ground = bpy.data.objects["stage9.ground"]
-        self.assertTrue(any(mat.name == "Texture_Material" for mat in ground.data.materials))
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(cls.test_file)
 
+
+    def test_get_ground_stages(self):
+        bpy.ops.mesh.primitive_plane_add(size=2, enter_editmode=False, align="WORLD")
+        plane = bpy.context.active_object
+        plane.name = "stage9.ground"
+
+        self.controller.get_ground_stages()
+        obj = bpy.data.objects.get("stage9.ground")
+        self.assertIsNotNone(obj, "stage9.ground object not found!")
+        self.assertTrue(any(mat.name == "Texture_Material" for mat in obj.data.materials), "Texture_Material not found in stage9.ground materials!")
 
 
 
