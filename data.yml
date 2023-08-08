@@ -2,20 +2,27 @@ crop:
   type: ["stage10", "stage7", "stage8"]
   size: [0.5, 0.8]
   percentage_share: [0.2, 0.2, 0.6]
-  total_number: 100
-  num_rows: 5
-  row_widths: 5
+  total_number: 20
+  num_rows: 2
+  row_widths: 2
 
 planting_date: '2023-02-01'  
 latitude: 35.6895  
 longitude: 139.6917  
 barley_type: 'spring' #spring or winter
-generation_seed: 1
+
+generation_seed: 10
+
 output:
   num_images: 1
   directory: 'output_images'
   file_name: 'barley'
 resolution: 
+<<<<<<< HEAD
   x: 512
   y: 512
 ground_type: "loam"
+=======
+  x: 1920
+  y: 1080
+>>>>>>> 644405856bc192e6b2873cd0bf3f1a9968e4350b
