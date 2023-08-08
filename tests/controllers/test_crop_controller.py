@@ -20,7 +20,7 @@ class CropControllerTest(unittest.TestCase):
             "total_number": 9,
             "num_rows": 2,
             "row_widths": 5,
-            "density": 1
+            "density": 1,
         },
         "resolution": {
             "x": 512,
@@ -67,7 +67,7 @@ class CropControllerTest(unittest.TestCase):
                 "total_number": 10,
                 "num_rows": 2,
                 "row_widths": 5,
-                "density": 1
+                "density": 1,
             },
 
             "resolution": {
