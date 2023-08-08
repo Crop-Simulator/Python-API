@@ -3,7 +3,6 @@ import bpy
 import math
 
 from .light_controller import LightController
-from .segmentation import SegmentationClass
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
@@ -49,9 +48,9 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
-        
+
         groundcon = GroundController(self.config)
-        print(self.config['ground_type'])
+        print(self.config["ground_type"])
         groundcon.get_ground_stages()
 
         self.setup_crop_positions()
