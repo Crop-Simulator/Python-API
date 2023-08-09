@@ -11,10 +11,11 @@ class Barley:
         self.growth_stage = ["stage0.009", "stage1.009", "stage2.009", "stage3.009", "stage4.009",
                              "stage5.009", "stage6.009", "stage7.009","stage8.009",
                              "stage9.009", "stage10.009"]
-
+        self.active_weeds = []
         self.crop_type = SegmentationClass.PLANT.value
         self.barley_object = self.set_model_stage(self.stage)
         self.GDD_PER_STAGE = 139
+        self.name = self.barley_object.name
 
     def set_model_stage(self, stage):
         bpy.context.active_object.name = self.growth_stage[stage]
@@ -39,9 +40,17 @@ class Barley:
     def set_location(self, location):
         self.barley_object.location = location
 
+    def get_location(self):
+        return self.barley_object.location
+
     def set_height(self, scale):
         self.barley_object.scale = Vector((scale, scale, scale))
 
+    def add_weed(self, weed):
+        self.active_weeds.append(weed)
+
+    def get_weeds(self):
+        return self.active_weeds
 
     def measure_height(self, crop_object):
         # Get the coordinates of the object's vertices
