@@ -30,14 +30,14 @@ class LightController:
         # link light object and set active
         bpy.context.collection.objects.link(light_object)
         bpy.context.view_layer.objects.active = light_object
-        
+
         #change location
         light_object.location = mathutils.Vector(light_location)
 
         # update scene to move light location
         dg = bpy.context.evaluated_depsgraph_get()
         dg.update()
-        
+
 
     def change_sky_type(self, sky_type):
         self.sky_type = sky_type

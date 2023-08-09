@@ -7,7 +7,7 @@ from src.controllers.segmentation import SegmentationClass
 class Barley:
     def __init__(self, stage, health):
         self.GDD_PER_STAGE = 139
-        
+
         self.stage = stage
         self.health = health
         self.growth_stage = ["stage0.009", "stage1.009", "stage2.009", "stage3.009", "stage4.009",
