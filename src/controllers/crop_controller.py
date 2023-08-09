@@ -1,6 +1,5 @@
 import random
 import bpy
-import math
 
 from .light_controller import LightController
 from src.objects.barley import Barley
@@ -59,32 +58,31 @@ class CropController:
 
     def setup_crop_positions(self):
         curr_row = 0
-        curr_loc = 0
         curr_crop_type = 0
         curr_crop = 0
         location = [0, 0, 0]
-        
+
         for crop in range(self.number_of_crops):
             # when the crop is divisible by the number of rows
             # add a row and reset the location
             if crop % self.number_of_rows == 0:
                 curr_row += 1
-                
+
             # calculate the number of crops to add based on the percentage share
             num_crops = int(self.number_of_crops * self.percentage_share[curr_crop_type])
-            
+
             # when the current crop is divisible by the number of crops
             # reset the crop type
             if curr_crop % num_crops == 0 and crop != 0:
                 curr_crop = 0
                 if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
-                    
+
             # add the crop to the scene
             crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
             self.all_crops.append(crop_model) # add crop objects to manipulate later
             self.add_weed(location)
-            
+
             # when the location is at the end of the row
             # add a row and reset the location
             if location[0] + 1 >= self.number_of_rows:
@@ -92,37 +90,8 @@ class CropController:
                 location[0] = 0
             else:
                 location[0] += self.row_widths
-                
+
             curr_crop += 1
-
-                
-            
-            
-        
-        
-        # for crop in range(self.number_of_crops):
-        #     if crop % self.number_of_rows == 0:
-        #         curr_row += 1
-        #         curr_loc = 0
-
-        #     num_crops = int(self.number_of_crops * self.percentage_share[curr_crop_type])
-        #     if curr_crop % num_crops == 0 and crop != 0:
-        #         curr_crop = 0
-        #         if not curr_crop_type >= len(self.crop_type) - 1:
-        #             curr_crop_type += 1
-
-        #     curr_loc += 1
-        #     crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
-        #     self.all_crops.append(crop_model) # add crop objects to manipulate later
-        #     self.add_weed(location)
-
-        #     if location[0] + 1 >= self.number_of_rows:
-        #         location[1] += 1
-        #         location[0] = 0
-        #     else:
-        #         location[0] += self.row_widths
-
-        #     curr_crop += 1
 
     # TODO procedural_generation Implementation.
     def procedural_generation(self):
