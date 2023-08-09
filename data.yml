@@ -1,7 +1,6 @@
 crop:
-  type: ["stage10", "stage7", "stage8"]
-  size: [0.5, 0.8]
-  percentage_share: [0.2, 0.2, 0.6]
+  type: ["barley"]
+  percentage_share: [1.0]
   total_number: 20
   num_rows: 2
   row_widths: 2
@@ -14,7 +13,7 @@ barley_type: 'spring' #spring or winter
 generation_seed: 10
 
 output:
-  num_images: 5
+  num_images: 1
   directory: 'output_images'
   file_name: 'barley'
 resolution: 

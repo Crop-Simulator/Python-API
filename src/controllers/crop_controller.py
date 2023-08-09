@@ -14,7 +14,6 @@ class CropController:
         self.counter = 1
         self.crop_data = config["crop"]
         self.crop_type = self.crop_data["type"]
-        self.crop_size = self.crop_data["size"]
         self.percentage_share = self.crop_data["percentage_share"]
         self.number_of_crops = self.crop_data["total_number"]
         self.number_of_rows = self.crop_data["num_rows"]
@@ -31,6 +30,7 @@ class CropController:
             "stage3" : "stage3.009",
             "stage2" : "stage2.009",
             "stage1" : "stage1.009",
+            "stage0" : "stage0.009",
         }
         try:
             self.generation_seed = config["generation_seed"]
@@ -63,39 +63,77 @@ class CropController:
         curr_crop_type = 0
         curr_crop = 0
         location = [0, 0, 0]
+        
         for crop in range(self.number_of_crops):
+            # when the crop is divisible by the number of rows
+            # add a row and reset the location
             if crop % self.number_of_rows == 0:
                 curr_row += 1
-                curr_loc = 0
-
-            num_crops = math.ceil(self.number_of_crops * self.percentage_share[curr_crop_type])
+                
+            # calculate the number of crops to add based on the percentage share
+            num_crops = int(self.number_of_crops * self.percentage_share[curr_crop_type])
+            
+            # when the current crop is divisible by the number of crops
+            # reset the crop type
             if curr_crop % num_crops == 0 and crop != 0:
                 curr_crop = 0
                 if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
-
-            curr_loc += 1
-            crop_model = self.add_crop(self.crop_size, self.crop_type[curr_crop_type], location)
+                    
+            # add the crop to the scene
+            crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
             self.all_crops.append(crop_model) # add crop objects to manipulate later
             self.add_weed(location)
-
+            
+            # when the location is at the end of the row
+            # add a row and reset the location
             if location[0] + 1 >= self.number_of_rows:
-                location[1] += 1
+                location[1] += 1 # next row
                 location[0] = 0
             else:
                 location[0] += self.row_widths
-
+                
             curr_crop += 1
+
+                
+            
+            
+        
+        
+        # for crop in range(self.number_of_crops):
+        #     if crop % self.number_of_rows == 0:
+        #         curr_row += 1
+        #         curr_loc = 0
+
+        #     num_crops = int(self.number_of_crops * self.percentage_share[curr_crop_type])
+        #     if curr_crop % num_crops == 0 and crop != 0:
+        #         curr_crop = 0
+        #         if not curr_crop_type >= len(self.crop_type) - 1:
+        #             curr_crop_type += 1
+
+        #     curr_loc += 1
+        #     crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
+        #     self.all_crops.append(crop_model) # add crop objects to manipulate later
+        #     self.add_weed(location)
+
+        #     if location[0] + 1 >= self.number_of_rows:
+        #         location[1] += 1
+        #         location[0] = 0
+        #     else:
+        #         location[0] += self.row_widths
+
+        #     curr_crop += 1
 
     # TODO procedural_generation Implementation.
     def procedural_generation(self):
         random.seed(self.generation_seed)
 
-    def add_crop(self, crop_size, growth_stage, loc):
-        barley = Barley(growth_stage, "healthy")
-        loc[0] = loc[0] - random.uniform(-.5, .5)
-        loc[1] = loc[1] - random.uniform(-.5, .5)
-        barley.set_location([loc[0], loc[1], loc[2]])
+    def add_crop(self, crop_type, loc):
+        if crop_type == "barley":
+            barley = Barley(1, "healthy")
+            loc[0] = loc[0] - random.uniform(-.5, .5)
+            loc[1] = loc[1] - random.uniform(-.5, .5)
+            barley.set_location([loc[0], loc[1], loc[2]])
 
         self.counter += 1
         bpy.context.collection.objects.link(barley.barley_object)
