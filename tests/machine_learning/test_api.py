@@ -43,7 +43,7 @@ class TestStableDiffusionAPI(unittest.TestCase):
             "alwayson_scripts": {
                 "controlnet": {
                     "args": [{
-                        "module": "oneformer_ade20k",
+                        "module": "none",
                         "model": model,
                         "input_image": input_image,
                         "processor_res": 512,
