@@ -6,6 +6,8 @@ from src.controllers.segmentation import SegmentationClass
 
 class Barley:
     def __init__(self, stage, health):
+        self.GDD_PER_STAGE = 139
+        
         self.stage = stage
         self.health = health
         self.growth_stage = ["stage0.009", "stage1.009", "stage2.009", "stage3.009", "stage4.009",
@@ -14,7 +16,6 @@ class Barley:
         self.active_weeds = []
         self.crop_type = SegmentationClass.PLANT.value
         self.barley_object = self.set_model_stage(self.stage)
-        self.GDD_PER_STAGE = 139
         self.name = self.barley_object.name
 
     def set_model_stage(self, stage):
