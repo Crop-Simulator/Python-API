@@ -8,8 +8,8 @@ class Weed:
         self.weed_object = self.get_weed_model()
 
     def get_weed_model(self):
-        bpy.context.active_object.name = "stage7.009"
-        weed = bpy.context.scene.objects.get("stage7.009")
+        bpy.context.active_object.name = "stage4.009"
+        weed = bpy.context.scene.objects.get("stage4.009")
         weed_model = weed.copy()
         weed_model.data = weed.data.copy()
         weed_model["segmentation_id"] = self.segmentation_id
@@ -17,3 +17,6 @@ class Weed:
 
     def set_location(self, location):
         self.weed_object.location = location
+
+    def get_location(self):
+        return self.weed_object.location
