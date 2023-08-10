@@ -50,7 +50,6 @@ class CropController:
         lightcon.add_light()
 
         groundcon = GroundController(self.config)
-        print(self.config["ground_type"])
         groundcon.get_ground_stages()
 
         self.setup_crop_positions()
