@@ -16,8 +16,21 @@ def read_segmentation_mask(path: str) -> str:
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
 
+def encode_image(f) -> str:
+    """
+    Encodes an image file as a base64-encoded string.
 
-def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_prompt: str = "", disable_controlnet: bool = False, **kwargs):
+    Args:
+        f (file): The file object to encode.
+
+    Returns:
+        str: The base64-encoded image.
+    """
+    return base64.b64encode(f.read()).decode("utf-8")
+
+
+def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_prompt: str = "",
+                   disable_controlnet: bool = False, segmentation_mask: str = None, **kwargs):
     """
     Generates an image from a given text prompt using the Stable Diffusion API.
 
@@ -34,24 +47,16 @@ def generate_image(api_client: StableDiffusionAPI, text_prompt: str, negative_pr
 
     # Add a controlnet segmentation to the Txt2ImgConfig object
     if not disable_controlnet:
-        txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]", read_segmentation_mask("test_seg1.png"))
-
-    # Print the Txt2ImgConfig object as a dictionary
-    print(txt2img_config.to_dict())
+        txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]", segmentation_mask)
 
     # Generate the image using the Stable Diffusion API client
     response = api_client.txt2img(txt2img_config.to_dict())
-
-    # Print the response metadata
     for k, v in response.items():
         if k != "images":
             print(f"{k}: {v}")
 
-    # Save the generated images to disk
-    for idx, img in enumerate(response["images"]):
-        with open(f"img_{idx}.png", "wb") as f:
-            f.write(base64.decodebytes(bytes(img, "utf-8")))
-        print(f"Image {idx} saved to img_{idx}.png")
+    return response["images"]
+
 
 
 if __name__ == "__main__":
@@ -65,3 +70,4 @@ if __name__ == "__main__":
 
     sd_api_client = StableDiffusionAPI(url)
     generate_image(sd_api_client, text_prompt, disable_controlnet=disable_controlnet, width=width, height=height)
+

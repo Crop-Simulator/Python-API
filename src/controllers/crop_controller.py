@@ -1,9 +1,11 @@
 import random
 import bpy
-from mathutils import Vector
+import math
 
 from .light_controller import LightController
-from .segmentation import SegmentationClass
+from src.objects.barley import Barley
+from src.objects.weed import Weed
+
 
 class CropController:
 
@@ -12,23 +14,26 @@ class CropController:
         self.crop_size = 0.5
         self.counter = 1
         self.crop_data = config["crop"]
-        self.type = self.crop_data["type"]
-        self.size = self.crop_data["size"]
+        self.crop_type = self.crop_data["type"]
+        self.crop_size = self.crop_data["size"]
         self.percentage_share = self.crop_data["percentage_share"]
-        self.total_number = self.crop_data["total_number"]
-        self.num_rows = self.crop_data["num_rows"]
+        self.number_of_crops = self.crop_data["total_number"]
+        self.number_of_rows = self.crop_data["num_rows"]
         self.row_widths = self.crop_data["row_widths"]
+        self.all_crops = []
+        self.weed_spacing = .2  # The bounding area value in for spacing between weed and crop
+        self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
-            "stage10" : "stage10.009",
-            "stage9" : "stage9.009",
-            "stage8" : "stage8.009",
-            "stage7" : "stage7.009",
-            "stage6" : "stage6.009",
-            "stage5" : "stage5.009",
-            "stage4" : "stage4.009",
-            "stage3" : "stage3.009",
-            "stage2" : "stage2.009",
-            "stage1" : "stage1.009",
+            "stage10": "stage10.009",
+            "stage9": "stage9.009",
+            "stage8": "stage8.009",
+            "stage7": "stage7.009",
+            "stage6": "stage6.009",
+            "stage5": "stage5.009",
+            "stage4": "stage4.009",
+            "stage3": "stage3.009",
+            "stage2": "stage2.009",
+            "stage1": "stage1.009",
         }
         try:
             self.generation_seed = config["generation_seed"]
@@ -58,115 +63,58 @@ class CropController:
         curr_loc = 0
         curr_crop_type = 0
         curr_crop = 0
-        num_rows = self.num_rows
-        loc_z = 0
-        loc_y = 0
-        loc_x = 0
-        for crop in range(self.total_number):
-
-            if crop % num_rows == 0:
-                # splits crops into rows:
-                # increases row num, when reached and
-                # increments location by 1
+        location = [0, 0, 0]
+        for crop in range(self.number_of_crops):
+            if crop % self.number_of_rows == 0:
                 curr_row += 1
                 curr_loc = 0
 
-            num_crops = int(self.total_number * self.percentage_share[curr_crop_type])
+            num_crops = math.ceil(self.number_of_crops * self.percentage_share[curr_crop_type])
             if curr_crop % num_crops == 0 and crop != 0:
-                # counts the correct number of crops have
-                # been generated based on their percentage share
-                # excludes: first crop because it should always be
-                # generated and will always return 0
-
-
                 curr_crop = 0
-                if not curr_crop_type >= len(self.type) - 1:
-                    # checks that there are more crop types
-                    # before changing to next crop type
+                if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
 
             curr_loc += 1
-            crop_model = self.add_crop(self.crop_size, self.growth_stage[self.type[curr_crop_type]], [loc_x, loc_y, loc_z])
-            if loc_x + 1 == self.row_widths:
-                loc_y += 1
-                loc_x = 0
+            crop_model = self.add_crop(self.crop_size, self.crop_type[curr_crop_type], location)
+            self.all_crops.append(crop_model)  # add crop objects to manipulate later
+            self.add_weed(location)
+            if location[0] + 1 >= self.number_of_rows:
+                location[1] += 1
+                location[0] = 0
             else:
-                loc_x += 1
-            material, segmentation_id = self.assign_crop_type(self.type[curr_crop_type])
-
-            crop_model["segmentation_id"] = segmentation_id
+                location[0] += self.row_widths
 
             curr_crop += 1
 
-    # TODO procedural_generation Implementation.
     def procedural_generation(self):
         random.seed(self.generation_seed)
 
-    def assign_crop_type(self, crop_type):
-        # assign material and segmentation id depending on crop type
-        material = bpy.data.materials.new(crop_type)
-        segmentation_id = SegmentationClass.PLANT.value
-        return material, segmentation_id
-
     def add_crop(self, crop_size, growth_stage, loc):
-        bpy.context.active_object.name = growth_stage
-        cube = bpy.context.scene.objects.get(growth_stage)
-        duplicated = cube.copy()
-        duplicated.data = cube.data.copy()
-        loc[0] - random.uniform(-.2, .2)
-        loc[1] - random.uniform(-.2, .2)
-        duplicated.location = (loc[0], loc[1], loc[2])
-
+        barley = Barley(growth_stage, "healthy")
+        loc[0] = loc[0] - random.uniform(-.5, .5)
+        loc[1] = loc[1] - random.uniform(-.5, .5)
+        barley.set_location([loc[0], loc[1], loc[2]])
         self.counter += 1
-        bpy.context.collection.objects.link(duplicated)
+        bpy.context.collection.objects.link(barley.barley_object)
+        return barley
 
-        # for ob in cube.users_collection[:]: #unlink from all preceeding object collections
-        #     ob.objects.unlink(cube)
-        # collection.objects.link(cube)
-
-        # Measure the height of the crop
-        #crop_height = self.measure_crop_height(duplicated)
-        #print("The height of the crop is:", crop_height)
-
-        return cube
-
-
-    def measure_crop_height(self, crop_object):
-        # Get the coordinates of the object's vertices
-        vertices = [v.co for v in crop_object.data.vertices]
-
-        # Get the transformation matrix of the object
-        matrix_world = crop_object.matrix_world
-
-        # Initialise min and max Y coordinates
-        min_y = float("inf")
-        max_y = float("-inf")
-
-        # Calculate the minimum and maximum Y coordinates of the transformed coordinates
-        for vertex in vertices:
-            transformed_vertex = matrix_world @ vertex
-            min_y = min(min_y, transformed_vertex.y)
-            max_y = max(max_y, transformed_vertex.y)
-
-        # Calculating the height of an object
-        crop_height = max_y - min_y
-
-        return crop_height
-
-    def resize_crop(self, crop_object, scale):
-        crop_object.scale = Vector((scale, scale, scale))
-
-    def add_weed(self, loc_x, loc_y, loc_z):
+    def add_weed(self, loc):
         if bool(random.getrandbits(1)):
-            bpy.context.active_object.name = self.growth_stage["stage3"]
-            cube = bpy.context.scene.objects.get(self.growth_stage["stage3"])
-            duplicated = cube.copy()
-            duplicated.data = cube.data.copy()
-            loc_x = loc_x - random.uniform(-.2, .2)
-            loc_y = loc_y - random.uniform(-.2, .2)
-            duplicated.location = (loc_x, loc_y, loc_z)
+            weed = Weed()
+            loc[0] = loc[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
+            loc[1] = loc[1] - random.uniform(-self.weed_spacing, self.weed_spacing)
+            weed.set_location([loc[0], loc[1], loc[2]])
             self.counter += 1
-            bpy.context.collection.objects.link(duplicated)
-            cube["segmentation_id"] = SegmentationClass.WEED.value
-            return cube
+            bpy.context.collection.objects.link(weed.weed_object)
+            self.populate_area_weeds(weed)
+            return weed
 
+    # If X of weed is within X of crop weed radius and Y of weed is within Y of crop weed radius then add it to the crop
+    def populate_area_weeds(self, weed):
+        for crop in self.all_crops:
+            if ((crop.get_location()[0] + self.weed_effect_area < weed.get_location()[0]) >
+                    crop.get_location()[0] - self.weed_effect_area and
+                    crop.get_location()[1] + self.weed_effect_area < weed.get_location()[1] >
+                    crop.get_location()[1] - self.weed_effect_area):
+                crop.add_weed(weed)

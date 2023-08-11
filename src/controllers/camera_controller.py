@@ -28,7 +28,13 @@ class CameraController:
 
     def update_camera(self, angle_rotation = (0, 0, 0), distance = 10.0):
         # update camera rotation and distance
-        camera_direction = bpy.data.objects[self.camera_name].location - mathutils.Vector(angle_rotation)
+        camera_object = bpy.data.objects[self.camera_name]
+        camera_direction = camera_object.location - mathutils.Vector(angle_rotation)
         rotation = camera_direction.to_track_quat("Z", "Y")
-        bpy.data.objects[self.camera_name].rotation_euler = rotation.to_euler()
-        bpy.data.objects[self.camera_name].location = rotation @ mathutils.Vector((0, 0, distance))
+
+        camera_object.rotation_euler = rotation.to_euler()
+        camera_object.location = rotation @ mathutils.Vector((0, 0, distance))
+        # TODO find a method of camera rotation using degrees or radians instead of euler's angles
+        # camera_object.rotation_euler.rotate_axis('X', math.radians(3.14159))
+
+
