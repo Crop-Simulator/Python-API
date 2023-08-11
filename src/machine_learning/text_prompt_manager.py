@@ -1,19 +1,6 @@
 from enum import Enum, auto
+from text_prompt import Weather, CameraType, CropType, WeedType
 
-class Weather(Enum):
-    SUNNY = auto()
-    RAINY = auto()
-    WINDY = auto()
-
-class CameraType(Enum):
-    DRONE = auto()
-    ROBOT = auto()
-
-class CropType(Enum):
-    BARLEY = auto()
-
-class WeedType(Enum):
-    WEED = auto()
 
 class TextPromptManager:
     def __init__(self, weather: Weather, camera_type: CameraType):
@@ -31,6 +18,17 @@ class TextPromptManager:
         self.validate_prompt()
         return f"Weather: {self.weather.name}, Camera Type: {self.camera_type.name}"
 
+    def blip_inference(self):
+        # TODO: use blip model to infer prompt, and concat with config specified in training file
+        return 1
+
+    def prompt_for_training(self):
+        # TODO: generate prompt for training
+        return 1
+
+    def prompt_for_generation(self):
+        # TODO: generate prompt for generation
+        return 1
 
 prompt_manager = TextPromptManager(Weather.SUNNY, CameraType.DRONE)
 print(prompt_manager.get_prompt())
