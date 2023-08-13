@@ -39,7 +39,7 @@ class CropController:
             self.generation_seed = config["generation_seed"]
         except KeyError:
             self.generation_seed = None
-        self.procedural_generation()
+        self.procedural_generation_seed_setter()
 
     def setup_crops(self):
         for obj in bpy.context.scene.objects:
@@ -75,19 +75,20 @@ class CropController:
                 if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
 
-            curr_loc += 1
+            curr_loc += 1 / self.crop_data["density"]
             crop_model = self.add_crop(self.crop_size, self.crop_type[curr_crop_type], location)
             self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
-            if location[0] + 1 >= self.number_of_rows:
-                location[1] += 1
+
+            if curr_row + 1 >= self.number_of_rows:
+                location[1] += 1 / self.crop_data["density"]
                 location[0] = 0
             else:
-                location[0] += self.row_widths
-
+                location[0] += self.row_widths / self.crop_data["density"]
             curr_crop += 1
+            curr_row += 1
 
-    def procedural_generation(self):
+    def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)
 
     def add_crop(self, crop_size, growth_stage, loc):
@@ -109,6 +110,7 @@ class CropController:
             bpy.context.collection.objects.link(weed.weed_object)
             self.populate_area_weeds(weed)
             return weed
+        return False
 
     # If X of weed is within X of crop weed radius and Y of weed is within Y of crop weed radius then add it to the crop
     def populate_area_weeds(self, weed):
