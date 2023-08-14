@@ -19,3 +19,10 @@ output:
 resolution: 
   x: 1920
   y: 1080
+
+growth_simulator:
+  days_per_stage: 30         # days needed for each growth stage
+  p_progression: 0.8         # probability of growth on given day
+  p_death: 0.1
+  growth_coefficient: 0.1    # importance of growth on previous day
+  gdd_coefficient: 1         # importance of gdd to growth

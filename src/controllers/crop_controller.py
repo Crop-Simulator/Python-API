@@ -54,10 +54,6 @@ class CropController:
 
         collection = bpy.data.collections.get(self.collection_name)
         for obj in bpy.context.scene.objects:
-            # if not obj.name in [plants.name for plants in self.all_plants]:
-            #     target = collection.objects.get(obj.name)
-            #     collection.objects.unlink(target)
-            #     target.hide_viewport = True
             if obj.name in self.growth_stage.values():
                 target = collection.objects.get(obj.name)
                 collection.objects.unlink(target)

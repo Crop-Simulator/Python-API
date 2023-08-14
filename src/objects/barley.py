@@ -26,18 +26,6 @@ class Barley:
         barley_stage["segmentation_id"] = self.crop_type
         return barley_stage
 
-    def growth_degree_days(self, t_max, t_min):
-        # barley varieties required an average accumulation of 139 GDD
-        # to progress to next stage
-        t_base = 0                  # celsius, can be fahrenheit
-        gdd = (t_max - t_min)/2 - t_base
-        self.gdd += gdd
-
-    def progress_stage(self):
-        if self.gdd >= self.GDD_PER_STAGE:
-            self.stage += 1
-            self.set_model_stage(self.stage)
-
     def set_location(self, location):
         self.barley_object.location = location
 
