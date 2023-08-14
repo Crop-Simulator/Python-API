@@ -13,18 +13,18 @@ class GrowthManager():
         self.config = config["growth_simulator"]
         self.p_progression = self.config["p_progression"]
         self.days_per_stage = self.config["days_per_stage"]
-    
+
     def growth_degree_days(self, t_max, t_min):
         # barley varieties required an average accumulation of 139 GDD
         # to progress to next stage
         t_base = 0                  # celsius, can be fahrenheit
         gdd = (t_max - t_min)/2 - t_base
         self.gdd += gdd
-        
+
     def growth_binomial_distribution(self, days_passed):
         section = days_passed % self.days_per_stage
         p = self.p_progression * section
-        progression_probability = np.random.binomial(1, p) 
+        progression_probability = np.random.binomial(1, p)
         return progression_probability # if return 1, progress, else no progress
 
     def progress_stage(self):

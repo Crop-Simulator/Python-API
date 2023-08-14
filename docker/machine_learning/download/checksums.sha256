@@ -1,5 +1,6 @@
 fc52756a74d5f371422ff99a7268cb6abb14bfc4a4de3569382cf0bd75e55d36  /data/models/Stable-diffusion/dreamlike-photoreal-2.0.ckpt
 bad6d753886c0edc978e79dfb06083737ab1bd9702e5b7c0f81b1e16a5ed12cc  /data/models/ControlNet/control_v11p_sd15_seg.pth
+761077ffe369fe8cf16ae353f8226bd4ca29805b161052f82c0170c7b50f1d99  /data/models/ControlNet/control_v11f1p_sd15_depth.pth
 c6a580b13a5bc05a5e16e4dbb80608ff2ec251a162311590c1f34c013d7f3dab  /data/models/VAE/vae-ft-mse-840000-ema-pruned.ckpt
 c209caecac2f97b4bb8f4d726b70ac2ac9b35904b7fc99801e1f5e61f9210c13  /data/models/LDSR/model.ckpt
 9d6ad53c5dafeb07200fb712db14b813b527edd262bc80ea136777bdb41be2ba  /data/models/LDSR/project.yaml

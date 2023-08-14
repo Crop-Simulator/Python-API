@@ -2,6 +2,7 @@ import random
 import bpy
 
 from .light_controller import LightController
+from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
 
@@ -9,6 +10,7 @@ from src.objects.weed import Weed
 class CropController:
 
     def __init__(self, config, collection):
+        self.config = config
         self.collection_name = collection
         self.crop_size = 0.5
         self.counter = 1
@@ -39,7 +41,7 @@ class CropController:
             self.generation_seed = config["generation_seed"]
         except KeyError:
             self.generation_seed = None
-        self.procedural_generation()
+        self.procedural_generation_seed_setter()
 
     def setup_crops(self):
         for obj in bpy.context.scene.objects:
@@ -49,6 +51,9 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
+
+        groundcon = GroundController(self.config)
+        groundcon.get_ground_stages()
 
         self.setup_crop_positions()
 
@@ -80,21 +85,19 @@ class CropController:
                 if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
 
-            # add the crop to the scene
-            print(self.crop_type[curr_crop_type])
-            self.add_crop(self.crop_type[curr_crop_type], location)
+            crop_model = self.add_crop(self.crop_size, self.crop_type[curr_crop_type], location)
+            self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
-            # when the location is at the end of the row
-            # add a row and reset the location
-            if location[0] + 1 >= self.number_of_rows:
-                location[1] += 1 # next row
+
+            if curr_row + 1 >= self.number_of_rows:
+                location[1] += 1 / self.crop_data["density"]
                 location[0] = 0
             else:
-                location[0] += self.row_widths
-
+                location[0] += self.row_widths / self.crop_data["density"]
             curr_crop += 1
+            curr_row += 1
 
-    def procedural_generation(self):
+    def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)
 
     def add_crop(self, crop_type, loc):
@@ -120,6 +123,7 @@ class CropController:
             self.all_plants.append(weed) # add objects to manipulate later
             self.populate_area_weeds(weed)
             return weed
+        return False
 
     # If X of weed is within X of crop weed radius and Y of weed is within Y of crop weed radius then add it to the crop
     def populate_area_weeds(self, weed):

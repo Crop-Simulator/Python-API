@@ -20,6 +20,7 @@ class BlenderScriptTest(unittest.TestCase):
             "total_number": 9,
             "num_rows": 2,
             "row_widths": 5,
+            "density": 1,
         },
         "output" : {
             "num_images": 1,
@@ -35,7 +36,7 @@ class BlenderScriptTest(unittest.TestCase):
             "x": 512,
             "y": 512,
         },
-
+        "ground_type": "loam",
     }
 
     @classmethod

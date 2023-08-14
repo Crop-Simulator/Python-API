@@ -19,11 +19,13 @@ class CropControllerTest(unittest.TestCase):
             "total_number": 9,
             "num_rows": 2,
             "row_widths": 5,
+            "density": 1,
         },
         "resolution": {
             "x": 512,
             "y": 512,
         },
+        "ground_type": "loam",
     }
 
     @classmethod

@@ -43,6 +43,7 @@ DEFAULT_OUTDIRS = {
   "outdir_img2img_grids": "/output/img2img-grids",
   "outdir_save": "/output/saved",
   "outdir_init_images": "/output/init-images",
+  "control_net_max_models_num": 2,
 }
 RE_VALID_OUTDIR = re.compile(r"(^/output(/\.?[\w\-\_]+)+/?$)|(^\s?$)")
 
@@ -84,6 +85,8 @@ def check_and_replace_config(config_file: str, target_file: str = None):
     if k not in data:
       data[k] = def_val
     else:
+      if isinstance(data[k], int):
+        continue
       data[k] = replace_if_invalid(value=data[k], replacement=def_val, pattern=RE_VALID_OUTDIR)
 
   # Check and fix other default settings

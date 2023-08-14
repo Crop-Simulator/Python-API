@@ -4,6 +4,7 @@ crop:
   total_number: 20
   num_rows: 2
   row_widths: 5
+  density: 1 #Crops per unit^2 -- Lower number == less dense
 
 planting_date: '2023-02-01'  
 latitude: 35.6895  
@@ -13,12 +14,13 @@ barley_type: 'spring' #spring or winter
 generation_seed: 123
 
 output:
-  num_images: 5
+  num_images: 1
   directory: 'output_images'
   file_name: 'barley'
 resolution: 
-  x: 1920
-  y: 1080
+  x: 512
+  y: 512
+ground_type: "loam"
 
 growth_simulator:
   days_per_stage: 30         # days needed for each growth stage
