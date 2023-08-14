@@ -134,7 +134,6 @@ class CropController:
         # Switch back to the original area
         self.context.area.type = original_area_type
 
-        print("The objects have been attached to the cursor position.")
 
     def simulate_snap_selected_to_cursor(self):
         # the method can simulate the operation of adsorbing the selected object to the cursor position.
