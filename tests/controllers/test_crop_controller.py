@@ -26,6 +26,7 @@ class CropControllerTest(unittest.TestCase):
             "x": 512,
             "y": 512,
         },
+        "ground_type": "loam",
     }
 
     @classmethod
@@ -73,7 +74,8 @@ class CropControllerTest(unittest.TestCase):
             "resolution": {
                 "x": 512,
                 "y": 512,
-            },
+        },
+            "ground_type": "loam",
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)

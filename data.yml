@@ -15,9 +15,10 @@ barley_type: 'spring' #spring or winter
 generation_seed: 10
 
 output:
-  num_images: 5
+  num_images: 1
   directory: 'output_images'
   file_name: 'barley'
 resolution: 
-  x: 1920
-  y: 1080
+  x: 512
+  y: 512
+ground_type: "loam"

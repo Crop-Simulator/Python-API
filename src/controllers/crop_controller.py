@@ -3,6 +3,7 @@ import bpy
 import math
 
 from .light_controller import LightController
+from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
 
@@ -10,6 +11,7 @@ from src.objects.weed import Weed
 class CropController:
 
     def __init__(self, config, collection):
+        self.config = config
         self.collection_name = collection
         self.crop_size = 0.5
         self.counter = 1
@@ -49,6 +51,9 @@ class CropController:
 
         lightcon = LightController()
         lightcon.add_light()
+
+        groundcon = GroundController(self.config)
+        groundcon.get_ground_stages()
 
         self.setup_crop_positions()
 
