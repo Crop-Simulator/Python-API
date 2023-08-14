@@ -21,6 +21,7 @@ class BlenderScriptTest(unittest.TestCase):
             "total_number": 9,
             "num_rows": 2,
             "row_widths": 5,
+            "density": 1,
         },
         "output" : {
             "num_images": 1,

@@ -58,7 +58,7 @@ class Txt2ImgConfig:
             "sampler_name": "Euler",
             "batch_size": 1,
             "n_iter": 1,
-            "steps": 30,
+            "steps": 35,
             "cfg_scale": 7,
             "width": 512,
             "height": 512,
@@ -94,7 +94,7 @@ class Txt2ImgConfig:
     def add_controlnet_segmentation(self, model: str, input_image: str):
         self.config["alwayson_scripts"]["controlnet"] = {
             "args": [{
-                "module": "oneformer_ade20k",
+                "module": "none",
                 "model": model,
                 "input_image": input_image,
                 "processor_res": 512,
