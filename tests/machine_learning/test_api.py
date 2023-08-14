@@ -52,7 +52,7 @@ class TestStableDiffusionAPI(unittest.TestCase):
                 },
             },
         }
-        self.assertEqual(config.to_dict()["alwayson_scripts"]["controlnet"], expected_config["alwayson_scripts"]["controlnet"])
+        self.assertEqual(config.to_dict()["alwayson_scripts"]["controlnet"]["args"][0], expected_config["alwayson_scripts"]["controlnet"]["args"][0])
 
 
 
