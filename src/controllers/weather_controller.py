@@ -1,6 +1,5 @@
 import requests
 from datetime import datetime, timedelta
-import os
 
 class WeatherController:
     HTTP_STATUS_OK = 200
