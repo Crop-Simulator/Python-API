@@ -20,11 +20,13 @@ class CropControllerTest(unittest.TestCase):
             "total_number": 9,
             "num_rows": 2,
             "row_widths": 5,
+            "density": 1,
         },
         "resolution": {
             "x": 512,
             "y": 512,
         },
+        "ground_type": "loam",
     }
 
     @classmethod
@@ -66,12 +68,14 @@ class CropControllerTest(unittest.TestCase):
                 "total_number": 10,
                 "num_rows": 2,
                 "row_widths": 5,
+                "density": 1,
             },
 
             "resolution": {
                 "x": 512,
                 "y": 512,
-            },
+        },
+            "ground_type": "loam",
         }
         with open(self.test_file, "w") as file:
             yaml.safe_dump(test_data, file)

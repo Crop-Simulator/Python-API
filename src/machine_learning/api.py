@@ -1,5 +1,6 @@
 import json
 import requests
+import warnings
 
 
 class StableDiffusionAPI:
@@ -88,18 +89,27 @@ class Txt2ImgConfig:
             if key in self.config:
                 self.config[key] = value
             else:
-                print(f"Unknown txt2img config key: {key}")
+                warnings.warn(f"Unknown txt2img config key: {key}", stacklevel=1)
 
-
-    def add_controlnet_segmentation(self, model: str, input_image: str):
+    def add_controlnet_segmentation(self, model: str, seg_map: str, depth_map: str = None):
         self.config["alwayson_scripts"]["controlnet"] = {
             "args": [{
                 "module": "none",
                 "model": model,
-                "input_image": input_image,
+                "input_image": seg_map,
                 "processor_res": 512,
                 "resize_mode": 1, # 1 = "inner fit", 2 = "outer fit"
-            }],
+            },
+            {
+                "module": "none",
+                "model": "control_v11f1p_sd15_depth [cfd03158]",
+                "input_image": depth_map,
+                "processor_res": 512,
+                "threshold_a": -1,
+                "threshold_b": -1,
+                "resize_mode": 1,
+            },
+            ],
         }
 
     def to_dict(self) -> dict:
