@@ -1,5 +1,6 @@
 import json
 import requests
+import warnings
 
 
 class StableDiffusionAPI:
@@ -28,62 +29,67 @@ class StableDiffusionAPI:
                 f"Request failed with status code {response.status_code}: {response.text}",
             )
 
-    def img2img(self, config: dict) -> requests.Response:
-        json_data = json.dumps(config)
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(
-            self.url + "/sdapi/v1/img2img",
-            data=json_data,
-            headers=headers,
-        )
-        with open("debug_payload.json", "w") as f:
-            f.write(json_data)
-        # Check the response status code
-        if response.status_code == StableDiffusionAPI.HTTP_OK:
-            resp_data = response.json()
-            return resp_data
-        else:
-            with open("debug_payload.json", "w") as f:
-                f.write(json_data)
-            raise requests.exceptions.HTTPError(
-                f"Request failed with status code {response.status_code}: {response.text}",
-            )
 
-class X2ImgConfig:
+class Txt2ImgConfig:
     """
-    Base config for X2Img API
+    Config for txt2img API
     """
     def __init__(self, **kwargs) -> None:
         """Initialize the config with default values. Use kwargs to override the defaults."""
         self.config = {
+            "enable_hr": False,
+            "denoising_strength": 0,
+            "firstphase_width": 0,
+            "firstphase_height": 0,
+            "hr_scale": 2,
+            "hr_upscaler": "string",
+            "hr_second_pass_steps": 0,
+            "hr_resize_x": 0,
+            "hr_resize_y": 0,
+            "hr_sampler_name": "string",
+            "hr_prompt": "",
+            "hr_negative_prompt": "",
             "prompt": "",
-            "styles": [],
+            "styles": ["string"],
             "seed": -1,
             "subseed": -1,
             "subseed_strength": 0,
             "seed_resize_from_h": -1,
             "seed_resize_from_w": -1,
-            "sampler_name": "DPM++ 2M Karras",
+            "sampler_name": "Euler",
             "batch_size": 1,
             "n_iter": 1,
-            "steps": 30,
+            "steps": 35,
             "cfg_scale": 7,
             "width": 512,
             "height": 512,
+            "restore_faces": False,
+            "tiling": False,
+            "do_not_save_samples": False,
+            "do_not_save_grid": False,
             "negative_prompt": "",
-            "alwayson_scripts": {},
+            "eta": 0,
+            "s_min_uncond": 0,
+            "s_churn": 0,
+            "s_tmax": 0,
+            "s_tmin": 0,
+            "s_noise": 1,
+            "override_settings": {
+                "sd_model_checkpoint": "dreamlike-photoreal-2.0",
+            },
+            "override_settings_restore_afterwards": True,
             "script_args": [],
-            "sampler_index": "DPM++ 2M Karras",
+            "sampler_index": "Euler",
             "script_name": "",
+            "send_images": True,
+            "save_images": False,
+            "alwayson_scripts": {},
         }
-        self.config.update(kwargs)
-
-    def to_json(self):
-        """Convert the config to a JSON string."""
-        return json.dumps(self.config)
-
-    def to_dict(self) -> dict:
-        return self.config
+        for key, value in kwargs.items():
+            if key in self.config:
+                self.config[key] = value
+            else:
+                warnings.warn(f"Unknown txt2img config key: {key}", stacklevel=1)
 
     def add_controlnet_segmentation(self, model: str, seg_map: str, depth_map: str = None):
         self.config["alwayson_scripts"]["controlnet"] = {
@@ -106,56 +112,5 @@ class X2ImgConfig:
             ],
         }
 
-class Img2ImgConfig(X2ImgConfig):
-    """
-    Config for img2img API
-    """
-    def __init__(self, **kwargs) -> None:
-        """Initialize the config with default values. Use kwargs to override the defaults."""
-        super().__init__(**kwargs)
-        self.config.update({
-            "init_images": [],
-            "resize_mode": 0,
-            "denoising_strength": 0.75,
-            "image_cfg_scale": 0,
-            "override_settings": {},
-            "override_settings_restore_afterwards": True,
-            "include_init_images": False,
-            "send_images": True,
-            "save_images": False,
-        })
-        self.config.update(kwargs)
-
-    def set_init_images(self, images: list):
-        """
-        Set the initial images for the config.
-
-        Args:
-            images (list): A list of base64-encoded images.
-
-        Returns:
-            None
-        """
-        self.config["init_images"] = images
-
-class Txt2ImgConfig(X2ImgConfig):
-    """
-    Config for txt2img API
-    """
-    def __init__(self, **kwargs) -> None:
-        """Initialize the config with default values. Use kwargs to override the defaults."""
-        super().__init__(**kwargs)
-        self.config.update({
-            "enable_hr": False,
-            "denoising_strength": 0,
-            "firstphase_width": 0,
-            "firstphase_height": 0,
-            "hr_scale": 2,
-            "hr_upscaler": "string",
-            "hr_second_pass_steps": 0,
-            "hr_resize_x": 0,
-            "hr_resize_y": 0,
-            "hr_sampler_name": "string",
-            "hr_prompt": "",
-            "hr_negative_prompt": "",
-        })
+    def to_dict(self) -> dict:
+        return self.config
