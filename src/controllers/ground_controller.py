@@ -1,5 +1,11 @@
+import os
+from pathlib import Path
+
 import bpy
 import mathutils
+
+from src.utils import get_project_root
+
 
 class GroundController:
     def __init__(self, config):
@@ -13,13 +19,14 @@ class GroundController:
         self.row_widths = self.crop_data["row_widths"]
 
     def get_texture_file(self):
-        base_dir = "src/blender_assets/textures/textures/"
+        print(get_project_root())
+        texture_dir = get_project_root() + "/blender_assets/textures/"
         if self.ground_type == "sandy":
-            return base_dir + "sandy_loam.jpg"
+            return texture_dir + "sandy_loam.jpg"
         elif self.ground_type == "loam":
-            return base_dir + "loam.jpg"
+            return texture_dir + "loam.jpg"
         elif self.ground_type == "brown_soil":
-            return base_dir == "brown_soil.jpg"
+            return texture_dir == "brown_soil.jpg"
         else:
             raise ValueError(f"Unknown ground type {self.ground_type}")
 
