@@ -1,6 +1,6 @@
 import base64
 
-from .api import StableDiffusionAPI, Txt2ImgConfig
+from .api import Img2ImgConfig, StableDiffusionAPI
 
 def read_segmentation_mask(path: str) -> str:
     """
@@ -28,7 +28,7 @@ def encode_image(f) -> str:
     return base64.b64encode(f.read()).decode("utf-8")
 
 
-def generate_image(api_client: StableDiffusionAPI, config: dict, controlnet_config: dict = None):
+def generate_image(api_client: StableDiffusionAPI, config: dict, controlnet_config: dict = None, input_image: str = None):
     """
     Generates an image from a given text prompt using the Stable Diffusion API.
 
@@ -41,16 +41,17 @@ def generate_image(api_client: StableDiffusionAPI, config: dict, controlnet_conf
         None
     """
     # Create a Txt2ImgConfig object with the given text prompt and negative prompt
-    txt2img_config = Txt2ImgConfig(**config)
+    config = Img2ImgConfig(**config)
+    config.set_init_images([input_image])
 
     # Add a controlnet segmentation to the Txt2ImgConfig object
     if controlnet_config and not controlnet_config.get("disable_controlnet", False):
-        txt2img_config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]",
+        config.add_controlnet_segmentation("control_v11p_sd15_seg [e1f51eb9]",
                                                     controlnet_config.get("segmentation_mask"),
                                                     controlnet_config.get("depth_mask"))
 
     # Generate the image using the Stable Diffusion API client
-    response = api_client.txt2img(txt2img_config.to_dict())
+    response = api_client.img2img(config.to_dict())
     for k, v in response.items():
         if k != "images":
             print(f"{k}: {v}")
