@@ -75,9 +75,9 @@ def extract_daily_data(self, data):
 
 
 
-api_key = os.environ["WEATHER_API"]
-weather_controllerr = WeatherController(api_key)
-weather_data = weather_controllerr.get_weather_for_growth_period("spring", "2023-02-01", 35.6895, 149)
-daily_weather_data = weather_controllerr.extract_daily_data(weather_data)
-print(daily_weather_data)
+# api_key = os.environ["WEATHER_API"]
+# weather_controllerr = WeatherController(api_key)
+# weather_data = weather_controllerr.get_weather_for_growth_period("spring", "2023-02-01", 35.6895, 149)
+# daily_weather_data = weather_controllerr.extract_daily_data(weather_data)
+# print(daily_weather_data)
 
