@@ -19,7 +19,6 @@ class GroundController:
         self.row_widths = self.crop_data["row_widths"]
 
     def get_texture_file(self):
-        print(get_project_root())
         texture_dir = get_project_root() + "/blender_assets/textures/"
         if self.ground_type == "sandy":
             return texture_dir + "sandy_loam.jpg"
