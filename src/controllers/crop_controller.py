@@ -85,7 +85,7 @@ class CropController:
                 if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
 
-            crop_model = self.add_crop(self.crop_size, self.crop_type[curr_crop_type], location)
+            crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
             self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
 
