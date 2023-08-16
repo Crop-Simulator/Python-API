@@ -2,7 +2,8 @@ import unittest
 from unittest.mock import patch, Mock
 
 import requests
-from src.machine_learning.api import StableDiffusionAPI, Txt2ImgConfig
+from src.machine_learning.api import StableDiffusionAPI
+from src.machine_learning.x2img_config import Txt2ImgConfig
 
 
 class TestStableDiffusionAPI(unittest.TestCase):
