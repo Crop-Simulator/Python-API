@@ -35,11 +35,17 @@ class Segmentation:
     def remove_class(self, class_id: int):
         del self.color_map[class_id]
 
-    def segment(self, output_file: str):
+    def segment(self, output_seg_map_file: str = None, output_depth_map_file: str = None):
         self._assign_classes()
         rendered_data = self._render_segmentation()
         segmentation = rendered_data["inst"]
-        self._write_segmentation(segmentation, output_file)
+        raw_depth_map = rendered_data["depth"]
+        depth_max = raw_depth_map.max()
+        normalized_depth_map = np.uint16(raw_depth_map / depth_max * 65535)
+        if output_seg_map_file is not None:
+            self._write_img(segmentation, output_seg_map_file)
+        if output_depth_map_file is not None:
+            self._write_img(normalized_depth_map, output_depth_map_file)
 
     def _assign_classes(self):
         for obj in bpy.data.objects:
@@ -62,6 +68,6 @@ class Segmentation:
         ).reshape(rendered_data["inst"].shape + (3,))
         return rendered_data
 
-    def _write_segmentation(self, im, output_file: str):
+    def _write_img(self, im, output_file: str):
         # save instance map as 16bit grey scale image
         cv2.imwrite(output_file, im)
