@@ -1,4 +1,3 @@
-from enum import Enum, auto
 from text_prompt import Weather, CameraType, CropType, WeedType
 
 

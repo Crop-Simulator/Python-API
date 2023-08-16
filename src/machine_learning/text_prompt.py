@@ -3,8 +3,12 @@ from enum import Enum, auto
 
 class Weather(Enum):
     SUNNY = auto()
-    RAINY = auto()
+    CLOUDY = auto()
     WINDY = auto()
+    RAINY = auto()
+    STORMY = auto()
+    SNOWY = auto()
+    FOGGY = auto()
 
 
 class CameraType(Enum):
