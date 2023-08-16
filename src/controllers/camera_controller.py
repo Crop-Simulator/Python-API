@@ -40,7 +40,7 @@ class CameraController:
         # TODO find a method of camera rotation using degrees or radians instead of euler's angles
         # camera_object.rotation_euler.rotate_axis('X', math.radians(3.14159))
 
-    def get_camera_pitch_degrees(self):
+    def get_photography_camera_angle(self):
         camera_object = bpy.data.objects[self.camera_name]
 
         # Get the rotation in Euler
@@ -49,7 +49,10 @@ class CameraController:
         # Extract the pitch (in radians)
         pitch = rotation_euler.x
 
-        # If you want the pitch in degrees:
+        # Convert to degrees:
         pitch_degrees = math.degrees(pitch)
 
-        return pitch_degrees
+        # Convert to photography camera angle
+        photography_camera_angle = 90 - pitch_degrees
+
+        return photography_camera_angle
