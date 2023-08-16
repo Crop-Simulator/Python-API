@@ -1,6 +1,7 @@
 import base64
 
-from .api import Img2ImgConfig, StableDiffusionAPI
+from .api import StableDiffusionAPI
+from .x2img_config import Img2ImgConfig
 
 def read_segmentation_mask(path: str) -> str:
     """
