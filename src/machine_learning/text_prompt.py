@@ -10,18 +10,23 @@ class Weather(Enum):
     SNOWY = auto()
     FOGGY = auto()
 
-
-class CameraType(Enum):
-    DRONE = auto()
-    ROBOT = auto()
+    def __str__(self):
+        return str(self.name).lower()
 
 
 class CropType(Enum):
-    BARLEY = auto()
+    SPRING_BARLEY = auto()
+    WINTER_BARLEY = auto()
+
+    def __str__(self):
+        return self.name.replace('_', ' ').lower()
 
 
 class WeedType(Enum):
     WEED = auto()
+
+    def __str__(self):
+        return str(self.name).lower()
 
 
 class SoilType(Enum):
@@ -29,23 +34,29 @@ class SoilType(Enum):
     LOAM = auto()
     SANDY_LOAM = auto()
 
+    def __str__(self):
+        return self.name.replace('_', ' ').lower()
+
 
 class CameraAngle(Enum):
 
-    TOP_DOWN_90 = auto()
-    BIRDS_EYE_VIEW_65 = auto()
-    HIGH_ANGLE_SHOT_45 = auto()
-    ABOVE_SHOT_30 = auto()
-    SLIGHTLY_ABOVE_15 = auto()
+    TOP_DOWN_90 = "top down view"
+    BIRDS_EYE_VIEW_65 = "high angle"
+    HIGH_ANGLE_SHOT_45 = "high angle"
+    ABOVE_SHOT_30 = "from above"
+    SLIGHTLY_ABOVE_15 = "from slightly above"
 
-    STRAIGHT_ON_0 = auto()
+    STRAIGHT_ON_0 = "front view, straight on"
 
-    HERO_VIEW__15 = auto()
-    LOW_VIEW__45 = auto()
-    WORMS_EYE_VIEW__75 = auto()
+    HERO_VIEW__15 = "from slightly below"
+    LOW_VIEW__45 = "from below"
+    WORMS_EYE_VIEW__75 = "from below"
 
     # fallback case
-    EXTREME_VIEW = auto()
+    EXTREME_VIEW = " "
+
+    def __str__(self):
+        return self.value
 
 
 def camera_angle_interpret(camera_angle: float) -> CameraAngle:
