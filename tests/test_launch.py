@@ -27,8 +27,8 @@ class BlenderScriptTest(unittest.TestCase):
             "num_images": 1,
             "directory" : test_directory,
             "file_name": test_output,
-            "camera_angle": "top_down"
-            
+            "camera_angle": "top_down",
+
         },
         "planting_date": "2023-02-01",
         "latitude": 35.6895,
