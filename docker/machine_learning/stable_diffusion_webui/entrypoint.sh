@@ -34,7 +34,6 @@ MOUNTS["${ROOT}/embeddings"]="/data/embeddings"
 MOUNTS["${ROOT}/config.json"]="/data/config/auto/config.json"
 MOUNTS["${ROOT}/ui-config.json"]="/data/config/auto/ui-config.json"
 MOUNTS["${ROOT}/styles.csv"]="/data/config/auto/styles.csv"
-MOUNTS["${ROOT}/extensions"]="/data/config/auto/extensions"
 MOUNTS["${ROOT}/config_states"]="/data/config/auto/config_states"
 
 # extra hacks
@@ -52,18 +51,9 @@ for to_path in "${!MOUNTS[@]}"; do
   echo Mounted $(basename "${from_path}")
 done
 
-echo "Installing extension dependencies (if any)"
-
 # because we build our container as root:
 chown -R root ~/.cache/
 chmod 766 ~/.cache/
-
-shopt -s nullglob
-# For install.py, please refer to https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Developing-extensions#installpy
-list=(./extensions/*/install.py)
-for installscript in "${list[@]}"; do
-  PYTHONPATH=${ROOT} python "$installscript"
-done
 
 if [ -f "/data/config/auto/startup.sh" ]; then
   pushd ${ROOT}

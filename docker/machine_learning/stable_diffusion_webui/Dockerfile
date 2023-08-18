@@ -15,6 +15,9 @@ RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f1
 RUN . /clone.sh k-diffusion https://github.com/crowsonkb/k-diffusion.git 5b3af030dd83e0297272d861c19477735d0317ec
 RUN . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8
 
+# Clone the ControlNet repo
+RUN . /clone.sh sd-webui-controlnet https://github.com/Mikubill/sd-webui-controlnet e9679f8fc50880a92d6f1b6fc1aabad41079efd5
+
 
 FROM alpine:3.17 as xformers
 RUN apk add --no-cache aria2
@@ -78,6 +81,8 @@ RUN --mount=type=cache,target=/root/.cache/pip \
   git reset --hard ${SHA} && \
   pip install -r requirements_versions.txt
 
+RUN mv ${ROOT}/repositories/sd-webui-controlnet ${ROOT}/extensions/
+
 COPY . /docker
 
 RUN \
@@ -86,6 +91,9 @@ RUN \
   # one of the ugliest hacks I ever wrote \
   sed -i 's/in_app_dir = .*/in_app_dir = True/g' /usr/local/lib/python3.10/site-packages/gradio/routes.py && \
   git config --global --add safe.directory '*'
+
+# install dependencies for extensions
+RUN /docker/dependency.sh
 
 WORKDIR ${ROOT}
 ENV NVIDIA_VISIBLE_DEVICES=all

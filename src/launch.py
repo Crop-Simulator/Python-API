@@ -1,13 +1,18 @@
 import typer
 import bpy
 from dotenv.main import load_dotenv
+import time
+import sys
 import os
 
+from src.controllers.crop_controller import CropController
+from src.controllers.yaml_reader import YamlReader
+from src.renderers.scene_renderer import SceneRenderer
 
-from controllers.crop_controller import CropController
-from controllers.yaml_reader import YamlReader
-from renderers.scene_renderer import SceneRenderer
-from controllers.weather_controller import WeatherController
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+
 load_dotenv()
 
 class TyperLaunchAPI:
@@ -22,16 +27,18 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+
+        start_time = time.time()
+        """"
+        Commented out while we wait for IBM's API key Tests also need to be written
         planting_date = config["planting_date"]
         lat = config["latitude"]
         lon = config["longitude"]
         barley_type = config["barley_type"]
         api_key = os.environ["WEATHER_API"]
-        print(api_key)
         weather_controller = WeatherController(api_key)
-
         weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
-        print(weather_data)
+        """
 
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
@@ -44,7 +51,11 @@ class TyperLaunchAPI:
 
 
         scenerender.render_scene()
+        end_time = time.time()
+        total_time = end_time - start_time
+        print("Time taken to run:", total_time)
 
 
 if __name__ == "__main__":
     typer.run(TyperLaunchAPI.typer_interface)
+
