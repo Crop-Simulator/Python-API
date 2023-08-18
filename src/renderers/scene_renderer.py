@@ -1,7 +1,5 @@
 import os
 import bpy
-import random
-import math
 
 from controllers.segmentation import Segmentation, SegmentationColor, SegmentationClass
 from controllers.camera_controller import CameraController
@@ -30,7 +28,7 @@ class SceneRenderer:
             "hero_shot": (120, 0, 0),
             "low_angle": (135, 0, 0),
             "worms_eye": (150, 0, 0),
-            
+
         }
 
     def render_scene(self):
@@ -41,17 +39,16 @@ class SceneRenderer:
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
-        
-        counter = 0
+
 
         for i in range(self.num_images):
             distance = 10
-        
+
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
             current_file = self.output_file + str(i)
 
             # self.cameracon.new_update_camera(distance = distance, angle_rotation=(x,y,z))
-            
+
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x

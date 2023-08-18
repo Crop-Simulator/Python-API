@@ -27,7 +27,7 @@ class CameraController:
         return collection
 
     def update_camera(self, angle_rotation = (0, 0, 0), distance = 10.0, camera_angles = (0, 0, 0)):
-       
+
         # update camera rotation and distance around object
         camera_object = bpy.data.objects[self.camera_name]
         camera_direction = camera_object.location - mathutils.Vector(angle_rotation)
@@ -35,17 +35,17 @@ class CameraController:
 
         camera_object.rotation_euler = rotation.to_euler()
         camera_object.location = rotation @ mathutils.Vector((0,0, distance))
-        
+
         # update camera angles in place
-        camera_object.rotation_mode = 'XYZ'
-        
+        camera_object.rotation_mode = "XYZ"
+
         pi = math.pi
-        x = camera_angles[0] * pi / 180 
+        x = camera_angles[0] * pi / 180
         y = camera_angles[1] * pi / 180
         z = camera_angles[2] * pi / 180
-        
+
         scene = bpy.context.scene
         scene.camera.rotation_euler[0] = x
         scene.camera.rotation_euler[1] = y
         scene.camera.rotation_euler[2] = z
-        
+
