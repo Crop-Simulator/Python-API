@@ -1,6 +1,7 @@
 import os
 import bpy
 import random
+import math
 
 from controllers.segmentation import Segmentation, SegmentationColor, SegmentationClass
 from controllers.camera_controller import CameraController
@@ -9,7 +10,7 @@ from controllers.light_controller import LightController
 class SceneRenderer:
     def __init__(self, configs, collection):
         self.collection = collection
-        self.cameracon = CameraController("Photo Taker", (0,0,0), (1.57057,0.00174533,1.57057), self.collection)
+        self.cameracon = CameraController("Photo Taker", (0, 0, 0), (1.57057,0.00174533,1.57057), self.collection)
         self.lightcon = LightController()
         self.resolution_data = configs["resolution"]
         self.render_resolution_x = self.resolution_data["x"]
@@ -18,7 +19,19 @@ class SceneRenderer:
         self.num_images = self.output_configs["num_images"]
         self.directory = self.output_configs["directory"]
         self.output_file = self.output_configs["file_name"]
+        self.camera_angle = self.output_configs["camera_angle"]
         self.render_samples = 10
+        self.preset_camera_angles = {
+            "top_down": (0, 0, 0),
+            "birds_eye": (15, 0, 0),
+            "high_angle": (45, 0, 0),
+            "above_shot": (60, 0, 0),
+            "straight_on": (90, 0, 0),
+            "hero_shot": (120, 0, 0),
+            "low_angle": (135, 0, 0),
+            "worms_eye": (150, 0, 0),
+            
+        }
 
     def render_scene(self):
         print("rendering...")
@@ -28,15 +41,17 @@ class SceneRenderer:
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
+        
+        counter = 0
 
         for i in range(self.num_images):
-            x = random.randint(0, 1000)
-            y = random.randint(0, 1000)
-            z = random.randint(0, 1000)
-            distance = random.randint(5, 10)
-            self.cameracon.update_camera(distance = distance, angle_rotation=(x,y,z))
-
+            distance = 10
+        
+            self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
             current_file = self.output_file + str(i)
+
+            # self.cameracon.new_update_camera(distance = distance, angle_rotation=(x,y,z))
+            
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
