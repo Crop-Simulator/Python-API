@@ -15,9 +15,8 @@ class BlenderScriptTest(unittest.TestCase):
     expected_output_file = os.getcwd() + "/" + test_directory + "/" + test_output + "0.png"
     test_data = {
         "crop": {
-            "type": ["stage10", "stage9", "stage8"],
-            "size": [0.5, 0.8, 1.0],
-            "percentage_share": [0.2, 0.3, 0.5],
+            "type": ["barley"],
+            "percentage_share": [1.0],
             "total_number": 9,
             "num_rows": 2,
             "row_widths": 5,
@@ -37,7 +36,7 @@ class BlenderScriptTest(unittest.TestCase):
             "x": 512,
             "y": 512,
         },
-
+        "ground_type": "loam",
     }
 
     @classmethod

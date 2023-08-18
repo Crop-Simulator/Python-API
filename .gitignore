@@ -8,6 +8,7 @@ __pycache__
 
 # Unwanted images
 output_images/
+tmp/
 
 # Distribution / packaging 
 .Python build/ 

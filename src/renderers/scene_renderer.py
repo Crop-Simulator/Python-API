@@ -50,4 +50,5 @@ class SceneRenderer:
                 SegmentationClass.WEED.value: SegmentationColor.GRASS.value,
             })
             segmentation_filename = current_file.replace(".png", "_seg.png") if current_file.endswith(".png") else current_file + "_seg.png"
-            segmentation.segment(image_directory + "/" + segmentation_filename)
+            depth_map_filename = segmentation_filename.replace("_seg.png", "_depth.png")
+            segmentation.segment(os.path.join(image_directory, segmentation_filename), os.path.join(image_directory, depth_map_filename))
