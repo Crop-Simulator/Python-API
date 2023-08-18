@@ -47,7 +47,7 @@ class BlenderScriptTest(unittest.TestCase):
 
         # Execute the script with simulated command-line arguments
         root_dir =  Path(__file__).parent.parent
-        run(["poetry", "run", "python", "src/launch.py", cls.test_file], cwd = root_dir)
+        run(["poetry", "run", "python", "src/launch.py", cls.test_file], cwd = root_dir, check=True)
 
     @classmethod
     def tearDownClass(cls):
