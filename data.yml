@@ -1,10 +1,9 @@
 crop:
-  type: ["stage10", "stage7", "stage8"]
-  size: [0.5, 0.8]
-  percentage_share: [0.2, 0.2, 0.6]
+  type: ["barley"]
+  percentage_share: [1.0]
   total_number: 20
   num_rows: 2
-  row_widths: 2
+  row_widths: 5
   density: 1 #Crops per unit^2 -- Lower number == less dense
 
 planting_date: '2023-02-01'  
@@ -12,7 +11,7 @@ latitude: 35.6895
 longitude: 139.6917  
 barley_type: 'spring' #spring or winter
 
-generation_seed: 10
+generation_seed: 123
 
 output:
   num_images: 1
@@ -22,3 +21,10 @@ resolution:
   x: 512
   y: 512
 ground_type: "loam"
+
+growth_simulator:
+  days_per_stage: 30         # days needed for each growth stage
+  p_progression: 0.8         # probability of growth on given day
+  p_death: 0.1
+  growth_coefficient: 0.1    # importance of growth on previous day
+  gdd_coefficient: 1         # importance of gdd to growth

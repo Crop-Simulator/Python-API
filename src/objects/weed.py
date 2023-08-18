@@ -6,6 +6,7 @@ class Weed:
     def __init__(self):
         self.segmentation_id = SegmentationClass.WEED.value
         self.weed_object = self.get_weed_model()
+        self.name = self.weed_object.name
 
     def get_weed_model(self):
         bpy.context.active_object.name = "stage4.009"
