@@ -36,6 +36,7 @@ class CropController:
             "stage3": "stage3.009",
             "stage2": "stage2.009",
             "stage1": "stage1.009",
+            "ground": "stage9.ground",
         }
         try:
             self.generation_seed = config["generation_seed"]
