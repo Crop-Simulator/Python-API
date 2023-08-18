@@ -47,8 +47,6 @@ class SceneRenderer:
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
             current_file = self.output_file + str(i)
 
-            # self.cameracon.new_update_camera(distance = distance, angle_rotation=(x,y,z))
-
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
