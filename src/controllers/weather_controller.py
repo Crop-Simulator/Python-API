@@ -1,6 +1,5 @@
 import requests
 from datetime import datetime, timedelta
-import os
 import csv
 from io import StringIO
 
@@ -8,12 +7,13 @@ class WeatherController:
     HTTP_STATUS_OK = 200
     DATE_LENGTH = 10
     SUNNY_IRRADIANCE_THRESHOLD = 200
+    BASE_URL = "https://api.weather.com/v3"
 
     def __init__(self, api_key):
         self.api_key = api_key
 
     def get_historical_weather(self, start_date, end_date, lat, lon):
-        base_url = "https://api.weather.com/v3/wx/hod/r1/direct"
+        api_url = f"{self.BASE_URL}/wx/hod/r1/direct"
         params = {
             "apiKey": self.api_key,
             "startDateTime": f"{start_date}T00Z",
@@ -23,7 +23,7 @@ class WeatherController:
             "units": "e",
         }
 
-        response = requests.get(base_url, params=params)
+        response = requests.get(api_url, params=params)
         if response.status_code == self.HTTP_STATUS_OK:
             data = response.json()
             processed_data = []
@@ -38,7 +38,7 @@ class WeatherController:
             raise Exception(f"API request error with status code {response.status_code}")
 
     def get_irradiance(self, start_date, end_date, lat, lon):
-        base_url = "https://api.weather.com/v3/wx/observations/historical/analytical/ext"
+        api_url = f"{self.BASE_URL}/wx/observations/historical/analytical/ext"
         params = {
             "apiKey": self.api_key,
             "startDate": start_date.replace("-", ""),
@@ -49,14 +49,13 @@ class WeatherController:
             "productId": "GlobalHorizontalIrradiance",
             "language": "en-US",
         }
-        response = requests.get(base_url, params=params)
+        response = requests.get(api_url, params=params)
         if response.status_code == self.HTTP_STATUS_OK:
             csv_reader = csv.DictReader(StringIO(response.text))
             data = [row for row in csv_reader]
             return data
         else:
-            print("Error Response:", response.text)
-            raise Exception(f"API request error with status code {response.status_code}")
+            raise Exception(f"API request error with status code {response.status_code}. Response: {response.text}")
 
 
     def extract_evapotranspiration_data(self, data):
@@ -155,9 +154,10 @@ class WeatherController:
 
     def get_merged_weather_data(self, barley_type, start_date, lat, lon):
         if barley_type == "spring":
-            end_date = (datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=180)).strftime("%Y-%m-%d")
+            period = 180
         elif barley_type == "winter":
-            end_date = (datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=270)).strftime("%Y-%m-%d")
+            period = 270
+        end_date = (datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=period)).strftime("%Y-%m-%d")
         weather_data = self.get_weather_for_growth_period(barley_type, start_date, lat, lon)
         daily_weather_data = self.extract_daily_data(weather_data)
 
@@ -167,8 +167,4 @@ class WeatherController:
         return self.merge_data_based_on_date(daily_weather_data, daily_et_data)
 
 
-api_key = os.environ["WEATHER_API"]
-weather_controller = WeatherController(api_key)
-merged_data = weather_controller.get_merged_weather_data("winter", "2023-02-01", 42.0, -89.5)
-print(merged_data)
 

@@ -36,8 +36,7 @@ class TyperLaunchAPI:
         barley_type = config["barley_type"]
         api_key = os.environ["WEATHER_API"]
         weather_controller = WeatherController(api_key)
-        weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
-        print(weather_data)
+        weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
 
 
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
