@@ -1,33 +1,47 @@
-import bpy
+import bpy, bmesh
 from mathutils import Vector
+from collections import defaultdict
 
 
 from src.controllers.segmentation import SegmentationClass
+from .object_manager import ObjectManager
 
 class Barley:
     def __init__(self, stage, health):
         self.GDD_PER_STAGE = 139
-
+        self.counter = 0
         self.stage = stage
         self.health = health
-        self.growth_stage = ["stage0.009", "stage1.009", "stage2.009", "stage3.009", "stage4.009",
-                             "stage5.009", "stage6.009", "stage7.009","stage8.009",
-                             "stage9.009", "stage10.009"]
+        self.growth_stage = ["stage0", "stage1", "stage2", "stage3", "stage4",
+                             "stage5", "stage6", "stage7","stage8",
+                             "stage9", "stage10"]
         self.active_weeds = []
         self.crop_type = SegmentationClass.PLANT.value
         self.barley_object = self.set_model_stage(self.stage)
-        self.name = self.barley_object.name
+        # self.name = self.barley_object.name
 
     def set_model_stage(self, stage):
-        bpy.context.active_object.name = self.growth_stage[stage]
-        duplicate = bpy.context.scene.objects.get(self.growth_stage[stage])
-        barley_stage = duplicate.copy()
-        barley_stage.data = duplicate.data.copy()
-        barley_stage["segmentation_id"] = self.crop_type
-        return barley_stage
+        # set collection as active collection
+
+        collection = bpy.context.view_layer.layer_collection.children[self.growth_stage[stage]]
+        bpy.context.view_layer.active_layer_collection = collection
+        self.counter += 1
+        
+        object_manager = ObjectManager()
+                    
+        context = bpy.context
+        object_manager.copy(context.scene.collection, context.collection)
+        
+        for collection in bpy.data.collections:
+            print(collection.name)
+            
+        for obj in bpy.data.collections[self.growth_stage[stage]].objects:
+            if ".skeleton" in obj.name:
+                return obj
 
     def set_location(self, location):
         self.barley_object.location = location
+
 
     def get_location(self):
         return self.barley_object.location

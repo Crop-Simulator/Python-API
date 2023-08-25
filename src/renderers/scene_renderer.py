@@ -9,7 +9,7 @@ from controllers.light_controller import LightController
 class SceneRenderer:
     def __init__(self, configs, collection):
         self.collection = collection
-        self.cameracon = CameraController("Photo Taker", (0,0,0), (1.57057,0.00174533,1.57057), self.collection)
+        self.cameracon = CameraController("Photo Taker", (10,1,0), (1.57057,0.00174533,1.57057), self.collection)
         self.lightcon = LightController()
         self.resolution_data = configs["resolution"]
         self.render_resolution_x = self.resolution_data["x"]
@@ -24,7 +24,6 @@ class SceneRenderer:
         print("rendering...")
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/" + self.directory
-        bpy.data.collections[self.collection]
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
@@ -33,7 +32,7 @@ class SceneRenderer:
             x = random.randint(0, 1000)
             y = random.randint(0, 1000)
             z = random.randint(0, 1000)
-            distance = random.randint(5, 10)
+            distance = 100
             self.cameracon.update_camera(distance = distance, angle_rotation=(x,y,z))
 
             current_file = self.output_file + str(i)
