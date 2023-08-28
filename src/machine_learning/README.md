@@ -1,11 +1,14 @@
 # Machine Learning Connector
 
-## Connector
+## Getting Started
 
-Run the connector with the following command:
+First, make sure that the StableDiffusion API is up and running. Checkout the [README](../../docker/README.md) for more information.
+
+The machine learning pipeline has a filesystem watcher that watches for the output from the Blender pipeline. New outputs are automatically processed by the machine learning pipeline.
+From the project root directory, run the following command to start the watcher:
 
 ```sh
-python -m src.machine_learning.connector # running from the project root directory
+poetry run python -m src.machine_learning.watcher
 ```
 
-It talks to the stable-diffusion-webui API and outputs images in the working directory.
+StableDiffusion image outputs are stored in the working directory.
