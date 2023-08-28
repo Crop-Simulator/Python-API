@@ -35,16 +35,16 @@ class MyHandler(FileSystemEventHandler):
     def handle_new_image_pair(self, img_path, seg_path, depth_file):
         # Read images and call handler function here
         print(f"Handling image pair: {img_path}, {seg_path}, {depth_file}")
-        with open(img_path, "rb") as _img_file, open(seg_path, "rb") as seg_file:
+        with open(seg_path, "rb") as seg_file:
             seg_file.seek(0)
             image_name = os.path.basename(img_path).replace(".png", "")
-            _encoded_img = base64.b64encode(_img_file.read()).decode("utf-8")
-            encoded_seg = base64.b64encode(seg_file.read()).decode("utf-8")
+            encoded_img = encode_png(img_path)
+            encoded_seg = encode_png(seg_path)
             encoded_depth = encode_png(depth_file)
             url = os.environ.get("SD_API_URL", "http://localhost:7860")
-            text_prompt = "best quality, 4k, 8k, ultra highres, raw photo in hdr,\
-            sharp focus, intricate texture, skin imperfections, photograph of wheat,\
-            crop field, soil, sunlight, photo, photorealistic, spring, sprouting"
+            text_prompt = "best quality, 4k, 8k, ultra highres, raw photo\
+            sharp focus, intricate texture, skin imperfections, photograph of barley with weed,\
+            crop field, soil, sunlight, photo, photorealistic"
             disable_controlnet = os.environ.get("DISABLE_CONTROLNET", "false").lower() == "true"
             width = int(os.environ.get("WIDTH", "512"))
             height = int(os.environ.get("HEIGHT", "512"))
@@ -55,7 +55,8 @@ class MyHandler(FileSystemEventHandler):
                                 "disable_controlnet": disable_controlnet,
                                 "segmentation_mask": encoded_seg,
                                 "depth_mask": encoded_depth,
-                            })
+                            },
+                            input_image=encoded_img)
 
             print(f"Generated {len(images)} images")
             # Save the generated images to disk
