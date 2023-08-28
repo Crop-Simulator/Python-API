@@ -33,7 +33,7 @@ class SceneRenderer:
             x = random.randint(0, 1000)
             y = random.randint(0, 1000)
             z = random.randint(0, 1000)
-            distance = random.randint(5, 10)
+            distance = 5
             self.cameracon.update_camera(distance = distance, angle_rotation=(x,y,z))
 
             current_file = self.output_file + str(i)
