@@ -17,6 +17,7 @@ output:
   num_images: 1
   directory: 'output_images'
   file_name: 'barley'
+  camera_angle: 'birds_eye'
 resolution: 
   x: 512
   y: 512
