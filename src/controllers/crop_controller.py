@@ -22,6 +22,11 @@ class CropController:
         self.row_widths = self.crop_data["row_widths"]
         self.all_crops = []
         self.all_plants = []
+        self.crop_health = {
+            "Healthy": (0.2, 0.8, 0.2, 1),  # Green in RGBA
+            "Unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
+            "Dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
+        }
         self.weed_spacing = 0.2  # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
@@ -86,6 +91,10 @@ class CropController:
                     curr_crop_type += 1
 
             crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
+            health_status = "Dead"
+            # health_status = random.choice(["Healthy", "Unhealthy", "Dead"])
+            self.set_crop_health(crop_model, health_status)
+
             self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
 
@@ -96,6 +105,21 @@ class CropController:
                 location[0] += self.row_widths / self.crop_data["density"]
             curr_crop += 1
             curr_row += 1
+
+    def set_crop_health(self, crop_object, health_status):
+        color = self.crop_health[health_status]
+
+        # Create a new material
+        material = bpy.data.materials.new(name=f"{health_status}_Material")
+        material.diffuse_color = color
+
+        # Assign it to object
+        if crop_object.barley_object.data.materials:
+            # assign to 1st material slot
+            crop_object.barley_object.data.materials[0] = material
+        else:
+            # no slots
+           crop_object.barley_object.data.materials.append(material)
 
     def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)

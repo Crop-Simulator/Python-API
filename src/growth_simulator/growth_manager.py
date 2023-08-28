@@ -1,6 +1,10 @@
 import numpy as np
 
 class GrowthManager():
+    IRRADIANCE_THRESHOLD = 250
+    LOW_IRRADIANCE_DAYS_LIMIT = 5
+    PRECIPITATION_THRESHOLD = 0.48
+
     def __init__(self, config, model, days_per_stage):
         self.GDD_PER_STAGE = 139
         self.stage = 0
@@ -13,6 +17,13 @@ class GrowthManager():
         self.config = config["growth_simulator"]
         self.p_progression = self.config["p_progression"]
         self.days_per_stage = self.config["days_per_stage"]
+        self.weather_data = []
+        self.status = "healthy"
+        self.days_low_irradiance = 0
+        self.days_total_precipitation = 0
+
+    def set_weather_data(self, data):
+        self.weather_data = data
 
     def growth_degree_days(self, t_max, t_min):
         # barley varieties required an average accumulation of 139 GDD
@@ -31,3 +42,20 @@ class GrowthManager():
         if self.gdd >= self.GDD_PER_STAGE:
             self.stage += 1
             self.set_model_stage(self.stage)
+
+    def evaluate_plant_health(self, weather_data):
+        for day in weather_data:
+            if day["irradiance"] < self.IRRADIANCE_THRESHOLD:
+                self.days_low_irradiance += 1
+            else:
+                self.days_low_irradiance = 0
+
+            self.days_total_precipitation += day["precipitation"]
+
+            if self.days_low_irradiance >= self.LOW_IRRADIANCE_DAYS_LIMIT:
+                self.status = "unhealthy"
+
+            if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD:
+                self.status = "dead"
+
+        return self.status
