@@ -25,18 +25,19 @@ class CropController:
         self.weed_spacing = 0.2  # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
-            "stage10": "stage10.009",
-            "stage9": "stage9.009",
-            "stage8": "stage8.009",
-            "stage7": "stage7.009",
-            "stage6": "stage6.009",
-            "stage5": "stage5.009",
-            "stage4": "stage4.009",
-            "stage3": "stage3.009",
-            "stage2": "stage2.009",
-            "stage1": "stage1.009",
-            "stage0" : "stage0.009",
-            "ground" : "stage0.ground"
+            "stage10": "stage10.stand",
+            "stage9": "stage9.stand",
+            "stage8": "stage8.stand",
+            "stage7": "stage7.stand",
+            "stage6": "stage6.stand",
+            "stage5": "stage5.stand",
+            "stage4": "stage4.stand",
+            "stage3": "stage3.stand",
+            "stage2": "stage2.stand",
+            "stage1": "stage1.stand",
+            "stage0" : "stage0.stand",
+            "ground" : "ground",
+            "weed" : "weed"
         }
         try:
             self.generation_seed = config["generation_seed"]
@@ -106,8 +107,8 @@ class CropController:
     def add_crop(self, crop_type, loc):
         crop = None
         if crop_type == "barley":
-            crop = Barley(5, "healthy")
-            crop2 = Barley(0, "healthy")
+            crop = Barley(7, "healthy")
+            crop2 = Barley(3, "healthy")
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])
