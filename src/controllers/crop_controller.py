@@ -22,7 +22,7 @@ class CropController:
         self.row_widths = self.crop_data["row_widths"]
         self.all_crops = []
         self.all_plants = []
-        self.weed_spacing = 0.2  # The bounding area value in for spacing between weed and crop
+        self.weed_spacing = 1 # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
             "stage10": "stage10.stand",
@@ -51,9 +51,6 @@ class CropController:
                 obj.select_set(True)
         bpy.ops.object.delete()
 
-        lightcon = LightController()
-        lightcon.add_light()
-
         groundcon = GroundController(self.config)
         groundcon.get_ground_stages()
 
@@ -64,6 +61,7 @@ class CropController:
             if obj.name in self.growth_stage.values():
                 target = collection.objects.get(obj.name)
                 collection.objects.unlink(target)
+            
 
     def setup_crop_positions(self):
         curr_row = 0
@@ -108,20 +106,20 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(7, "healthy")
-            crop2 = Barley(3, "healthy")
+            # crop2 = Barley(9, "healthy")
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])
-        crop2.set_location([loc[0], loc[1], loc[2]])
+        # crop2.set_location([loc[0], loc[1], loc[2]])
         self.counter += 1
         bpy.context.collection.objects.link(crop.barley_object)
-        bpy.context.collection.objects.link(crop2.barley_object)
+        # bpy.context.collection.objects.link(crop2.barley_object)
         self.all_crops.append(crop) # add crop objects to manipulate later
         self.all_plants.append(crop)
         return crop
 
     def add_weed(self, loc):
-        if bool(random.getrandbits(1)):
+        if bool(random.getrandbits(1)): 
             weed = Weed()
             loc[0] = loc[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
             loc[1] = loc[1] - random.uniform(-self.weed_spacing, self.weed_spacing)
