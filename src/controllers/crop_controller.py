@@ -1,11 +1,13 @@
 import random
 import bpy
+import os
 
 from .light_controller import LightController
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
-
+from src.growth_simulator.growth_manager import GrowthManager
+from src.controllers.weather_controller import WeatherController
 
 class CropController:
 
@@ -20,13 +22,10 @@ class CropController:
         self.number_of_crops = self.crop_data["total_number"]
         self.number_of_rows = self.crop_data["num_rows"]
         self.row_widths = self.crop_data["row_widths"]
+        self.growth_simulator = config["growth_simulator"]
+        self.days_per_stage = self.growth_simulator["days_per_stage"]
         self.all_crops = []
         self.all_plants = []
-        self.crop_health = {
-            "Healthy": (0.2, 0.8, 0.2, 1),  # Green in RGBA
-            "Unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
-            "Dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
-        }
         self.weed_spacing = 0.2  # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
@@ -91,10 +90,6 @@ class CropController:
                     curr_crop_type += 1
 
             crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
-            health_status = "Dead"
-            # health_status = random.choice(["Healthy", "Unhealthy", "Dead"])
-            self.set_crop_health(crop_model, health_status)
-
             self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
 
@@ -106,21 +101,6 @@ class CropController:
             curr_crop += 1
             curr_row += 1
 
-    def set_crop_health(self, crop_object, health_status):
-        color = self.crop_health[health_status]
-
-        # Create a new material
-        material = bpy.data.materials.new(name=f"{health_status}_Material")
-        material.diffuse_color = color
-
-        # Assign it to object
-        if crop_object.barley_object.data.materials:
-            # assign to 1st material slot
-            crop_object.barley_object.data.materials[0] = material
-        else:
-            # no slots
-           crop_object.barley_object.data.materials.append(material)
-
     def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)
 
@@ -128,6 +108,16 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(7, "healthy")
+            growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
+            planting_date = self.config["planting_date"]
+            lat = self.config["latitude"]
+            lon = self.config["longitude"]
+            barley_type = self.config["barley_type"]
+            api_key = os.environ["WEATHER_API"]
+            weather_controller = WeatherController(api_key)
+            weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
+            health_status = growth_manager.evaluate_plant_health(weather_data)
+            crop.set_color(self.crop_health[health_status])
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])
