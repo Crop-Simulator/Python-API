@@ -30,7 +30,7 @@ class CropControllerTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        bpy.ops.wm.read_homefile()
+        bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
 
     @classmethod
     def tearDownClass(cls):
@@ -38,7 +38,7 @@ class CropControllerTest(unittest.TestCase):
         os.remove(cls.test_file)
 
     def setUp(self):
-        bpy.ops.wm.read_homefile()
+        bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         # Create test data YAML file
         with open(self.test_file, "w") as file:
             yaml.safe_dump(self.test_data, file)

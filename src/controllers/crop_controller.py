@@ -1,7 +1,6 @@
 import random
 import bpy
 
-from .light_controller import LightController
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
@@ -37,7 +36,7 @@ class CropController:
             "stage1": "stage1.stand",
             "stage0" : "stage0.stand",
             "ground" : "ground",
-            "weed" : "weed"
+            "weed" : "weed",
         }
         try:
             self.generation_seed = config["generation_seed"]
@@ -61,7 +60,7 @@ class CropController:
             if obj.name in self.growth_stage.values():
                 target = collection.objects.get(obj.name)
                 collection.objects.unlink(target)
-            
+
 
     def setup_crop_positions(self):
         curr_row = 0
@@ -84,7 +83,7 @@ class CropController:
                 curr_crop = 0
                 if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
-                    
+
             stage = crop % 10
 
             crop_model = self.add_crop(self.crop_type[curr_crop_type], location, stage)
@@ -120,7 +119,7 @@ class CropController:
         return crop
 
     def add_weed(self, loc):
-        if bool(random.getrandbits(1)): 
+        if bool(random.getrandbits(1)):
             weed = Weed()
             loc[0] = loc[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
             loc[1] = loc[1] - random.uniform(-self.weed_spacing, self.weed_spacing)
