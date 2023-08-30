@@ -28,7 +28,7 @@ class TyperLaunchAPI:
     @staticmethod
     def launch(config):
 
-        start_time = time.time()  
+        start_time = time.time()
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
         # Set the unit system to metric

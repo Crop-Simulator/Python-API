@@ -27,16 +27,16 @@ class CropControllerTest(unittest.TestCase):
         },
         "ground_type": "loam",
         "growth_simulator": {
-            "days_per_stage": 30,         
-            "p_progression": 0.8,   
+            "days_per_stage": 30,
+            "p_progression": 0.8,
             "p_death": 0.1,
             "growth_coefficient": 0.1,
-            "gdd_coefficient": 1    
+            "gdd_coefficient": 1,
         },
         "planting_date": "2023-02-01",
-        "latitude": 35.6895, 
+        "latitude": 35.6895,
         "longitude": 139.6917,
-        "barley_type": "spring" 
+        "barley_type": "spring",
     }
 
     @classmethod

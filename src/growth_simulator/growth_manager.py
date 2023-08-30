@@ -41,7 +41,6 @@ class GrowthManager():
     def progress_stage(self):
         if self.gdd >= self.GDD_PER_STAGE:
             self.stage += 1
-            self.stage = stage
             self.model.set_model_stage(self.stage)
 
     def evaluate_plant_health(self, weather_data):

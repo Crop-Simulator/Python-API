@@ -1,7 +1,6 @@
 import random
 import bpy
 import os
-from .light_controller import LightController
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
