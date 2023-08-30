@@ -10,7 +10,7 @@ class Barley:
 
         self.stage = stage
         self.health = health
-        self.growth_stage = ["weed", "stage1.stand", "stage2.stand", "stage3.stand", "stage4.stand",
+        self.growth_stage = ["stage0.stand", "stage1.stand", "stage2.stand", "stage3.stand", "stage4.stand",
                              "stage5.stand", "stage6.stand", "stage7.stand","stage8.stand",
                              "stage9.stand", "stage10.stand"]
         self.active_weeds = []
