@@ -106,14 +106,11 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(stage, "healthy")
-            # crop2 = Barley(9, "healthy")
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])
-        # crop2.set_location([loc[0], loc[1], loc[2]])
         self.counter += 1
         bpy.context.collection.objects.link(crop.barley_object)
-        # bpy.context.collection.objects.link(crop2.barley_object)
         self.all_crops.append(crop) # add crop objects to manipulate later
         self.all_plants.append(crop)
         return crop
