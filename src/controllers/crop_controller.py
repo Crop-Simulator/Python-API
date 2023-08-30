@@ -85,8 +85,9 @@ class CropController:
                 if not curr_crop_type >= len(self.crop_type) - 1:
                     curr_crop_type += 1
                     
+            stage = crop % 10
 
-            crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
+            crop_model = self.add_crop(self.crop_type[curr_crop_type], location, stage)
             self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
 
@@ -102,10 +103,10 @@ class CropController:
     def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)
 
-    def add_crop(self, crop_type, loc):
+    def add_crop(self, crop_type, loc, stage):
         crop = None
         if crop_type == "barley":
-            crop = Barley(7, "healthy")
+            crop = Barley(stage, "healthy")
             # crop2 = Barley(9, "healthy")
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)

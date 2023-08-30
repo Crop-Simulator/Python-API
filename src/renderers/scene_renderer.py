@@ -8,7 +8,7 @@ from controllers.light_controller import LightController
 class SceneRenderer:
     def __init__(self, configs, collection):
         self.collection = collection
-        self.cameracon = CameraController("Photo Taker", (2, 0, 0), (1.57057,0.00174533,1.57057), self.collection)
+        self.cameracon = CameraController("Photo Taker", (0, 0, 0), (1.57057,0.00174533,1.57057), self.collection)
         self.lightcon = LightController()
         self.resolution_data = configs["resolution"]
         self.render_resolution_x = self.resolution_data["x"]
