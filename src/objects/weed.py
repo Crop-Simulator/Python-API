@@ -9,7 +9,6 @@ class Weed:
         self.name = self.weed_object.name
 
     def get_weed_model(self):
-        bpy.context.active_object.name = "stage4.009"
         weed = bpy.context.scene.objects.get("stage4.009")
         weed_model = weed.copy()
         weed_model.data = weed.data.copy()

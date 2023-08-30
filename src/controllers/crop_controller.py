@@ -1,7 +1,6 @@
 import random
 import bpy
 
-from .light_controller import LightController
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
@@ -48,9 +47,6 @@ class CropController:
             if obj.name not in self.growth_stage.values():
                 obj.select_set(True)
         bpy.ops.object.delete()
-
-        lightcon = LightController()
-        lightcon.add_light()
 
         groundcon = GroundController(self.config)
         groundcon.get_ground_stages()

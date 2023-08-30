@@ -19,7 +19,6 @@ class Barley:
         self.name = self.barley_object.name
 
     def set_model_stage(self, stage):
-        bpy.context.active_object.name = self.growth_stage[stage]
         duplicate = bpy.context.scene.objects.get(self.growth_stage[stage])
         barley_stage = duplicate.copy()
         barley_stage.data = duplicate.data.copy()
