@@ -28,7 +28,7 @@ class GroundController:
             raise ValueError(f"Unknown ground type {self.ground_type}")
 
     def get_ground_stages(self):
-        ground_stages = [obj for obj in bpy.data.objects if obj.name.startswith("stage") and obj.name.endswith(".ground")]
+        ground_stages = [obj for obj in bpy.data.objects if obj.name == "ground"]
         # ground_size = self.total_number/self.num_rows*self.row_widths
         for obj in ground_stages:
             self.collection.objects.link(obj)

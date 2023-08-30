@@ -10,9 +10,9 @@ class Barley:
 
         self.stage = stage
         self.health = health
-        self.growth_stage = ["stage0.009", "stage1.009", "stage2.009", "stage3.009", "stage4.009",
-                             "stage5.009", "stage6.009", "stage7.009","stage8.009",
-                             "stage9.009", "stage10.009"]
+        self.growth_stage = ["stage0.stand", "stage1.stand", "stage2.stand", "stage3.stand", "stage4.stand",
+                             "stage5.stand", "stage6.stand", "stage7.stand","stage8.stand",
+                             "stage9.stand", "stage10.stand"]
         self.active_weeds = []
         self.crop_type = SegmentationClass.PLANT.value
         self.barley_object = self.set_model_stage(self.stage)

@@ -42,7 +42,7 @@ class SceneRenderer:
 
 
         for i in range(self.num_images):
-            distance = 10
+            distance = 20
 
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
             current_file = self.output_file + str(i)

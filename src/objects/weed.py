@@ -9,7 +9,7 @@ class Weed:
         self.name = self.weed_object.name
 
     def get_weed_model(self):
-        weed = bpy.context.scene.objects.get("stage4.009")
+        weed = bpy.context.scene.objects.get("weed")
         weed_model = weed.copy()
         weed_model.data = weed.data.copy()
         weed_model["segmentation_id"] = self.segmentation_id

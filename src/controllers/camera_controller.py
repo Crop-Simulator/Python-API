@@ -26,7 +26,7 @@ class CameraController:
         scene.camera = bpy.context.object
         return collection
 
-    def update_camera(self, angle_rotation = (0, 0, 0), distance = 10.0, camera_angles = (0, 0, 0)):
+    def update_camera(self, angle_rotation = (0, -2, 0), distance = 10.0, camera_angles = (0, 0, 0)):
 
         # update camera rotation and distance around object
         camera_object = bpy.data.objects[self.camera_name]
