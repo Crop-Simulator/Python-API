@@ -45,17 +45,18 @@ class GrowthManager():
 
     def evaluate_plant_health(self, weather_data):
         for day in weather_data:
-            if day["irradiance"] < self.IRRADIANCE_THRESHOLD:
+            if day["irradiance"] < IRRADIANCE_THRESHOLD:
                 self.days_low_irradiance += 1
             else:
                 self.days_low_irradiance = 0
 
             self.days_total_precipitation += day["precipitation"]
 
-            if self.days_low_irradiance >= self.LOW_IRRADIANCE_DAYS_LIMIT:
+            if self.days_low_irradiance >= LOW_IRRADIANCE_DAYS_LIMIT:
                 self.status = "unhealthy"
 
-            if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD:
+            if self.days_total_precipitation < PRECIPITATION_THRESHOLD:
                 self.status = "dead"
-
+            print(self.status)
         return self.status
+

@@ -62,3 +62,11 @@ class Barley:
         crop_height = max_y - min_y
 
         return crop_height
+    
+    def set_color(self, color_tuple):
+        if self.barley_object.material_slots:
+            self.barley_object.material_slots[0].material.diffuse_color = color_tuple
+        else:
+            material = bpy.data.materials.new(name="Barley_Material")
+            material.diffuse_color = color_tuple
+            self.barley_object.data.materials.append(material)
