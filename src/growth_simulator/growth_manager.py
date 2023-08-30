@@ -10,7 +10,7 @@ class GrowthManager():
         self.stage = 0
         self.gdd = 0
         self.model = model
-        self.model_stage = self.set_model_stage(self.stage)
+        self.model_stage = self.model.set_model_stage(self.stage)
         self.name = self.model_stage.name
         self.days_per_stage = days_per_stage    # expected number of days per stage
         self.probability_of_success = 0.8       # probability of success on day for that stage
@@ -41,21 +41,23 @@ class GrowthManager():
     def progress_stage(self):
         if self.gdd >= self.GDD_PER_STAGE:
             self.stage += 1
-            self.set_model_stage(self.stage)
+            self.stage = stage
+            self.model.set_model_stage(self.stage)
 
     def evaluate_plant_health(self, weather_data):
         for day in weather_data:
-            if day["irradiance"] < self.IRRADIANCE_THRESHOLD:
+            if int(float(day["irradiance"])) < self.IRRADIANCE_THRESHOLD:
                 self.days_low_irradiance += 1
             else:
                 self.days_low_irradiance = 0
 
-            self.days_total_precipitation += day["precipitation"]
+            self.days_total_precipitation += int(float(day["precipitation"]))
 
             if self.days_low_irradiance >= self.LOW_IRRADIANCE_DAYS_LIMIT:
                 self.status = "unhealthy"
-
+                return self.status
             if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD:
                 self.status = "dead"
+                return self.status
         return self.status
 

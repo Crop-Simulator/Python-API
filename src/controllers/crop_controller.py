@@ -25,6 +25,11 @@ class CropController:
         self.days_per_stage = self.growth_simulator["days_per_stage"]
         self.all_crops = []
         self.all_plants = []
+        self.crop_health = {
+            "healthy": (0.2, 0.8, 0.2, 1),  # Green in RGBA
+            "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
+            "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
+        }
         self.weed_spacing = 0.2  # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
@@ -106,7 +111,7 @@ class CropController:
     def add_crop(self, crop_type, loc):
         crop = None
         if crop_type == "barley":
-            crop = Barley(7, "healthy")
+            crop = Barley(8, "healthy")
             growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
             planting_date = self.config["planting_date"]
             lat = self.config["latitude"]
@@ -116,6 +121,7 @@ class CropController:
             weather_controller = WeatherController(api_key)
             weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
             health_status = growth_manager.evaluate_plant_health(weather_data)
+            print(health_status)
             crop.set_color(self.crop_health[health_status])
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
