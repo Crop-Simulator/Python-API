@@ -26,6 +26,8 @@ class BlenderScriptTest(unittest.TestCase):
             "num_images": 1,
             "directory" : test_directory,
             "file_name": test_output,
+            "camera_angle": "top_down",
+
         },
         "planting_date": "2023-02-01",
         "latitude": 35.6895,
@@ -62,6 +64,7 @@ class BlenderScriptTest(unittest.TestCase):
         os.remove(cls.test_file)
         os.remove(cls.expected_output_file)
         os.remove("tests/expected_output0_seg.png")
+        os.remove("tests/expected_output0_depth.png")
 
     def test_unit_system_metric(self):
         # Check if the unit system is now set to metric
