@@ -30,7 +30,7 @@ class CropControllerTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        bpy.ops.wm.read_homefile()
+        bpy.ops.wm.read_homefile(filepath="src/blender_assets/CropAssets.blend")
 
     @classmethod
     def tearDownClass(cls):
@@ -38,7 +38,7 @@ class CropControllerTest(unittest.TestCase):
         os.remove(cls.test_file)
 
     def setUp(self):
-        bpy.ops.wm.read_homefile()
+        bpy.ops.wm.read_homefile(filepath="src/blender_assets/CropAssets.blend")
         # Create test data YAML file
         with open(self.test_file, "w") as file:
             yaml.safe_dump(self.test_data, file)
@@ -52,14 +52,12 @@ class CropControllerTest(unittest.TestCase):
         self.expected_material_name = ["stage1", "stage2", "stage3", "stage4", "stage5",
                                        "stage6", "stage7", "stage8", "stage9", "stage10"]
 
-
     def test_add_weed_within_effect_area(self):
         test_controller = CropController(self.input_data, self.collection)
         test_controller.setup_crops()
         for crops in test_controller.all_crops:
             self.expected_weed_list.append(crops.get_weeds())
         self.assertTrue(any(self.expected_weed_list))
-
 
 
 if __name__ == "__main__":

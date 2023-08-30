@@ -57,6 +57,7 @@ class BlenderScriptTest(unittest.TestCase):
         os.remove(cls.test_file)
         os.remove(cls.expected_output_file)
         os.remove("tests/expected_output0_seg.png")
+        os.remove("tests/expected_output0_depth.png")
 
     def test_unit_system_metric(self):
         # Check if the unit system is now set to metric
