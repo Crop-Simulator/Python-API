@@ -10,6 +10,7 @@ class SegmentationClass(enum.Enum):
     BACKGROUND = 0
     PLANT = 1
     WEED = 2
+    SOIL = 3
 
 
 class SegmentationColor(enum.Enum):
