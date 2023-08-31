@@ -3,7 +3,7 @@ import bpy
 import mathutils
 
 from src.utils import get_project_root
-from controllers.segmentation import SegmentationClass
+from src.controllers.segmentation import SegmentationClass
 
 
 class GroundController:
