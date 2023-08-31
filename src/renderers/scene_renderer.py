@@ -4,6 +4,8 @@ import bpy
 from controllers.segmentation import Segmentation, SegmentationColor, SegmentationClass
 from controllers.camera_controller import CameraController
 from controllers.light_controller import LightController
+from src.machine_learning.text_prompt_manager import TextPromptManager
+from src.machine_learning.text_prompt_definition import camera_angle_interpret
 
 class SceneRenderer:
     def __init__(self, configs, collection):
@@ -31,7 +33,7 @@ class SceneRenderer:
 
         }
 
-    def render_scene(self):
+    def render_scene(self, text_prompt_manager: TextPromptManager):
         print("rendering...")
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/" + self.directory
@@ -45,6 +47,7 @@ class SceneRenderer:
             distance = 20
 
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
+            text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
             current_file = self.output_file + str(i)
 
 
