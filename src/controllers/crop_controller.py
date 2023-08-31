@@ -4,6 +4,8 @@ import bpy
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
+from src.machine_learning.text_prompt_manager import TextPromptManager
+from src.machine_learning.text_prompt_definition import CropType, SoilType
 
 
 class CropController:
@@ -135,3 +137,13 @@ class CropController:
                     crop.get_location()[1] + self.weed_effect_area < weed.get_location()[1] >
                     crop.get_location()[1] - self.weed_effect_area):
                 crop.add_weed(weed)
+
+    def update_text_prompt_manager(self, manager: TextPromptManager):
+
+        for crop in CropType:
+            if str(crop) == self.crop_type[0]:
+                manager.crop_type = crop
+
+        for soil in SoilType:
+            if str(soil) == self.config["ground_type"]:
+                manager.soil_type = soil

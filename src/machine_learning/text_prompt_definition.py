@@ -15,8 +15,7 @@ class Weather(Enum):
 
 
 class CropType(Enum):
-    SPRING_BARLEY = auto()
-    WINTER_BARLEY = auto()
+    BARLEY = auto()
 
     def __str__(self):
         return self.name.replace('_', ' ').lower()

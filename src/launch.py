@@ -51,6 +51,8 @@ class TyperLaunchAPI:
         scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
 
+        cropcon.update_text_prompt_manager(text_prompt_manager)
+
 
         scenerender.render_scene()
         end_time = time.time()

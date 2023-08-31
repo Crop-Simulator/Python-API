@@ -1,4 +1,4 @@
-from text_prompt_definition import Weather, CropType, WeedType, SoilType, CameraAngle, camera_angle_interpret
+from .text_prompt_definition import Weather, CropType, WeedType, SoilType, CameraAngle, camera_angle_interpret
 
 
 class TextPromptManager:
