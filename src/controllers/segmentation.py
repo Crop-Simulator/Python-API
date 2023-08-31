@@ -40,8 +40,11 @@ class Segmentation:
         rendered_data = self._render_segmentation()
         segmentation = rendered_data["inst"]
         raw_depth_map = rendered_data["depth"]
+        raw_depth_map = np.uint16(raw_depth_map * 1000)
         depth_max = raw_depth_map.max()
-        normalized_depth_map = np.uint16(raw_depth_map / depth_max * 65535)
+        normalized_depth_map = raw_depth_map
+        # keep 0s, and map max depths to min values
+        normalized_depth_map = (raw_depth_map > 0) * (-raw_depth_map + depth_max)
         if output_seg_map_file is not None:
             self._write_img(segmentation, output_seg_map_file)
         if output_depth_map_file is not None:

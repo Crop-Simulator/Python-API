@@ -8,6 +8,7 @@ import os
 from src.controllers.crop_controller import CropController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
+from src.controllers.weather_controller import WeatherController
 from src.machine_learning.text_prompt_manager import TextPromptManager
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,16 +33,14 @@ class TyperLaunchAPI:
         text_prompt_manager = TextPromptManager()
 
         start_time = time.time()
-        """"
-        Commented out while we wait for IBM's API key Tests also need to be written
         planting_date = config["planting_date"]
         lat = config["latitude"]
         lon = config["longitude"]
         barley_type = config["barley_type"]
         api_key = os.environ["WEATHER_API"]
         weather_controller = WeatherController(api_key)
-        weather_data = weather_controller.get_weather_for_growth_period(barley_type, planting_date, lat, lon)
-        """
+        weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
+
 
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"

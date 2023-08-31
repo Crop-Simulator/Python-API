@@ -1,8 +1,8 @@
 crop:
   type: ["barley"]
   percentage_share: [1.0]
-  total_number: 20
-  num_rows: 2
+  total_number: 50
+  num_rows: 5
   row_widths: 5
   density: 1 #Crops per unit^2 -- Lower number == less dense
 
@@ -11,12 +11,13 @@ latitude: 35.6895
 longitude: 139.6917  
 barley_type: 'spring' #spring or winter
 
-generation_seed: 123
+generation_seed: 12
 
 output:
-  num_images: 1
+  num_images: 10
   directory: 'output_images'
   file_name: 'barley'
+  camera_angle: 'above_shot'
 resolution: 
   x: 512
   y: 512
