@@ -63,9 +63,9 @@ class GrowthManager():
         self.days_total_precipitation += int(float(data["precipitation"]))
 
         if self.days_low_irradiance >= self.LOW_IRRADIANCE_DAYS_LIMIT:
-            self.status = CropHealth.UNHEALTHY
+            self.status = CropHealth.UNHEALTHY.value
             return self.status
         if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD:
-            self.status = CropHealth.DEAD
+            self.status = CropHealth.DEAD.value
             return self.status
         return self.status

@@ -113,7 +113,7 @@ class CropController:
     def add_crop(self, crop_type, loc, stage):
         crop = None
         if crop_type == "barley":
-            crop = Barley(8, "healthy")
+            crop = Barley(stage, "healthy")
             growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
             planting_date = self.config["planting_date"]
             lat = self.config["latitude"]
@@ -122,7 +122,7 @@ class CropController:
             api_key = os.environ["WEATHER_API"]
             weather_controller = WeatherController(api_key)
             weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
-            health_status = growth_manager.evaluate_plant_health(weather_data)
+            health_status = growth_manager.evaluate_plant_health(weather_data, 1)
             crop.set_color(self.crop_health[health_status])
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
