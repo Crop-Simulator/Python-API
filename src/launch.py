@@ -8,7 +8,6 @@ import os
 from src.controllers.crop_controller import CropController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
-from src.controllers.weather_controller import WeatherController
 from src.machine_learning.text_prompt_manager import TextPromptManager
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -33,15 +32,6 @@ class TyperLaunchAPI:
         text_prompt_manager = TextPromptManager()
 
         start_time = time.time()
-        planting_date = config["planting_date"]
-        lat = config["latitude"]
-        lon = config["longitude"]
-        barley_type = config["barley_type"]
-        api_key = os.environ["WEATHER_API"]
-        weather_controller = WeatherController(api_key)
-        weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
-
-
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
         # Set the unit system to metric
