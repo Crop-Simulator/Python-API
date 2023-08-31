@@ -1,11 +1,8 @@
 import random
 import bpy
-import os
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
-from src.growth_simulator.growth_manager import GrowthManager
-from src.controllers.weather_controller import WeatherController
 
 class CropController:
 

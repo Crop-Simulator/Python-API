@@ -31,7 +31,7 @@ class GroundController:
     def get_ground_stages(self):
         ground_stages = bpy.data.objects["ground"]
         # ground_size = self.total_number/self.num_rows*self.row_widths
-        
+
         ground_stages.location = (1, 0.5, -5)
         ground_stages.scale = mathutils.Vector((10, 10, 1))
         ground_stages["segmentation_id"] = SegmentationClass.SOIL.value
@@ -59,7 +59,7 @@ class GroundController:
         links.new(texture_node.outputs[0], principled_node.inputs[0])  # color to base color
 
 
-        # Assign it to object 
+        # Assign it to object
         if ground_stages.data.materials:
             # assign to 1st material slot
             ground_stages.data.materials[0] = material
