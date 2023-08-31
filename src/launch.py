@@ -8,6 +8,7 @@ import os
 from src.controllers.crop_controller import CropController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
+from src.machine_learning.text_prompt_manager import TextPromptManager
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -27,6 +28,8 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+
+        text_prompt_manager = TextPromptManager()
 
         start_time = time.time()
         """"

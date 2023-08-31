@@ -24,9 +24,10 @@ class CropType(Enum):
 
 class WeedType(Enum):
     WEED = auto()
+    BROADLEAF_WEED = auto()
 
     def __str__(self):
-        return str(self.name).lower()
+        return self.name.replace('_', ' ').lower()
 
 
 class SoilType(Enum):
