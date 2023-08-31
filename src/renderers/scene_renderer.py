@@ -48,8 +48,9 @@ class SceneRenderer:
 
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
             text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
+            with open(os.path.join(image_directory, self.output_file + str(i) + '.txt'), 'w') as file:
+                file.write(text_prompt_manager.prompt_for_generation())
             current_file = self.output_file + str(i)
-
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x

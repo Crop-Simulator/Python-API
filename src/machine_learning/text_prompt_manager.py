@@ -36,13 +36,12 @@ class TextPromptManager:
         positive_prompt = self.get_attribute_string() + \
                           ", best quality, 4k, 8k, ultra highres, raw photo, sharp focus, intricate texture, skin imperfections, crop field, soil, photo, photorealistic"
         negative_prompt = "illustration, anime"
-        return {"positive": positive_prompt,
-                "negative": negative_prompt}
+        return positive_prompt + "\n" + negative_prompt
 
-prompt_manager = TextPromptManager(Weather.FOGGY, camera_angle=camera_angle_interpret(45))
+# prompt_manager = TextPromptManager(Weather.FOGGY, camera_angle=camera_angle_interpret(45))
 # prompt_manager.get_prompt()
 # print(prompt_manager.get_prompt())
 
-print(prompt_manager.prompt_for_training())
-print(prompt_manager.prompt_for_training()["positive"])
-print(prompt_manager.prompt_for_training()["negative"])
+# print(prompt_manager.prompt_for_training())
+# print(prompt_manager.prompt_for_training()["positive"])
+# print(prompt_manager.prompt_for_training()["negative"])
