@@ -8,6 +8,7 @@ import os
 from src.controllers.crop_controller import CropController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
+from src.machine_learning.text_prompt_manager import TextPromptManager
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -28,6 +29,8 @@ class TyperLaunchAPI:
     @staticmethod
     def launch(config):
 
+        text_prompt_manager = TextPromptManager()
+
         start_time = time.time()
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
@@ -37,9 +40,9 @@ class TyperLaunchAPI:
         cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
+        cropcon.update_text_prompt_manager(text_prompt_manager)
 
-
-        scenerender.render_scene()
+        scenerender.render_scene(text_prompt_manager)
         end_time = time.time()
         total_time = end_time - start_time
         print("Time taken to run:", total_time)

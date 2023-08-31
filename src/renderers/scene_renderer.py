@@ -4,6 +4,8 @@ import bpy
 from controllers.segmentation import Segmentation, SegmentationColor, SegmentationClass
 from controllers.camera_controller import CameraController
 from controllers.light_controller import LightController
+from src.machine_learning.text_prompt_manager import TextPromptManager
+from src.machine_learning.text_prompt_definition import camera_angle_interpret
 
 class SceneRenderer:
     def __init__(self, configs, collection):
@@ -31,7 +33,7 @@ class SceneRenderer:
 
         }
 
-    def render_scene(self):
+    def render_scene(self, text_prompt_manager: TextPromptManager):
         print("rendering...")
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/" + self.directory
@@ -45,8 +47,10 @@ class SceneRenderer:
             distance = 20
 
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
+            text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
+            with open(os.path.join(image_directory, self.output_file + str(i) + ".txt"), "w") as file:
+                file.write(text_prompt_manager.prompt_for_generation())
             current_file = self.output_file + str(i)
-
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
