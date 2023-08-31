@@ -1,4 +1,10 @@
 import numpy as np
+import enum
+
+class CropHealth(enum.Enum):
+    HEALTHY = "healthy"
+    UNHEALTHY = "unhealthy"
+    DEAD = "dead"
 
 class GrowthManager():
     IRRADIANCE_THRESHOLD = 250
@@ -21,9 +27,13 @@ class GrowthManager():
         self.status = "healthy"
         self.days_low_irradiance = 0
         self.days_total_precipitation = 0
+        self.current_day = 0
 
     def set_weather_data(self, data):
         self.weather_data = data
+        
+    def progress_day(self):
+        self.current_day += 1
 
     def growth_degree_days(self, t_max, t_min):
         # barley varieties required an average accumulation of 139 GDD
@@ -39,24 +49,23 @@ class GrowthManager():
         return progression_probability # if return 1, progress, else no progress
 
     def progress_stage(self):
-        if self.gdd >= self.GDD_PER_STAGE:
+        if self.gdd >= self.GDD_PER_STAGE and self.stage < 10:
             self.stage += 1
             self.model.set_model_stage(self.stage)
 
-    def evaluate_plant_health(self, weather_data):
-        for day in weather_data:
-            if int(float(day["irradiance"])) < self.IRRADIANCE_THRESHOLD:
-                self.days_low_irradiance += 1
-            else:
-                self.days_low_irradiance = 0
+    def evaluate_plant_health(self, weather_data, day):
+        data = weather_data[day]
+        if int(float(data["irradiance"])) < self.IRRADIANCE_THRESHOLD:
+            self.days_low_irradiance += 1
+        else:
+            self.days_low_irradiance = 0
 
-            self.days_total_precipitation += int(float(day["precipitation"]))
+        self.days_total_precipitation += int(float(data["precipitation"]))
 
-            if self.days_low_irradiance >= self.LOW_IRRADIANCE_DAYS_LIMIT:
-                self.status = "unhealthy"
-                return self.status
-            if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD:
-                self.status = "dead"
-                return self.status
+        if self.days_low_irradiance >= self.LOW_IRRADIANCE_DAYS_LIMIT:
+            self.status = CropHealth.UNHEALTHY
+            return self.status
+        if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD:
+            self.status = CropHealth.DEAD
+            return self.status
         return self.status
-
