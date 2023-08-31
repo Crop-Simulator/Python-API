@@ -84,7 +84,7 @@ def camera_angle_interpret(camera_angle: float) -> CameraAngle:
         (STRAIGHT_ON_0_THRESHOLD, CameraAngle.STRAIGHT_ON_0),
         (HERO_VIEW__15_THRESHOLD, CameraAngle.HERO_VIEW__15),
         (LOW_VIEW__45_THRESHOLD, CameraAngle.LOW_VIEW__45),
-        (WORMS_EYE_VIEW__75_THRESHOLD, CameraAngle.WORMS_EYE_VIEW__75)
+        (WORMS_EYE_VIEW__75_THRESHOLD, CameraAngle.WORMS_EYE_VIEW__75),
     ]
 
     # Loop through the thresholds and return the corresponding CameraAngle for the first match.

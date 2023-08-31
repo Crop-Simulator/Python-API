@@ -1,6 +1,3 @@
-from .text_prompt_definition import Weather, CropType, WeedType, SoilType, CameraAngle
-
-
 class TextPromptManager:
     def __init__(self):
         self.weather = None
