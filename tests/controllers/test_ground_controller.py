@@ -2,6 +2,7 @@ import unittest
 import bpy
 import os
 import yaml
+
 from src.controllers.ground_controller import GroundController
 
 
@@ -45,12 +46,12 @@ class GroundControllerTest(unittest.TestCase):
     def test_get_ground_stages(self):
         bpy.ops.mesh.primitive_plane_add(size=2, enter_editmode=False, align="WORLD")
         plane = bpy.context.active_object
-        plane.name = "stage9.ground"
+        plane.name = "ground"
 
         self.controller.get_ground_stages()
-        obj = bpy.data.objects.get("stage9.ground")
-        self.assertIsNotNone(obj, "stage9.ground object not found!")
-        self.assertTrue(any(mat.name == "Texture_Material" for mat in obj.data.materials), "Texture_Material not found in stage9.ground materials!")
+        obj = bpy.data.objects.get("ground")
+        self.assertIsNotNone(obj, "ground object not found!")
+        self.assertTrue(any(mat.name == "Texture_Material" for mat in obj.data.materials), "Texture_Material not found in ground materials!")
 
 
 

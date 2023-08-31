@@ -1,11 +1,8 @@
 import random
 import bpy
-import os
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
-from src.growth_simulator.growth_manager import GrowthManager
-from src.controllers.weather_controller import WeatherController
 from src.machine_learning.text_prompt_manager import TextPromptManager
 from src.machine_learning.text_prompt_definition import CropType, SoilType
 
@@ -117,16 +114,16 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(8, "healthy")
-            growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
-            planting_date = self.config["planting_date"]
-            lat = self.config["latitude"]
-            lon = self.config["longitude"]
-            barley_type = self.config["barley_type"]
-            api_key = os.environ["WEATHER_API"]
-            weather_controller = WeatherController(api_key)
-            weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
-            health_status = growth_manager.evaluate_plant_health(weather_data)
-            crop.set_color(self.crop_health[health_status])
+            # growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
+            # planting_date = self.config["planting_date"]
+            # lat = self.config["latitude"]
+            # lon = self.config["longitude"]
+            # barley_type = self.config["barley_type"]
+            # api_key = os.environ["WEATHER_API"]
+            # weather_controller = WeatherController(api_key)
+            # weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
+            # health_status = growth_manager.evaluate_plant_health(weather_data)
+            # crop.set_color(self.crop_health[health_status])
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])
