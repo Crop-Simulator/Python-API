@@ -1,16 +1,21 @@
 import requests
-from datetime import datetime, timedelta
 import csv
+import os
+
+from datetime import datetime, timedelta
 from io import StringIO
+from decouple import config
+
 
 class WeatherController:
     HTTP_STATUS_OK = 200
     DATE_LENGTH = 10
     SUNNY_IRRADIANCE_THRESHOLD = 200
     BASE_URL = "https://api.weather.com/v3"
+    API_KEY = config("WEATHER_API")
 
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self):
+        self.api_key = self.API_KEY
 
     def get_historical_weather(self, start_date, end_date, lat, lon):
         api_url = f"{self.BASE_URL}/wx/hod/r1/direct"

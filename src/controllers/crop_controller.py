@@ -4,11 +4,11 @@ import os
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
-from src.growth_simulator.growth_manager import GrowthManager
+from src.growth_simulator.growth_manager import GrowthManager, CropHealth
 from src.controllers.weather_controller import WeatherController
 
 class CropController:
-
+    
     def __init__(self, config, collection):
         self.config = config
         self.collection_name = collection
@@ -46,6 +46,17 @@ class CropController:
             "ground" : "ground",
             "weed" : "weed",
         }
+        self.planting_date = self.config["planting_date"]
+        self.lat = self.config["latitude"]
+        self.lon = self.config["longitude"]
+        self.barley_type = self.config["barley_type"]
+        self.crop_health = {
+            CropHealth.HEALTHY.value : (0.2, 0.8, 0.2, 1),  # Green in RGBA
+            CropHealth.UNHEALTHY.value : (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
+            CropHealth.DEAD.value : (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
+        }
+        self.weather_controller = WeatherController()
+        self.weather_data = self.weather_controller.get_merged_weather_data(self.barley_type, self.planting_date, self.lat, self.lon)
         try:
             self.generation_seed = config["generation_seed"]
         except KeyError:
@@ -114,16 +125,19 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(stage, "healthy")
-            growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
-            planting_date = self.config["planting_date"]
-            lat = self.config["latitude"]
-            lon = self.config["longitude"]
-            barley_type = self.config["barley_type"]
-            api_key = os.environ["WEATHER_API"]
-            weather_controller = WeatherController(api_key)
-            weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
-            health_status = growth_manager.evaluate_plant_health(weather_data, 1)
-            crop.set_color(self.crop_health[health_status])
+
+            growth_manager = GrowthManager(self.config, crop, self.days_per_stage, self.weather_data)
+            crop = growth_manager.simulate_growth()
+            crop.set_color(self.crop_health[growth_manager.status])
+            # planting_date = self.config["planting_date"]
+            # lat = self.config["latitude"]
+            # lon = self.config["longitude"]
+            # barley_type = self.config["barley_type"]
+            # api_key = os.environ["WEATHER_API"]
+            # weather_controller = WeatherController(api_key)
+            # weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
+            # health_status = growth_manager.evaluate_plant_health(weather_data, 1)
+            # crop.set_color(self.crop_health[health_status])
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])

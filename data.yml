@@ -6,6 +6,8 @@ crop:
   row_widths: 5
   density: 1 #Crops per unit^2 -- Lower number == less dense
 
+  
+
 planting_date: '2023-02-01'  
 latitude: 35.6895  
 longitude: 139.6917  
@@ -29,3 +31,8 @@ growth_simulator:
   p_death: 0.1
   growth_coefficient: 0.1    # importance of growth on previous day
   gdd_coefficient: 1         # importance of gdd to growth
+  effect_of_irradiance: 0.1  # importance of irradiance to growth [0-1]
+  effect_of_precipitation: 0.5 # importance of precipitation to growth [0-1]
+  effect_of_temperature: 0.5 # importance of temperature to growth [0-1]
+  maximum_temperature: 86    # maximum temperature for growth (F)
+  minimum_temperature: 32    # minimum temperature for growth (F)
