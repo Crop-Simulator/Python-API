@@ -4,18 +4,22 @@ import numpy as np
 drawing = False  # true if mouse is pressed
 mode = 'brush'  # can be 'brush', 'erase', or 'rect'
 ix, iy = -1, -1
+image_aspect_ratio = 1
 
 
 def on_trackbar(val):
     # This function is a dummy callback when trackbar values change.
     pass
 
+def change_image_display_size(val):
+    global image_aspect_ratio
+    cv2.resizeWindow("Images Display", val, int(val/image_aspect_ratio))
 
 # Mouse callback function
 def draw_mask(event, x, y, flags, param):
     global ix, iy, drawing, mask_blurred
 
-    brush_size = cv2.getTrackbarPos('Brush Size', 'Segmented Image')
+    brush_size = cv2.getTrackbarPos('Brush Size', "Tools Window")
 
     if event == cv2.EVENT_LBUTTONDOWN:
         drawing = True
@@ -45,10 +49,11 @@ def change_mode(val):
 
 
 def segment_plant_from_dirt_interactive(image_path):
-    global mask_blurred
+    global mask_blurred, image_aspect_ratio
 
     # Load the image
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    image_aspect_ratio = image.shape[1]/image.shape[0]
 
     # Convert the image from BGR to HSV (Hue, Saturation, Value)
     image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -56,39 +61,44 @@ def segment_plant_from_dirt_interactive(image_path):
     # Initial definition
     mask_blurred = np.zeros_like(image[:, :, 0])
 
-    # Create a window to display the original and segmented image
-    cv2.namedWindow('Segmented Image', cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('Segmented Image', 600, 600)
-    cv2.setMouseCallback('Segmented Image', draw_mask)
+    cv2.namedWindow("Tools Window", cv2.WINDOW_NORMAL)
+
+    cv2.namedWindow("Images Display", cv2.WINDOW_NORMAL)
+    cv2.setMouseCallback("Images Display", draw_mask)
 
     # Trackbars for HSV thresholds
-    cv2.createTrackbar('Lower H', 'Segmented Image', 35, 179, on_trackbar)
-    cv2.createTrackbar('Lower S', 'Segmented Image', 40, 255, on_trackbar)
-    cv2.createTrackbar('Lower V', 'Segmented Image', 40, 255, on_trackbar)
-    cv2.createTrackbar('Upper H', 'Segmented Image', 85, 179, on_trackbar)
-    cv2.createTrackbar('Upper S', 'Segmented Image', 255, 255, on_trackbar)
-    cv2.createTrackbar('Upper V', 'Segmented Image', 255, 255, on_trackbar)
+    cv2.createTrackbar('Lower H', "Tools Window", 35, 179, on_trackbar)
+    cv2.createTrackbar('Lower S', "Tools Window", 40, 255, on_trackbar)
+    cv2.createTrackbar('Lower V', "Tools Window", 40, 255, on_trackbar)
+    cv2.createTrackbar('Upper H', "Tools Window", 85, 179, on_trackbar)
+    cv2.createTrackbar('Upper S', "Tools Window", 255, 255, on_trackbar)
+    cv2.createTrackbar('Upper V', "Tools Window", 255, 255, on_trackbar)
 
     # Trackbars for smoothing operations
-    cv2.createTrackbar('Closing Size', 'Segmented Image', 1, 30, on_trackbar)
-    cv2.createTrackbar('Blur Size', 'Segmented Image', 1, 30, on_trackbar)
+    cv2.createTrackbar('Closing Sz', "Tools Window", 1, 30, on_trackbar)
+    cv2.createTrackbar('Blur Size', "Tools Window", 1, 30, on_trackbar)
 
     # Trackbars for drawing tools
-    cv2.createTrackbar('Tool', 'Segmented Image', 0, 2, change_mode)
-    cv2.createTrackbar('Brush Size', 'Segmented Image', 5, 50, lambda x: x)
+    cv2.createTrackbar('Tool', "Tools Window", 0, 2, change_mode)
+    cv2.createTrackbar('Brush Size', "Tools Window", 5, 50, lambda x: x)
+
+    # Image window resize
+    cv2.createTrackbar('Img Width', "Tools Window", 800, 2000, change_image_display_size)
+    target_window_width = cv2.getTrackbarPos('Img Width', "Tools Window")
+    cv2.resizeWindow("Images Display", target_window_width, int(target_window_width/image_aspect_ratio))
 
     while True:
         # Get the current trackbar positions
-        lower_h = cv2.getTrackbarPos('Lower H', 'Segmented Image')
-        lower_s = cv2.getTrackbarPos('Lower S', 'Segmented Image')
-        lower_v = cv2.getTrackbarPos('Lower V', 'Segmented Image')
+        lower_h = cv2.getTrackbarPos('Lower H', "Tools Window")
+        lower_s = cv2.getTrackbarPos('Lower S', "Tools Window")
+        lower_v = cv2.getTrackbarPos('Lower V', "Tools Window")
 
-        upper_h = cv2.getTrackbarPos('Upper H', 'Segmented Image')
-        upper_s = cv2.getTrackbarPos('Upper S', 'Segmented Image')
-        upper_v = cv2.getTrackbarPos('Upper V', 'Segmented Image')
+        upper_h = cv2.getTrackbarPos('Upper H', "Tools Window")
+        upper_s = cv2.getTrackbarPos('Upper S', "Tools Window")
+        upper_v = cv2.getTrackbarPos('Upper V', "Tools Window")
 
-        closing_size = cv2.getTrackbarPos('Closing Size', 'Segmented Image')
-        blur_size = cv2.getTrackbarPos('Blur Size', 'Segmented Image')
+        closing_size = cv2.getTrackbarPos('Closing Sz', "Tools Window")
+        blur_size = cv2.getTrackbarPos('Blur Size', "Tools Window")
 
         # Define a mask for green color (which might represent plants)
         lower_green = np.array([lower_h, lower_s, lower_v])
@@ -106,7 +116,7 @@ def segment_plant_from_dirt_interactive(image_path):
         mask_blurred = cv2.GaussianBlur(mask_closed, (blur_size, blur_size), 0)
 
         # Display the segmented image
-        cv2.imshow('Segmented Image', mask_blurred)
+        cv2.imshow("Images Display", mask_blurred)
 
         key = cv2.waitKey(1) & 0xFF
 
@@ -117,6 +127,11 @@ def segment_plant_from_dirt_interactive(image_path):
         elif key == ord('r'):
             mode = 'rect'
         elif key == ord('q'):
+            break
+
+        # if window closed, break
+        if cv2.getWindowProperty("Tools Window", cv2.WND_PROP_VISIBLE) < 1 or \
+                cv2.getWindowProperty("Images Display", cv2.WND_PROP_VISIBLE) < 1:
             break
 
     cv2.destroyAllWindows()
