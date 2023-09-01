@@ -1,8 +1,14 @@
 import cv2
 import numpy as np
+from enum import Enum, auto
+
+class ToolMode(Enum):
+    ERASER = auto()
+    BRUSH = auto()
+    RECTANGLE = auto()
 
 drawing = False  # true if mouse is pressed
-mode = 'brush'  # can be 'brush', 'erase', or 'rect'
+tool_mode = ToolMode.BRUSH
 ix, iy = -1, -1
 image_aspect_ratio = 1
 
@@ -27,25 +33,18 @@ def draw_mask(event, x, y, flags, param):
 
     elif event == cv2.EVENT_MOUSEMOVE:
         if drawing:
-            if mode == 'brush':
+            if tool_mode is ToolMode.BRUSH:
                 cv2.circle(mask_blurred, (x, y), brush_size, 255, -1)
-            elif mode == 'erase':
+                print(f"brush on ({x}, {y})")
+
+            elif tool_mode is ToolMode.ERASER:
                 cv2.circle(mask_blurred, (x, y), brush_size, 0, -1)
+                print(f"erase on ({x}, {y})")
 
     elif event == cv2.EVENT_LBUTTONUP:
         drawing = False
-        if mode == 'rect':
+        if tool_mode is ToolMode.RECTANGLE:
             cv2.rectangle(mask_blurred, (ix, iy), (x, y), 255, -1)
-
-
-def change_mode(val):
-    global mode
-    if val == 0:
-        mode = 'brush'
-    elif val == 1:
-        mode = 'erase'
-    else:
-        mode = 'rect'
 
 
 def segment_plant_from_dirt_interactive(image_path):
@@ -66,6 +65,11 @@ def segment_plant_from_dirt_interactive(image_path):
     cv2.namedWindow("Images Display", cv2.WINDOW_NORMAL)
     cv2.setMouseCallback("Images Display", draw_mask)
 
+    # Image window resize
+    cv2.createTrackbar("Disp Width", "Tools Window", 800, 2000, change_image_display_size)
+    target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
+    cv2.resizeWindow("Images Display", target_window_width, int(target_window_width / image_aspect_ratio))
+
     # Trackbars for HSV thresholds
     cv2.createTrackbar('Lower H', "Tools Window", 35, 179, on_trackbar)
     cv2.createTrackbar('Lower S', "Tools Window", 40, 255, on_trackbar)
@@ -79,13 +83,7 @@ def segment_plant_from_dirt_interactive(image_path):
     cv2.createTrackbar('Blur Size', "Tools Window", 1, 30, on_trackbar)
 
     # Trackbars for drawing tools
-    cv2.createTrackbar('Tool', "Tools Window", 0, 2, change_mode)
     cv2.createTrackbar('Brush Size', "Tools Window", 5, 50, lambda x: x)
-
-    # Image window resize
-    cv2.createTrackbar('Img Width', "Tools Window", 800, 2000, change_image_display_size)
-    target_window_width = cv2.getTrackbarPos('Img Width', "Tools Window")
-    cv2.resizeWindow("Images Display", target_window_width, int(target_window_width/image_aspect_ratio))
 
     while True:
         # Get the current trackbar positions
@@ -121,12 +119,13 @@ def segment_plant_from_dirt_interactive(image_path):
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord('b'):
-            mode = 'brush'
+            tool_mode = ToolMode.BRUSH
         elif key == ord('e'):
-            mode = 'erase'
+            tool_mode = ToolMode.ERASER
         elif key == ord('r'):
-            mode = 'rect'
-        elif key == ord('q'):
+            tool_mode = ToolMode.RECTANGLE
+        elif key == ord('q') or key == 27:
+            # press "q" or "esc" to quit
             break
 
         # if window closed, break
