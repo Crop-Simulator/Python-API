@@ -29,6 +29,7 @@ class Barley:
             "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
             "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
         }
+        self.set_color(self.crop_health[self.growth_manager.status])
 
     def set_model_stage(self, stage):
         duplicate = bpy.context.scene.objects.get(self.growth_stage[stage])
