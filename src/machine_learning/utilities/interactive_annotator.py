@@ -8,7 +8,7 @@ class ToolMode(Enum):
     RECTANGLE = auto()
 
 drawing = False  # true if mouse is pressed
-tool_mode = ToolMode.BRUSH
+tool_mode = ToolMode.ERASER
 ix, iy = -1, -1
 image_aspect_ratio = 1
 
@@ -35,11 +35,11 @@ def draw_mask(event, x, y, flags, param):
         if drawing:
             if tool_mode is ToolMode.BRUSH:
                 cv2.circle(mask_blurred, (x, y), brush_size, 255, -1)
-                print(f"brush on ({x}, {y})")
+                print(f"[Debug] {tool_mode} on ({x}, {y})")
 
             elif tool_mode is ToolMode.ERASER:
                 cv2.circle(mask_blurred, (x, y), brush_size, 0, -1)
-                print(f"erase on ({x}, {y})")
+                print(f"[Debug] {tool_mode} on ({x}, {y})")
 
     elif event == cv2.EVENT_LBUTTONUP:
         drawing = False
@@ -48,7 +48,7 @@ def draw_mask(event, x, y, flags, param):
 
 
 def segment_plant_from_dirt_interactive(image_path):
-    global mask_blurred, image_aspect_ratio
+    global mask_blurred, image_aspect_ratio, tool_mode
 
     # Load the image
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
@@ -120,10 +120,13 @@ def segment_plant_from_dirt_interactive(image_path):
 
         if key == ord('b'):
             tool_mode = ToolMode.BRUSH
+            print(f"[Debug] mode changed to {tool_mode}")
         elif key == ord('e'):
             tool_mode = ToolMode.ERASER
+            print(f"[Debug] mode changed to {tool_mode}")
         elif key == ord('r'):
             tool_mode = ToolMode.RECTANGLE
+            print(f"[Debug] mode changed to {tool_mode}")
         elif key == ord('q') or key == 27:
             # press "q" or "esc" to quit
             break
