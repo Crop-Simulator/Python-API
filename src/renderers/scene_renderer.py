@@ -54,14 +54,14 @@ class SceneRenderer:
 
             current_file = self.output_file + str(i) + "rendered_day" + str(render_number)
 
-            text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
-            with open(os.path.join(image_directory, self.output_file + str(i) + ".txt"), "w") as file:
-                file.write(text_prompt_manager.prompt_for_generation())
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
             bpy.context.scene.render.resolution_y = self.render_resolution_y
             bpy.context.scene.render.filepath = os.path.join(image_directory, current_file)
             bpy.ops.render.render(use_viewport=True, write_still=True)
+            text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
+            with open(os.path.join(image_directory, self.output_file + str(i) + ".txt"), "w") as file:
+                file.write(text_prompt_manager.prompt_for_generation())
 
             segmentation = Segmentation({
                 SegmentationClass.BACKGROUND.value: SegmentationColor.SKY.value,  # Background;
