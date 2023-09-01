@@ -6,7 +6,7 @@ crop:
   row_widths: 5
   density: 1 #Crops per unit^2 -- Lower number == less dense
 
-  
+weed_likelihood: 0.0 #0.0-1.0
 
 planting_date: '2023-02-01'  
 latitude: 35.6895  
@@ -16,17 +16,18 @@ barley_type: 'spring' #spring or winter
 generation_seed: 12
 
 output:
-  num_images: 10
+  num_images: 1
   directory: 'output_images'
   file_name: 'barley'
-  camera_angle: 'above_shot'
+  camera_angle: 'birds_eye'
 resolution: 
   x: 512
   y: 512
 ground_type: "loam"
 
 growth_simulator:
-  days_per_stage: 30         # days needed for each growth stage
+  total_days:  3
+  days_per_stage: 1         # days needed for each growth stage
   p_progression: 0.8         # probability of growth on given day
   p_death: 0.1
   growth_coefficient: 0.1    # importance of growth on previous day

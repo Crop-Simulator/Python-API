@@ -1,6 +1,7 @@
 import numpy as np
 import enum
 import os
+import random
 
 
 class CropHealth(enum.Enum):
@@ -12,14 +13,14 @@ class GrowthManager():
     IRRADIANCE_THRESHOLD = 250
     LOW_IRRADIANCE_DAYS_LIMIT = 5
     PRECIPITATION_THRESHOLD = 0.1
+    MIN_TEMPERATURE_THRESHOLD = 37.9
 
     def __init__(self, config, model, days_per_stage, weather_data):
-        self.GDD_PER_STAGE = 139
+        self.GDD_PER_STAGE = 5
         self.stage = 0
         self.gdd = 0
         self.model = model
-        self.model_stage = self.model.set_model_stage(self.stage)
-        self.name = self.model_stage.name
+        self.name = self.model.name
         self.days_per_stage = days_per_stage    # expected number of days per stage
         self.probability_of_success = 0.8       # probability of success on day for that stage
         self.config = config["growth_simulator"]
@@ -30,6 +31,7 @@ class GrowthManager():
         self.effect_of_precipitation = self.config["effect_of_precipitation"]
         self.weather_data = weather_data
         self.status = "healthy"
+        self.days_passed_since_last_stage = 0
         
         self.days_high_temperature = 0
         self.days_low_irradiance = 0
@@ -47,27 +49,29 @@ class GrowthManager():
         gdd = (t_max - t_min)/2 - t_base
         self.gdd += gdd
 
-    def growth_binomial_distribution(self, days_passed):
+    def random_growth(self, days_passed):
         # grows with probability p_progression
         # maximum liklihood of progression at days_per_stage set in data.yml
         section = days_passed % self.days_per_stage
         p = self.p_progression * section
-        progression_probability = np.random.binomial(1, p)
+        progression_probability = random.randint(0, 1)
         return progression_probability # if return 1, progress, else no progress
 
     def progress_stage(self):
         self.calculate_growth_degree_days(self.weather_data[self.current_day]["max_temperature"],
                                           self.weather_data[self.current_day]["min_temperature"])
-        can_grow = self.growth_binomial_distribution()
+        can_grow = self.random_growth(self.days_passed_since_last_stage)
+        self.days_passed_since_last_stage += 1
+        
         # only grow if reached growth degree days and not at final stage
         # and has reached growth day probability
         if can_grow and self.gdd >= self.GDD_PER_STAGE and self.stage < 10:
             self.stage += 1
-            return self.model.set_model_stage(self.stage)
+            self.days_passed_since_last_stage = 0
+        return self.stage
 
-    def evaluate_plant_health(self, weather_data, day):
-        data = weather_data[day]
-        print(data)
+    def evaluate_plant_health(self):
+        data = self.weather_data[self.current_day]
         if int(float(data["irradiance"])) < self.IRRADIANCE_THRESHOLD:
             self.days_low_irradiance += 1
         else:
@@ -77,23 +81,24 @@ class GrowthManager():
 
         if self.days_low_irradiance >= self.LOW_IRRADIANCE_DAYS_LIMIT:
             self.health_points -= self.effect_of_irradiance
-        if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD or self.weather_data[day]["max_temperature"] > 86:
-            if self.weather_data[day]["max_temperature"] > 86:
+            
+        if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD or self.weather_data[self.current_day]["max_temperature"] > 86 or self.weather_data[self.current_day]["min_temperature"] < self.MIN_TEMPERATURE_THRESHOLD:
+            if self.weather_data[self.current_day]["max_temperature"] > 86:
                 self.days_high_temperature += 1
             if self.days_total_precipitation < self.PRECIPITATION_THRESHOLD:
                 self.days_total_precipitation += 1
-            self.health_points -= self.effect_of_temperature + self.effect_of_precipitation
+            self.health_points -= self.effect_of_temperature + self.effect_of_precipitation + 5
+            
         elif self.days_total_precipitation >= self.PRECIPITATION_THRESHOLD:
             self.health_points += self.effect_of_precipitation
         return self.status
     
-    def simulate_growth(self):
-        self.progress_day()
-        self.evaluate_plant_health(self.weather_data, self.current_day)
-        if self.status== CropHealth.DEAD.value:
-            return self.model
-        elif self.status == CropHealth.UNHEALTHY.value:
-            crop = self.progress_stage()
-            return crop
+    def update_health_status(self):
+        if self.health_points <= 0:
+            self.status = CropHealth.DEAD.value
+        elif self.health_points <= 5:
+            self.status = CropHealth.UNHEALTHY.value
         else:
-            return self.model
+            self.status = CropHealth.HEALTHY.value
+        return self.status
+    

@@ -29,17 +29,18 @@ class TyperLaunchAPI:
     def launch(config):
 
         start_time = time.time()
-        bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
         collection = "Collection"
         # Set the unit system to metric
         bpy.context.scene.unit_settings.system = "METRIC"
         bpy.context.scene.unit_settings.scale_length = 1.0  # Set the scale to 1.0 for metric units
         cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config, collection)
-        cropcon.setup_crops()
-
-
-        scenerender.render_scene()
+        
+        for day in range(config["growth_simulator"]["total_days"]):
+            bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
+            cropcon.setup_crops(day)
+            scenerender.render_scene()
+            
         end_time = time.time()
         total_time = end_time - start_time
         print("Time taken to run:", total_time)

@@ -18,6 +18,8 @@ class SceneRenderer:
         self.directory = self.output_configs["directory"]
         self.output_file = self.output_configs["file_name"]
         self.camera_angle = self.output_configs["camera_angle"]
+        self.growth_simulator = configs["growth_simulator"]
+        self.total_days = self.growth_simulator["total_days"]
         self.render_samples = 10
         self.preset_camera_angles = {
             "top_down": (0, 0, 0),
@@ -30,22 +32,23 @@ class SceneRenderer:
             "worms_eye": (150, 0, 0),
 
         }
+        self.curr_image = 0
 
     def render_scene(self):
         print("rendering...")
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/" + self.directory
-        bpy.data.collections[self.collection]
+        bpy.context.view_layer.update()
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
 
 
-        for i in range(self.num_images):
+        while self.curr_image < (self.num_images + self.total_days):
             distance = 20
 
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
-            current_file = self.output_file + str(i)
+            current_file = self.output_file + str(self.curr_image)
 
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
@@ -62,3 +65,4 @@ class SceneRenderer:
             segmentation_filename = current_file.replace(".png", "_seg.png") if current_file.endswith(".png") else current_file + "_seg.png"
             depth_map_filename = segmentation_filename.replace("_seg.png", "_depth.png")
             segmentation.segment(os.path.join(image_directory, segmentation_filename), os.path.join(image_directory, depth_map_filename))
+            self.curr_image += 1

@@ -13,7 +13,6 @@ class WeatherController:
     SUNNY_IRRADIANCE_THRESHOLD = 200
     BASE_URL = "https://api.weather.com/v3"
     API_KEY = config("WEATHER_API")
-
     def __init__(self):
         self.api_key = self.API_KEY
 
