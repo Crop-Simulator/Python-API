@@ -30,6 +30,9 @@ class CropController:
             "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
             "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
         }
+        self.x_offset = 0 - (self.number_of_crops/self.number_of_rows)*2
+        self.x_offset = max(self.x_offset, -20)
+        self.y_offset = 5
         self.weed_spacing = 1 # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
@@ -75,7 +78,7 @@ class CropController:
         curr_row = 0
         curr_crop_type = 0
         curr_crop = 0
-        location = [-20, 0, 0]
+        location = [self.x_offset, 0, 0]
 
         for crop in range(self.number_of_crops):
             # when the crop is divisible by the number of rows
@@ -100,8 +103,8 @@ class CropController:
             self.add_weed(location)
 
             if curr_row + 1 >= self.number_of_rows:
-                location[1] += 1 / self.crop_data["density"]
-                location[0] = -20
+                location[1] += (1 / self.crop_data["density"]) + self.y_offset
+                location[0] = self.x_offset
                 curr_row = 0
             else:
                 location[0] += self.row_widths / self.crop_data["density"]
