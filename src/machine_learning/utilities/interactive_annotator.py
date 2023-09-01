@@ -9,11 +9,15 @@ class ToolMode(Enum):
     RECTANGLE = auto()
 
 
+# State variables for drawing
 drawing = False  # true if mouse is pressed
 tool_mode = ToolMode.ERASER
 ix, iy = -1, -1
+
+# Variables for image display
 image_aspect_ratio = 1
-mask_blurred = None
+layer_ground = None
+layer_weed = None
 
 
 class TrackbarParameters:
@@ -27,8 +31,7 @@ class TrackbarParameters:
         self.upper_s = None
         self.upper_v = None
 
-        self.closing_size = None
-        self.blur_size = None
+        self.smoothing = None
 
         self.brush_size = None
 
@@ -56,30 +59,18 @@ class TrackbarParameters:
         self.upper_v = val
 
     def callback_closing_size(self, val):
-        self.closing_size = val
-
-    def callback_blur_size(self, val):
-        self.blur_size = val
+        self.smoothing = val
 
     def callback_brush_size(self, val):
         self.brush_size = val
 
+
 trackbar_parameters = TrackbarParameters()
-
-
-def on_trackbar(val):
-    # This function is a dummy callback when trackbar values change.
-    pass
-
-
-# def callback_change_image_display_size(val):
-#     global image_aspect_ratio
-#     cv2.resizeWindow("Images Display", val, int(val / image_aspect_ratio))
 
 
 # Mouse callback function
 def callback_draw_mask(event, x, y, flags, param):
-    global ix, iy, drawing, mask_blurred
+    global ix, iy, drawing, layer_weed
 
     brush_size = cv2.getTrackbarPos('Brush Size', "Tools Window")
 
@@ -90,21 +81,21 @@ def callback_draw_mask(event, x, y, flags, param):
     elif event == cv2.EVENT_MOUSEMOVE:
         if drawing:
             if tool_mode is ToolMode.BRUSH:
-                cv2.circle(mask_blurred, (x, y), brush_size, 255, -1)
+                cv2.circle(layer_weed, (x, y), brush_size, 255, -1)
                 print(f"[Debug] {tool_mode} on ({x}, {y})")
 
             elif tool_mode is ToolMode.ERASER:
-                cv2.circle(mask_blurred, (x, y), brush_size, 0, -1)
+                cv2.circle(layer_weed, (x, y), brush_size, 0, -1)
                 print(f"[Debug] {tool_mode} on ({x}, {y})")
 
     elif event == cv2.EVENT_LBUTTONUP:
         drawing = False
         if tool_mode is ToolMode.RECTANGLE:
-            cv2.rectangle(mask_blurred, (ix, iy), (x, y), 255, -1)
+            cv2.rectangle(layer_weed, (ix, iy), (x, y), 255, -1)
 
 
 def interactive_annotator(image_path):
-    global mask_blurred, image_aspect_ratio, tool_mode, trackbar_parameters
+    global layer_ground, image_aspect_ratio, tool_mode, trackbar_parameters
 
     # Load the image
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
@@ -114,7 +105,7 @@ def interactive_annotator(image_path):
     image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     # Initial definition
-    mask_blurred = np.zeros_like(image[:, :, 0])
+    layer_ground = np.zeros_like(image[:, :, 0])
 
     cv2.namedWindow("Tools Window", cv2.WINDOW_NORMAL)
 
@@ -135,8 +126,7 @@ def interactive_annotator(image_path):
     cv2.createTrackbar('Upper V', "Tools Window", 255, 255, trackbar_parameters.callback_upper_v)
 
     # Trackbars for smoothing operations
-    cv2.createTrackbar('Closing Sz', "Tools Window", 1, 30, trackbar_parameters.callback_closing_size)
-    cv2.createTrackbar('Blur Size', "Tools Window", 1, 30, trackbar_parameters.callback_blur_size)
+    cv2.createTrackbar('Smoothing', "Tools Window", 1, 30, trackbar_parameters.callback_closing_size)
 
     # Trackbars for drawing tools
     cv2.createTrackbar('Brush Size', "Tools Window", 5, 50, trackbar_parameters.callback_brush_size)
@@ -149,16 +139,11 @@ def interactive_annotator(image_path):
         mask_green = cv2.inRange(image_hsv, lower_green, upper_green)
 
         # Apply closing operation (dilation followed by erosion)
-        kernel = np.ones((trackbar_parameters.closing_size, trackbar_parameters.closing_size), np.uint8)
-        mask_closed = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
-
-        # Apply Gaussian blur
-        if trackbar_parameters.blur_size % 2 == 0:  # blur size needs to be odd
-            trackbar_parameters.blur_size += 1
-        mask_blurred = cv2.GaussianBlur(mask_closed, (trackbar_parameters.blur_size, trackbar_parameters.blur_size), 0)
+        kernel = np.ones((trackbar_parameters.smoothing, trackbar_parameters.smoothing), np.uint8)
+        layer_ground = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
 
         # Display the segmented image
-        cv2.imshow("Images Display", mask_blurred)
+        cv2.imshow("Images Display", layer_ground)
 
         key = cv2.waitKey(1) & 0xFF
 
