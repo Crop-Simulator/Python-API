@@ -7,6 +7,7 @@ from src.machine_learning.text_prompt_manager import TextPromptManager
 from src.machine_learning.text_prompt_definition import CropType, SoilType
 
 
+
 class CropController:
 
     def __init__(self, config, collection):
@@ -29,6 +30,9 @@ class CropController:
             "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
             "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
         }
+        self.x_offset = 0 - (self.number_of_crops/self.number_of_rows)*2
+        self.x_offset = max(self.x_offset, -20)
+        self.y_offset = 5
         self.weed_spacing = 1 # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.growth_stage = {
@@ -74,7 +78,7 @@ class CropController:
         curr_row = 0
         curr_crop_type = 0
         curr_crop = 0
-        location = [0, 0, 0]
+        location = [self.x_offset, 0, 0]
 
         for crop in range(self.number_of_crops):
             # when the crop is divisible by the number of rows
@@ -99,8 +103,8 @@ class CropController:
             self.add_weed(location)
 
             if curr_row + 1 >= self.number_of_rows:
-                location[1] += 1 / self.crop_data["density"]
-                location[0] = 0
+                location[1] += (1 / self.crop_data["density"]) + self.y_offset
+                location[0] = self.x_offset
                 curr_row = 0
             else:
                 location[0] += self.row_widths / self.crop_data["density"]
@@ -114,16 +118,6 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(8, "healthy")
-            # growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
-            # planting_date = self.config["planting_date"]
-            # lat = self.config["latitude"]
-            # lon = self.config["longitude"]
-            # barley_type = self.config["barley_type"]
-            # api_key = os.environ["WEATHER_API"]
-            # weather_controller = WeatherController(api_key)
-            # weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
-            # health_status = growth_manager.evaluate_plant_health(weather_data)
-            # crop.set_color(self.crop_health[health_status])
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])
@@ -132,6 +126,15 @@ class CropController:
         self.all_crops.append(crop) # add crop objects to manipulate later
         self.all_plants.append(crop)
         return crop
+
+    def update_plant_health(self, weather_data, days):
+        # for crop in self.all_crops:
+        #     # Day needs to be to the growth manager
+        #     growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
+        #     health_status = growth_manager.evaluate_plant_health(weather_data)
+        #     crop.set_color(self.crop_health[health_status])
+        return True
+
 
     def add_weed(self, loc):
         if bool(random.getrandbits(1)):

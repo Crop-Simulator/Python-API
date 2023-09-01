@@ -2,7 +2,7 @@ crop:
   type: ["barley"]
   percentage_share: [1.0]
   total_number: 50
-  num_rows: 5
+  num_rows: 10
   row_widths: 5
   density: 1 #Crops per unit^2 -- Lower number == less dense
 
@@ -14,7 +14,7 @@ barley_type: 'spring' #spring or winter
 generation_seed: 12
 
 output:
-  num_images: 10
+  num_images: 2
   directory: 'output_images'
   file_name: 'barley'
   camera_angle: 'above_shot'
@@ -24,6 +24,8 @@ resolution:
 ground_type: "loam"
 
 growth_simulator:
+  days_per_render: 5
+  total_days: 15
   days_per_stage: 30         # days needed for each growth stage
   p_progression: 0.8         # probability of growth on given day
   p_death: 0.1
