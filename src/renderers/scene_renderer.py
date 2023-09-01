@@ -5,10 +5,11 @@ from controllers.segmentation import Segmentation, SegmentationColor, Segmentati
 from controllers.camera_controller import CameraController
 from controllers.light_controller import LightController
 
+
 class SceneRenderer:
     def __init__(self, configs, collection):
         self.collection = collection
-        self.cameracon = CameraController("Photo Taker", (0, 0, 0), (1.57057,0.00174533,1.57057), self.collection)
+        self.cameracon = CameraController("Photo Taker", (0, 0, 0), (1.57057, 0.00174533, 1.57057), self.collection)
         self.lightcon = LightController()
         self.resolution_data = configs["resolution"]
         self.render_resolution_x = self.resolution_data["x"]
@@ -31,22 +32,23 @@ class SceneRenderer:
 
         }
 
-    def render_scene(self):
-        print("rendering...")
-        current_working_directory = str(os.getcwd())
-        image_directory = current_working_directory + "/" + self.directory
-        bpy.data.collections[self.collection]
+    def setup_render(self):
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
 
+    def update_scene(self, render_number):
+        print("rendering...")
+        current_working_directory = str(os.getcwd())
+        image_directory = current_working_directory + "/" + self.directory
 
         for i in range(self.num_images):
             distance = 20
 
-            self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
-            current_file = self.output_file + str(i)
+            self.cameracon.update_camera(distance=distance, angle_rotation=(0, 0, 0),
+                                         camera_angles=self.preset_camera_angles[self.camera_angle])
 
+            current_file = self.output_file + str(i) + "rendered_day" + str(render_number)
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
@@ -55,11 +57,13 @@ class SceneRenderer:
             bpy.ops.render.render(use_viewport=True, write_still=True)
 
             segmentation = Segmentation({
-                SegmentationClass.BACKGROUND.value: SegmentationColor.SKY.value, # Background;
-                SegmentationClass.PLANT.value: SegmentationColor.PLANT.value, # Plant
+                SegmentationClass.BACKGROUND.value: SegmentationColor.SKY.value,  # Background;
+                SegmentationClass.PLANT.value: SegmentationColor.PLANT.value,  # Plant
                 SegmentationClass.WEED.value: SegmentationColor.GRASS.value,
-                SegmentationClass.SOIL.value: SegmentationColor.LAND_GROUND_SOIL.value,# land;ground;soil
+                SegmentationClass.SOIL.value: SegmentationColor.LAND_GROUND_SOIL.value,  # land;ground;soil
             })
-            segmentation_filename = current_file.replace(".png", "_seg.png") if current_file.endswith(".png") else current_file + "_seg.png"
+            segmentation_filename = current_file.replace(".png", "_seg.png") if current_file.endswith(
+                ".png") else current_file + "_seg.png"
             depth_map_filename = segmentation_filename.replace("_seg.png", "_depth.png")
-            segmentation.segment(os.path.join(image_directory, segmentation_filename), os.path.join(image_directory, depth_map_filename))
+            segmentation.segment(os.path.join(image_directory, segmentation_filename),
+                                 os.path.join(image_directory, depth_map_filename))

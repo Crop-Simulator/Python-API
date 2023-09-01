@@ -4,6 +4,7 @@ from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
 
+
 class CropController:
 
     def __init__(self, config, collection):
@@ -71,7 +72,7 @@ class CropController:
         curr_row = 0
         curr_crop_type = 0
         curr_crop = 0
-        location = [0, 0, 0]
+        location = [-20, 0, 0]
 
         for crop in range(self.number_of_crops):
             # when the crop is divisible by the number of rows
@@ -97,7 +98,7 @@ class CropController:
 
             if curr_row + 1 >= self.number_of_rows:
                 location[1] += 1 / self.crop_data["density"]
-                location[0] = 0
+                location[0] = -20
                 curr_row = 0
             else:
                 location[0] += self.row_widths / self.crop_data["density"]
@@ -111,16 +112,6 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(8, "healthy")
-            # growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
-            # planting_date = self.config["planting_date"]
-            # lat = self.config["latitude"]
-            # lon = self.config["longitude"]
-            # barley_type = self.config["barley_type"]
-            # api_key = os.environ["WEATHER_API"]
-            # weather_controller = WeatherController(api_key)
-            # weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
-            # health_status = growth_manager.evaluate_plant_health(weather_data)
-            # crop.set_color(self.crop_health[health_status])
         loc[0] = loc[0] - random.uniform(-.5, .5)
         loc[1] = loc[1] - random.uniform(-.5, .5)
         crop.set_location([loc[0], loc[1], loc[2]])
@@ -129,6 +120,15 @@ class CropController:
         self.all_crops.append(crop) # add crop objects to manipulate later
         self.all_plants.append(crop)
         return crop
+
+    def update_plant_health(self, weather_data, days):
+        # for crop in self.all_crops:
+        #     # Day needs to be to the growth manager
+        #     growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
+        #     health_status = growth_manager.evaluate_plant_health(weather_data)
+        #     crop.set_color(self.crop_health[health_status])
+        return True
+
 
     def add_weed(self, loc):
         if bool(random.getrandbits(1)):

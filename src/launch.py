@@ -6,6 +6,7 @@ import sys
 import os
 
 from src.controllers.crop_controller import CropController
+from src.controllers.weather_controller import WeatherController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
 
@@ -37,9 +38,19 @@ class TyperLaunchAPI:
         cropcon = CropController(config, collection)
         scenerender = SceneRenderer(config, collection)
         cropcon.setup_crops()
-
-
-        scenerender.render_scene()
+        scenerender.setup_render()
+        planting_date = config["planting_date"]
+        lat = config["latitude"]
+        lon = config["longitude"]
+        barley_type = config["barley_type"]
+        api_key = os.environ["WEATHER_API"]
+        weather_controller = WeatherController(api_key)
+        weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
+        growth_sim_data = config["growth_simulator"]
+        for day in range(growth_sim_data["total_days"]):
+            cropcon.update_plant_health(weather_data, day)
+            if day % growth_sim_data["days_per_render"] == 0:
+                scenerender.update_scene(day)
         end_time = time.time()
         total_time = end_time - start_time
         print("Time taken to run:", total_time)
