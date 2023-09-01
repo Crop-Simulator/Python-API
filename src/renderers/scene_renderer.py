@@ -5,8 +5,6 @@ from controllers.segmentation import Segmentation, SegmentationColor, Segmentati
 from controllers.camera_controller import CameraController
 from controllers.light_controller import LightController
 
-from src.machine_learning import text_prompt_manager
-from src.machine_learning.text_prompt_manager import TextPromptManager
 from src.machine_learning.text_prompt_definition import camera_angle_interpret
 
 
