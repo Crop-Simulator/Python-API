@@ -18,6 +18,7 @@ ix, iy = -1, -1
 image_aspect_ratio = 1
 layer_ground = None
 layer_weed = None
+flag_redo_extract_ground = False
 
 
 class TrackbarParameters:
@@ -41,27 +42,43 @@ class TrackbarParameters:
         cv2.resizeWindow("Images Display", val, int(val / image_aspect_ratio))
 
     def callback_lower_h(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.lower_h = val
 
     def callback_lower_s(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.lower_s = val
 
     def callback_lower_v(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.lower_v = val
 
     def callback_upper_h(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.upper_h = val
 
     def callback_upper_s(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.upper_s = val
 
     def callback_upper_v(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.upper_v = val
 
     def callback_closing_size(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.smoothing = val
 
     def callback_brush_size(self, val):
+        global flag_redo_extract_ground
+        flag_redo_extract_ground = True
         self.brush_size = val
 
 
@@ -94,8 +111,24 @@ def callback_draw_mask(event, x, y, flags, param):
             cv2.rectangle(layer_weed, (ix, iy), (x, y), 255, -1)
 
 
+def extract_ground(image_hsv):
+    global trackbar_parameters
+
+    # Define a mask for green color (which might represent plants)
+    lower_green = np.array([trackbar_parameters.lower_h, trackbar_parameters.lower_s, trackbar_parameters.lower_v])
+    upper_green = np.array([trackbar_parameters.upper_h, trackbar_parameters.upper_s, trackbar_parameters.upper_v])
+
+    mask_green = cv2.inRange(image_hsv, lower_green, upper_green)
+
+    # Apply closing operation (dilation followed by erosion)
+    kernel = np.ones((trackbar_parameters.smoothing, trackbar_parameters.smoothing), np.uint8)
+    ground = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
+
+    return ground
+
+
 def interactive_annotator(image_path):
-    global layer_ground, image_aspect_ratio, tool_mode, trackbar_parameters
+    global layer_ground, image_aspect_ratio, tool_mode, trackbar_parameters, flag_redo_extract_ground
 
     # Load the image
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
@@ -131,16 +164,12 @@ def interactive_annotator(image_path):
     # Trackbars for drawing tools
     cv2.createTrackbar('Brush Size', "Tools Window", 5, 50, trackbar_parameters.callback_brush_size)
 
+    layer_ground = extract_ground(image_hsv)
+
     while True:
-        # Define a mask for green color (which might represent plants)
-        lower_green = np.array([trackbar_parameters.lower_h, trackbar_parameters.lower_s, trackbar_parameters.lower_v])
-        upper_green = np.array([trackbar_parameters.upper_h, trackbar_parameters.upper_s, trackbar_parameters.upper_v])
-
-        mask_green = cv2.inRange(image_hsv, lower_green, upper_green)
-
-        # Apply closing operation (dilation followed by erosion)
-        kernel = np.ones((trackbar_parameters.smoothing, trackbar_parameters.smoothing), np.uint8)
-        layer_ground = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
+        if flag_redo_extract_ground:
+            layer_ground = extract_ground(image_hsv)
+            flag_redo_extract_ground = False
 
         # Display the segmented image
         cv2.imshow("Images Display", layer_ground)
