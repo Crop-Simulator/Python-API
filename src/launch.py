@@ -9,6 +9,7 @@ from src.controllers.crop_controller import CropController
 from src.controllers.weather_controller import WeatherController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
+from src.machine_learning.text_prompt_manager import TextPromptManager
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -28,6 +29,8 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
+
+        text_prompt_manager = TextPromptManager()
 
         start_time = time.time()
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
@@ -49,8 +52,10 @@ class TyperLaunchAPI:
         growth_sim_data = config["growth_simulator"]
         for day in range(growth_sim_data["total_days"]):
             cropcon.update_plant_health(weather_data, day)
+            cropcon.update_text_prompt_manager(text_prompt_manager)
             if day % growth_sim_data["days_per_render"] == 0:
-                scenerender.update_scene(day)
+                scenerender.update_scene(day, text_prompt_manager)
+
         end_time = time.time()
         total_time = end_time - start_time
         print("Time taken to run:", total_time)

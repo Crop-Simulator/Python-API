@@ -5,6 +5,10 @@ from controllers.segmentation import Segmentation, SegmentationColor, Segmentati
 from controllers.camera_controller import CameraController
 from controllers.light_controller import LightController
 
+from src.machine_learning import text_prompt_manager
+from src.machine_learning.text_prompt_manager import TextPromptManager
+from src.machine_learning.text_prompt_definition import camera_angle_interpret
+
 
 class SceneRenderer:
     def __init__(self, configs, collection):
@@ -37,8 +41,8 @@ class SceneRenderer:
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
 
-    def update_scene(self, render_number):
-        print("rendering...")
+    def update_scene(self, render_number, text_prompt_manager):
+        print("rendering...EPOCH: ", render_number)
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/" + self.directory
 
@@ -50,6 +54,9 @@ class SceneRenderer:
 
             current_file = self.output_file + str(i) + "rendered_day" + str(render_number)
 
+            text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
+            with open(os.path.join(image_directory, self.output_file + str(i) + ".txt"), "w") as file:
+                file.write(text_prompt_manager.prompt_for_generation())
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
             bpy.context.scene.render.resolution_y = self.render_resolution_y
