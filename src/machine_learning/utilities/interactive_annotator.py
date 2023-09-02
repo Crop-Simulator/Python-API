@@ -203,7 +203,26 @@ def check_progress(config, config_path):
 
     return all_images, last_processed_image_index
 
-# def get_next_image():
+
+def get_next_image(config, config_path, all_images, current_image_index):
+    if current_image_index >= len(all_images) - 1:
+        print(f"[CONFIG] All images in the source folder "
+              f"{config['WORK DIRECTORY']['source image folder']} has been processed. ")
+        sys.exit("Please select another folder and restart the programme.")
+
+    else:
+        # update config file
+        config["PROGRESS"]["last processed image index"] = str(current_image_index)
+        with open(config_path, 'w') as configfile:
+            config.write(configfile)
+            print(f"[CONFIG] The last processed image record has been updated to {all_images[current_image_index]}")
+
+        # open image
+        next_image_index = current_image_index + 1
+        image_path = os.path.join(config["WORK DIRECTORY"]["source image folder"], all_images[next_image_index])
+        image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+
+        return image, next_image_index
 
 
 def interactive_annotator(image_path):
@@ -217,43 +236,36 @@ def interactive_annotator(image_path):
     # Check progress
     all_images, last_processed_image_index = check_progress(config, config_path)
 
-
-    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    # Open next image
+    image, current_image_index = get_next_image(config, config_path, all_images, last_processed_image_index)
     image_aspect_ratio = image.shape[1] / image.shape[0]
 
-    # Convert the image from BGR to HSV (Hue, Saturation, Value)
-    image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-    # Initial definition
-    layer_ground = np.zeros_like(image[:, :, 0])
-    layer_weed = np.zeros_like(image[:, :, 0])
-
+    # Windows setup
     cv2.namedWindow("Tools Window", cv2.WINDOW_NORMAL)
-
     cv2.namedWindow(IMAGE_WINDOW_NAME, cv2.WINDOW_NORMAL)
     cv2.setMouseCallback(IMAGE_WINDOW_NAME, callback_draw_mask)
 
-    # Image window resize
+    # Trackbars
     cv2.createTrackbar("Disp Width", "Tools Window", 800, 2000, trackbar_parameters.callback_display_width)
-    target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
-    cv2.resizeWindow(IMAGE_WINDOW_NAME, target_window_width, int(target_window_width / image_aspect_ratio))
-
     cv2.createTrackbar("Disp Mode", "Tools Window", 0, 3, trackbar_parameters.callback_display_mode)
-
-    # Trackbars for HSV thresholds
     cv2.createTrackbar('Lower H', "Tools Window", 35, 179, trackbar_parameters.callback_lower_h)
     cv2.createTrackbar('Lower S', "Tools Window", 40, 255, trackbar_parameters.callback_lower_s)
     cv2.createTrackbar('Lower V', "Tools Window", 40, 255, trackbar_parameters.callback_lower_v)
     cv2.createTrackbar('Upper H', "Tools Window", 85, 179, trackbar_parameters.callback_upper_h)
     cv2.createTrackbar('Upper S', "Tools Window", 255, 255, trackbar_parameters.callback_upper_s)
     cv2.createTrackbar('Upper V', "Tools Window", 255, 255, trackbar_parameters.callback_upper_v)
-
-    # Trackbars for smoothing operations
     cv2.createTrackbar('Smoothing', "Tools Window", 1, 30, trackbar_parameters.callback_closing_size)
-
-    # Trackbars for drawing tools
     cv2.createTrackbar('Brush Size', "Tools Window", 50, 300, trackbar_parameters.callback_brush_size)
 
+    # Image window resize
+    target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
+    cv2.resizeWindow(IMAGE_WINDOW_NAME, target_window_width, int(target_window_width / image_aspect_ratio))
+
+    # Convert the image from BGR to HSV (Hue, Saturation, Value)
+    image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # Initialize layers
+    layer_weed = np.zeros_like(image[:, :, 0])
     layer_ground = extract_ground(image_hsv)
     layer_merged_display_bgr = None
 
