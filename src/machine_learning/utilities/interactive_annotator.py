@@ -4,7 +4,7 @@ from enum import Enum, auto
 
 # Variables related to config
 config_path = "interactive_annotator_config.ini"
-config = None
+config = {}
 flag_preferences_changed = False
 
 class ToolMode(Enum):
@@ -50,43 +50,73 @@ class TrackbarParameters:
         self.brush_size = None
 
     def callback_display_width(self, val):
-        global image_aspect_ratio, IMAGE_WINDOW_NAME
+        global image_aspect_ratio, IMAGE_WINDOW_NAME, flag_preferences_changed, config
         self.display_width = val
+        config["DISPLAY"]["width"] = str(val)
+        flag_preferences_changed = True
+
         cv2.resizeWindow(IMAGE_WINDOW_NAME, val, int(val / image_aspect_ratio))
 
     def callback_display_mode(self, val):
+        global flag_preferences_changed, config
         self.display_mode = val
+        config["DISPLAY"]["mode"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_lower_h(self, val):
+        global flag_preferences_changed, config
         self.lower_h = val
+        config["TOOL SETTING"]["lower h"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_lower_s(self, val):
+        global flag_preferences_changed, config
         self.lower_s = val
+        config["TOOL SETTING"]["lower s"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_lower_v(self, val):
+        global flag_preferences_changed, config
         self.lower_v = val
+        config["TOOL SETTING"]["lower v"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_upper_h(self, val):
+        global flag_preferences_changed, config
         self.upper_h = val
+        config["TOOL SETTING"]["upper h"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_upper_s(self, val):
+        global flag_preferences_changed, config
         self.upper_s = val
+        config["TOOL SETTING"]["upper s"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_upper_v(self, val):
+        global flag_preferences_changed, config
         self.upper_v = val
+        config["TOOL SETTING"]["upper v"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_closing_size(self, val):
+        global flag_preferences_changed, config
         self.smoothing = val
+        config["TOOL SETTING"]["smoothing"] = str(val)
+        flag_preferences_changed = True
         flag_redraw()
 
     def callback_brush_size(self, val):
+        global flag_preferences_changed, config
+        config["TOOL SETTING"]["brush size"] = str(val)
+        flag_preferences_changed = True
         self.brush_size = val
 
 
@@ -215,12 +245,21 @@ def check_progress():
 
 
 def get_next_image(all_images, current_image_index):
-    global config, config_path
+    global config, config_path, flag_preferences_changed
 
     if current_image_index >= len(all_images) - 1:
         print(f"[CONFIG] All images in the source folder "
               f"{config['WORK DIRECTORY']['source image folder']} has been processed. ")
-        sys.exit("Please select another folder and restart the programme.")
+
+        # update config file
+        config["PROGRESS"]["last processed image index"] = str(current_image_index)
+        with open(config_path, 'w') as configfile:
+            config.write(configfile)
+            if flag_preferences_changed:
+                flag_preferences_changed = False
+                print("[CONFIG] Detected changes in trackbar values. Your new preferences has been saved.")
+
+        sys.exit("Annotation completed. Please select another folder and restart the programme.")
 
     else:
         # open image
@@ -231,10 +270,12 @@ def get_next_image(all_images, current_image_index):
         # update config file
         config["PROGRESS"]["last processed image index"] = str(current_image_index)
 
-
         with open(config_path, 'w') as configfile:
             config.write(configfile)
             print(f"[CONFIG] The last processed image record has been updated to {all_images[current_image_index]}")
+            if flag_preferences_changed:
+                flag_preferences_changed = False
+                print("[CONFIG] Detected changes in trackbar values. Your new preferences has been saved.")
             print(f"[WORKFLOW] Start working on image {all_images[next_image_index]}")
 
         return image, next_image_index
