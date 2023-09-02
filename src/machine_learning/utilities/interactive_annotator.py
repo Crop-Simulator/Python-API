@@ -19,6 +19,13 @@ image_aspect_ratio = 1
 layer_ground = None
 layer_weed = None
 flag_redo_extract_ground = False
+flag_redo_merge_layers = True
+
+
+def redraw():
+    global flag_redo_extract_ground, flag_redo_merge_layers
+    flag_redo_extract_ground = True
+    flag_redo_merge_layers = True
 
 
 class TrackbarParameters:
@@ -42,43 +49,34 @@ class TrackbarParameters:
         cv2.resizeWindow("Images Display", val, int(val / image_aspect_ratio))
 
     def callback_lower_h(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.lower_h = val
+        redraw()
 
     def callback_lower_s(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.lower_s = val
+        redraw()
 
     def callback_lower_v(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.lower_v = val
+        redraw()
 
     def callback_upper_h(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.upper_h = val
+        redraw()
 
     def callback_upper_s(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.upper_s = val
+        redraw()
 
     def callback_upper_v(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.upper_v = val
+        redraw()
 
     def callback_closing_size(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.smoothing = val
+        redraw()
 
     def callback_brush_size(self, val):
-        global flag_redo_extract_ground
-        flag_redo_extract_ground = True
         self.brush_size = val
 
 
@@ -118,17 +116,19 @@ def extract_ground(image_hsv):
     lower_green = np.array([trackbar_parameters.lower_h, trackbar_parameters.lower_s, trackbar_parameters.lower_v])
     upper_green = np.array([trackbar_parameters.upper_h, trackbar_parameters.upper_s, trackbar_parameters.upper_v])
 
-    mask_green = cv2.inRange(image_hsv, lower_green, upper_green)
+    ground = cv2.inRange(image_hsv, lower_green, upper_green)
 
     # Apply closing operation (dilation followed by erosion)
-    kernel = np.ones((trackbar_parameters.smoothing, trackbar_parameters.smoothing), np.uint8)
-    ground = cv2.morphologyEx(mask_green, cv2.MORPH_CLOSE, kernel)
+    if trackbar_parameters.smoothing > 0:
+        kernel = np.ones((trackbar_parameters.smoothing, trackbar_parameters.smoothing), np.uint8)
+        ground = cv2.morphologyEx(ground, cv2.MORPH_CLOSE, kernel)
 
     return ground
 
 
 def interactive_annotator(image_path):
-    global layer_ground, image_aspect_ratio, tool_mode, trackbar_parameters, flag_redo_extract_ground
+    global layer_ground, layer_weed, image_aspect_ratio, tool_mode, trackbar_parameters, \
+        flag_redo_extract_ground, flag_redo_merge_layers
 
     # Load the image
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
@@ -139,6 +139,7 @@ def interactive_annotator(image_path):
 
     # Initial definition
     layer_ground = np.zeros_like(image[:, :, 0])
+    layer_weed = np.zeros_like(image[:, :, 0])
 
     cv2.namedWindow("Tools Window", cv2.WINDOW_NORMAL)
 
@@ -165,15 +166,29 @@ def interactive_annotator(image_path):
     cv2.createTrackbar('Brush Size', "Tools Window", 5, 50, trackbar_parameters.callback_brush_size)
 
     layer_ground = extract_ground(image_hsv)
+    layer_merged_display_bgr = None
 
+    # GUI main loop
     while True:
         if flag_redo_extract_ground:
             layer_ground = extract_ground(image_hsv)
             flag_redo_extract_ground = False
 
-        # Display the segmented image
-        cv2.imshow("Images Display", layer_ground)
+        if flag_redo_merge_layers:
+            # start with deep-copying an image
+            layer_merged_display_bgr = image.copy()
 
+            # Find the pixels where the layer_ground is 0 (i.e., ground)
+            indices = np.where(layer_ground == 0)
+            # Invert the pixels of the BGR image where mask is 0
+            layer_merged_display_bgr[indices[0], indices[1], :] = 255 - layer_merged_display_bgr[indices[0], indices[1], :]
+            # layer_merged_display_bgr[indices[0], indices[1], :] = (120,120,120)
+            flag_redo_merge_layers = False
+
+        # Display the segmented view
+        cv2.imshow("Images Display", layer_merged_display_bgr)
+
+        # keyboard event
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord('b'):
