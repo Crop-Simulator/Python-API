@@ -2,13 +2,16 @@ import cv2, os, configparser, sys
 import numpy as np
 from enum import Enum, auto
 
+# Variables related to config
+config_path = "interactive_annotator_config.ini"
+config = None
+flag_preferences_changed = False
 
 class ToolMode(Enum):
     ERASER = auto()
     BRUSH = auto()
     RECTANGLE = auto()
     RECTANGLE_ERASE = auto()
-
 
 # State variables for drawing
 drawing = False  # true if mouse is pressed
@@ -137,7 +140,8 @@ def extract_ground(image_hsv):
     return ground
 
 
-def read_config_or_create_default(config_path):
+def read_config_or_create_default():
+    global config_path, config
     config = configparser.ConfigParser()
 
     if not os.path.exists(config_path):
@@ -175,10 +179,8 @@ def read_config_or_create_default(config_path):
         config.read(config_path)
         print(f"[CONFIG] {config_path} loaded")
 
-    return config
-
-
-def check_progress(config, config_path):
+def check_progress():
+    global config, config_path
 
     # Get a sorted list of all image filenames in the folder
     all_images = sorted([img for img
@@ -212,7 +214,9 @@ def check_progress(config, config_path):
     return all_images, last_processed_image_index
 
 
-def get_next_image(config, config_path, all_images, current_image_index):
+def get_next_image(all_images, current_image_index):
+    global config, config_path
+
     if current_image_index >= len(all_images) - 1:
         print(f"[CONFIG] All images in the source folder "
               f"{config['WORK DIRECTORY']['source image folder']} has been processed. ")
@@ -236,8 +240,8 @@ def get_next_image(config, config_path, all_images, current_image_index):
         return image, next_image_index
 
 
-def save_annotated_image(config, image_shape, image_name):
-    global layer_ground, layer_weed
+def save_annotated_image(image_shape, image_name):
+    global layer_ground, layer_weed, config
 
     # Start with image filled with crop colour
     annotated_image = np.full(image_shape,
@@ -266,17 +270,16 @@ def save_annotated_image(config, image_shape, image_name):
 
 def interactive_annotator(image_path):
     global layer_ground, layer_weed, image_aspect_ratio, tool_mode, trackbar_parameters, \
-        flag_redo_extract_ground, flag_redo_merge_layers, IMAGE_WINDOW_NAME
+        flag_redo_extract_ground, flag_redo_merge_layers, IMAGE_WINDOW_NAME, config_path, config
 
     # Load config file, and create one if none exists
-    config_path = "interactive_annotator_config.ini"
-    config = read_config_or_create_default(config_path)
+    read_config_or_create_default()
 
     # Check progress
-    all_images, last_processed_image_index = check_progress(config, config_path)
+    all_images, last_processed_image_index = check_progress()
 
     # Open next image
-    image, current_image_index = get_next_image(config, config_path, all_images, last_processed_image_index)
+    image, current_image_index = get_next_image(all_images, last_processed_image_index)
     image_aspect_ratio = image.shape[1] / image.shape[0]
 
     # Windows setup
@@ -382,14 +385,14 @@ def interactive_annotator(image_path):
             break
         elif key == 32:
             # press "space" to save and preview annotated image
-            annotated_image, output_path = save_annotated_image(config, image.shape, all_images[current_image_index])
+            annotated_image, output_path = save_annotated_image(image.shape, all_images[current_image_index])
             cv2.imshow("Tools Window", annotated_image)
 
             print(f"[WORKFLOW] Progress [{current_image_index + 1}/{len(all_images)}]. "
                   f"Annotated image saved to {output_path}. ")
 
             # switch to next image
-            image, current_image_index = get_next_image(config, config_path, all_images, current_image_index)
+            image, current_image_index = get_next_image(all_images, current_image_index)
 
             # resize window if aspect ratio changed
             if image_aspect_ratio != image.shape[1] / image.shape[0]:
