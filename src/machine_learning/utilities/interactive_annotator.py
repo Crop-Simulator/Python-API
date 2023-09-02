@@ -31,6 +31,7 @@ def redraw():
 class TrackbarParameters:
     def __init__(self):
         self.display_width = None
+        self.display_mode = 0
 
         self.lower_h = None
         self.lower_s = None
@@ -47,6 +48,10 @@ class TrackbarParameters:
         global image_aspect_ratio
         self.display_width = val
         cv2.resizeWindow("Images Display", val, int(val / image_aspect_ratio))
+
+    def callback_display_mode(self, val):
+        self.display_mode = val
+        redraw()
 
     def callback_lower_h(self, val):
         self.lower_h = val
@@ -151,6 +156,8 @@ def interactive_annotator(image_path):
     target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
     cv2.resizeWindow("Images Display", target_window_width, int(target_window_width / image_aspect_ratio))
 
+    cv2.createTrackbar("Disp Mode", "Tools Window", 0, 2, trackbar_parameters.callback_display_mode)
+
     # Trackbars for HSV thresholds
     cv2.createTrackbar('Lower H', "Tools Window", 35, 179, trackbar_parameters.callback_lower_h)
     cv2.createTrackbar('Lower S', "Tools Window", 40, 255, trackbar_parameters.callback_lower_s)
@@ -180,9 +187,21 @@ def interactive_annotator(image_path):
 
             # Find the pixels where the layer_ground is 0 (i.e., ground)
             indices = np.where(layer_ground == 0)
-            # Invert the pixels of the BGR image where mask is 0
-            layer_merged_display_bgr[indices[0], indices[1], :] = 255 - layer_merged_display_bgr[indices[0], indices[1], :]
-            # layer_merged_display_bgr[indices[0], indices[1], :] = (120,120,120)
+
+            # Different display mode:
+            if trackbar_parameters.display_mode == 0:
+                # Darken the ground area
+                layer_merged_display_bgr[indices[0], indices[1], :] = \
+                        layer_merged_display_bgr[indices[0], indices[1], :] // 3
+
+            elif trackbar_parameters.display_mode == 1:
+                # replace ground with grey
+                layer_merged_display_bgr[indices[0], indices[1], :] = (127,127,127)
+
+            elif trackbar_parameters.display_mode == 2:
+                # replace ground with red
+                layer_merged_display_bgr[indices[0], indices[1], :] = (100,100,220)
+
             flag_redo_merge_layers = False
 
         # Display the segmented view
