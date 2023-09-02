@@ -43,7 +43,6 @@ class TyperLaunchAPI:
         cropcon = CropController(config, collection_name)
         scenerender = SceneRenderer(config, collection_name)
         cropcon.setup_crops()
-        print(len(cropcon.all_crops))
         scenerender.setup_render()
         # planting_date = config["planting_date"]
         # lat = config["latitude"]

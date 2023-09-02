@@ -23,7 +23,7 @@ class Barley:
         self.name = self.barley_object.name
         self.config = config
         self.days_per_stage = self.config["growth_simulator"]["days_per_stage"]
-        self.growth_manager = GrowthManager(self.config, self.barley_object, self, self.days_per_stage, self.weather_data)
+        self.growth_manager = GrowthManager(self.config, self.barley_object, self, self.weather_data)
         self.crop_health = {
             CropHealth.UNHEALTHY.value : (0.6, 0.8, 0.2, 0.2),  # Yellow-green in RGBA
             CropHealth.DEAD.value : (0.0, 0.0, 0.0, 0.2),  # Brown in RGBA
