@@ -7,11 +7,12 @@ class ToolMode(Enum):
     ERASER = auto()
     BRUSH = auto()
     RECTANGLE = auto()
+    RECTANGLE_ERASE = auto()
 
 
 # State variables for drawing
 drawing = False  # true if mouse is pressed
-tool_mode = ToolMode.BRUSH
+tool_mode = ToolMode.RECTANGLE
 ix, iy = -1, -1
 
 # Variables for image display
@@ -47,7 +48,7 @@ class TrackbarParameters:
     def callback_display_width(self, val):
         global image_aspect_ratio
         self.display_width = val
-        cv2.resizeWindow("Images Display", val, int(val / image_aspect_ratio))
+        cv2.resizeWindow("PRESS KEY: (B)rush (E)raser (R)ectangle (G)RectangleErase (X)Reset (Q)uit", val, int(val / image_aspect_ratio))
 
     def callback_display_mode(self, val):
         self.display_mode = val
@@ -103,19 +104,19 @@ def callback_draw_mask(event, x, y, flags, param):
             if tool_mode is ToolMode.BRUSH:
                 cv2.circle(layer_weed, (x, y), brush_size, 255, -1)
                 flag_redo_merge_layers = True
-                print(f"[Debug] {tool_mode} on ({x}, {y})")
 
             elif tool_mode is ToolMode.ERASER:
                 cv2.circle(layer_weed, (x, y), brush_size, 0, -1)
                 flag_redo_merge_layers = True
-                print(f"[Debug] {tool_mode} on ({x}, {y})")
 
     elif event == cv2.EVENT_LBUTTONUP:
         drawing = False
         if tool_mode is ToolMode.RECTANGLE:
             cv2.rectangle(layer_weed, (ix, iy), (x, y), 255, -1)
             flag_redo_merge_layers = True
-            print(f"[Debug] {tool_mode} on ({ix}, {iy}) to ({x}, {y})")
+        elif tool_mode is ToolMode.RECTANGLE_ERASE:
+            cv2.rectangle(layer_weed, (ix, iy), (x, y), 0, -1)
+            flag_redo_merge_layers = True
 
 
 def extract_ground(image_hsv):
@@ -152,13 +153,13 @@ def interactive_annotator(image_path):
 
     cv2.namedWindow("Tools Window", cv2.WINDOW_NORMAL)
 
-    cv2.namedWindow("Images Display", cv2.WINDOW_NORMAL)
-    cv2.setMouseCallback("Images Display", callback_draw_mask)
+    cv2.namedWindow("PRESS KEY: (B)rush (E)raser (R)ectangle (G)RectangleErase (X)Reset (Q)uit", cv2.WINDOW_NORMAL)
+    cv2.setMouseCallback("PRESS KEY: (B)rush (E)raser (R)ectangle (G)RectangleErase (X)Reset (Q)uit", callback_draw_mask)
 
     # Image window resize
     cv2.createTrackbar("Disp Width", "Tools Window", 800, 2000, trackbar_parameters.callback_display_width)
     target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
-    cv2.resizeWindow("Images Display", target_window_width, int(target_window_width / image_aspect_ratio))
+    cv2.resizeWindow("PRESS KEY: (B)rush (E)raser (R)ectangle (G)RectangleErase (X)Reset (Q)uit", target_window_width, int(target_window_width / image_aspect_ratio))
 
     cv2.createTrackbar("Disp Mode", "Tools Window", 0, 3, trackbar_parameters.callback_display_mode)
 
@@ -222,27 +223,29 @@ def interactive_annotator(image_path):
             flag_redo_merge_layers = False
 
         # Display the segmented view
-        cv2.imshow("Images Display", layer_merged_display_bgr)
+        cv2.imshow("PRESS KEY: (B)rush (E)raser (R)ectangle (G)RectangleErase (X)Reset (Q)uit", layer_merged_display_bgr)
 
         # keyboard event
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord('b'):
             tool_mode = ToolMode.BRUSH
-            print(f"[Debug] mode changed to {tool_mode}")
         elif key == ord('e'):
             tool_mode = ToolMode.ERASER
-            print(f"[Debug] mode changed to {tool_mode}")
         elif key == ord('r'):
             tool_mode = ToolMode.RECTANGLE
-            print(f"[Debug] mode changed to {tool_mode}")
+        elif key == ord('g'):
+            tool_mode = ToolMode.RECTANGLE_ERASE
+        elif key == ord('x'):
+            layer_weed = np.zeros_like(image[:, :, 0])
+            flag_redo_merge_layers = True
         elif key == ord('q') or key == 27:
             # press "q" or "esc" to quit
             break
 
         # if window closed, break
         if cv2.getWindowProperty("Tools Window", cv2.WND_PROP_VISIBLE) < 1 or \
-                cv2.getWindowProperty("Images Display", cv2.WND_PROP_VISIBLE) < 1:
+                cv2.getWindowProperty("PRESS KEY: (B)rush (E)raser (R)ectangle (G)RectangleErase (X)Reset (Q)uit", cv2.WND_PROP_VISIBLE) < 1:
             break
 
     cv2.destroyAllWindows()
