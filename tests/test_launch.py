@@ -22,8 +22,9 @@ class BlenderScriptTest(unittest.TestCase):
             "row_widths": 5,
             "density": 1,
         },
+        "weed_likelihood": 0.0,
         "output" : {
-            "num_images": 1,
+            "num_images_per_day": 1,
             "directory" : test_directory,
             "file_name": test_output,
             "camera_angle": "top_down",
@@ -47,6 +48,11 @@ class BlenderScriptTest(unittest.TestCase):
             "p_death": 0.1,
             "growth_coefficient": 0.1,
             "gdd_coefficient": 1,
+            "effect_of_irradiance": 0.1,
+            "effect_of_temperature": 0.1,
+            "effect_of_precipitation": 0.1,
+            "maximum_temperature": 40,
+            "minimum_temperature": 0,
         },
     }
 

@@ -17,10 +17,12 @@ class SceneRenderer:
         self.render_resolution_x = self.resolution_data["x"]
         self.render_resolution_y = self.resolution_data["y"]
         self.output_configs = configs["output"]
-        self.num_images = self.output_configs["num_images"]
+        self.num_images = self.output_configs["num_images_per_day"]
         self.directory = self.output_configs["directory"]
         self.output_file = self.output_configs["file_name"]
         self.camera_angle = self.output_configs["camera_angle"]
+        self.growth_simulator = configs["growth_simulator"]
+        self.total_days = self.growth_simulator["total_days"]
         self.render_samples = 10
         self.preset_camera_angles = {
             "top_down": (0, 0, 0),
@@ -33,24 +35,24 @@ class SceneRenderer:
             "worms_eye": (150, 0, 0),
 
         }
+        self.curr_image = 0
 
     def setup_render(self):
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
 
-    def update_scene(self, render_number, text_prompt_manager):
-        print("rendering...EPOCH: ", render_number)
+    def update_scene(self, day, text_prompt_manager):
+        print("rendering...EPOCH: ", day)
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/" + self.directory
 
         for i in range(self.num_images):
             distance = 20
 
-            self.cameracon.update_camera(distance=distance, angle_rotation=(0, 0, 0),
-                                         camera_angles=self.preset_camera_angles[self.camera_angle])
+            self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])
 
-            current_file = self.output_file + str(i) + "rendered_day" + str(render_number)
+            current_file = self.output_file + str(i) + "rendered_day" + str(day)
 
             # bpy.context.scene.eevee.taa_render_samples = self.render_samples
             bpy.context.scene.render.resolution_x = self.render_resolution_x
@@ -72,3 +74,5 @@ class SceneRenderer:
             depth_map_filename = segmentation_filename.replace("_seg.png", "_depth.png")
             segmentation.segment(os.path.join(image_directory, segmentation_filename),
                                  os.path.join(image_directory, depth_map_filename))
+            self.curr_image += 1
+

@@ -6,7 +6,6 @@ import sys
 import os
 
 from src.controllers.crop_controller import CropController
-from src.controllers.weather_controller import WeatherController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
 from src.machine_learning.text_prompt_manager import TextPromptManager
@@ -30,28 +29,24 @@ class TyperLaunchAPI:
     @staticmethod
     def launch(config):
 
+
         text_prompt_manager = TextPromptManager()
 
         start_time = time.time()
+        collection_name = "Collection"
         bpy.ops.wm.open_mainfile(filepath="src/blender_assets/CropAssets.blend")
-        collection = "Collection"
+        for obj in bpy.data.objects:
+            obj.location = (1000,1000,1000)
         # Set the unit system to metric
         bpy.context.scene.unit_settings.system = "METRIC"
         bpy.context.scene.unit_settings.scale_length = 1.0  # Set the scale to 1.0 for metric units
-        cropcon = CropController(config, collection)
-        scenerender = SceneRenderer(config, collection)
+        cropcon = CropController(config, collection_name)
+        scenerender = SceneRenderer(config, collection_name)
         cropcon.setup_crops()
         scenerender.setup_render()
-        planting_date = config["planting_date"]
-        lat = config["latitude"]
-        lon = config["longitude"]
-        barley_type = config["barley_type"]
-        api_key = os.environ["WEATHER_API"]
-        weather_controller = WeatherController(api_key)
-        weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
         growth_sim_data = config["growth_simulator"]
         for day in range(growth_sim_data["total_days"]):
-            cropcon.update_plant_health(weather_data, day)
+            cropcon.grow_crops()
             cropcon.update_text_prompt_manager(text_prompt_manager)
             if day % growth_sim_data["days_per_render"] == 0:
                 scenerender.update_scene(day, text_prompt_manager)
