@@ -6,7 +6,6 @@ import sys
 import os
 
 from src.controllers.crop_controller import CropController
-from src.controllers.weather_controller import WeatherController
 from src.controllers.yaml_reader import YamlReader
 from src.renderers.scene_renderer import SceneRenderer
 from src.machine_learning.text_prompt_manager import TextPromptManager
@@ -29,22 +28,7 @@ class TyperLaunchAPI:
 
     @staticmethod
     def launch(config):
-        
-        model_names = {
-            "stage0" : "stage0.stand",
-            "stage1": "stage1.stand",
-            "stage2": "stage2.stand",
-            "stage3": "stage3.stand",
-            "stage4": "stage4.stand",
-            "stage5": "stage5.stand",
-            "stage6": "stage6.stand",
-            "stage7": "stage7.stand",
-            "stage8": "stage8.stand",
-            "stage9": "stage9.stand",
-            "stage10": "stage10.stand",
-            "ground" : "ground",
-            "weed" : "weed",
-        }
+
 
         text_prompt_manager = TextPromptManager()
 

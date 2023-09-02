@@ -86,7 +86,7 @@ class Barley:
         else:
             self.barley_object.data.materials.append(material)
         self.barley_object.active_material = material
-        
+
     def grow(self, location):
         self.growth_manager.progress_day()
         self.stage = self.growth_manager.progress_stage()

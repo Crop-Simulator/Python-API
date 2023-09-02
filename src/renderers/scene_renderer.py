@@ -72,7 +72,7 @@ class SceneRenderer:
             segmentation_filename = current_file.replace(".png", "_seg.png") if current_file.endswith(
                 ".png") else current_file + "_seg.png"
             depth_map_filename = segmentation_filename.replace("_seg.png", "_depth.png")
-            segmentation.segment(os.path.join(image_directory, segmentation_filename), 
+            segmentation.segment(os.path.join(image_directory, segmentation_filename),
                                  os.path.join(image_directory, depth_map_filename))
             self.curr_image += 1
 

@@ -1,6 +1,5 @@
 import requests
 import csv
-import os
 
 from datetime import datetime, timedelta
 from io import StringIO

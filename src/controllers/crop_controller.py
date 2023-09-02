@@ -1,12 +1,10 @@
 import random
 import bpy
-import os
 import math
 
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
-from src.growth_simulator.growth_manager import CropHealth
 from src.controllers.weather_controller import WeatherController
 from src.machine_learning.text_prompt_manager import TextPromptManager
 from src.machine_learning.text_prompt_definition import CropType, SoilType
@@ -14,7 +12,7 @@ from src.machine_learning.text_prompt_definition import CropType, SoilType
 
 
 class CropController:
-    
+
     def __init__(self, config, collection):
         self.config = config
         self.collection_name = collection
@@ -32,7 +30,7 @@ class CropController:
         self.all_crops = []
         self.all_plants = []
         self.weed_likelihood = int(config["weed_likelihood"]) * 100
- 
+
         self.crop_health = {
             "healthy": (0.2, 0.8, 0.2, 1),  # Green in RGBA
             "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
@@ -72,7 +70,7 @@ class CropController:
         self.procedural_generation_seed_setter()
 
     def setup_crops(self):
-        bpy.ops.object.select_all(action='DESELECT')
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in bpy.context.scene.objects:
             if obj.name not in self.model_names.values():
                 obj.select_set(True)
@@ -80,7 +78,7 @@ class CropController:
 
         groundcon = GroundController(self.config)
         groundcon.get_ground_stages()
-        
+
 
         self.initialise_crops()
 
@@ -95,7 +93,7 @@ class CropController:
             crop_model = self.add_crop(self.crop_type[0], location, 0)
             self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
-            
+
             # move along row to next crop position
             curr_crop += 1
             curr_col += 1
@@ -107,7 +105,7 @@ class CropController:
                 location[0] = + self.x_offset
             else:
                 location[0] += self.row_widths / self.crop_data["density"]
-            
+
     def grow_crops(self):
         for crop in self.all_crops:
             crop.grow(crop.location)
