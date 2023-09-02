@@ -2,7 +2,7 @@ crop:
   type: ["barley"]
   percentage_share: [1.0]
   total_number: 50
-  num_rows: 5
+  num_rows: 10
   row_widths: 5
   density: 1 #Crops per unit^2 -- Lower number == less dense
 
@@ -26,8 +26,9 @@ resolution:
 ground_type: "loam"
 
 growth_simulator:
-  total_days:  10
-  days_per_stage: 1         # days needed for each growth stage
+  days_per_render: 5
+  total_days: 10
+  days_per_stage: 30         # days needed for each growth stage
   p_progression: 0.8         # probability of growth on given day
   p_death: 0.1
   growth_coefficient: 0.1    # importance of growth on previous day

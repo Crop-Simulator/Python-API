@@ -61,6 +61,7 @@ class GrowthManager():
             return False
 
     def progress_stage(self):
+        print("Current Day: ", self.current_day)
         self.calculate_growth_degree_days(self.weather_data[self.current_day]["max_temperature"],
                                           self.weather_data[self.current_day]["min_temperature"])
         can_grow = self.stochastic_growth(self.days_passed_since_last_stage)

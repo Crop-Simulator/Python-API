@@ -49,3 +49,19 @@ class CameraController:
         scene.camera.rotation_euler[1] = y
         scene.camera.rotation_euler[2] = z
 
+    def get_photography_camera_angle(self):
+        camera_object = bpy.data.objects[self.camera_name]
+
+        # Get the rotation in Euler
+        rotation_euler = camera_object.rotation_euler
+
+        # Extract the pitch (in radians)
+        pitch = rotation_euler.x
+
+        # Convert to degrees:
+        pitch_degrees = math.degrees(pitch)
+
+        # Convert to photography camera angle
+        photography_camera_angle = 90 - pitch_degrees
+
+        return photography_camera_angle

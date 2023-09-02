@@ -12,7 +12,7 @@ class BlenderScriptTest(unittest.TestCase):
     test_file = "test_data.yml"
     test_output = "expected_output"
     test_directory = "tests"
-    expected_output_file = os.getcwd() + "/" + test_directory + "/" + test_output + "0.png"
+    expected_output_file = os.getcwd() + "/" + test_directory + "/" + test_output + "0rendered_day0.png"
     test_data = {
         "crop": {
             "type": ["barley"],
@@ -40,6 +40,8 @@ class BlenderScriptTest(unittest.TestCase):
         },
         "ground_type": "loam",
         "growth_simulator": {
+            "days_per_render": 5,
+            "total_days": 3,
             "days_per_stage": 30,
             "p_progression": 0.8,
             "p_death": 0.1,
@@ -63,8 +65,8 @@ class BlenderScriptTest(unittest.TestCase):
         # Clean up test environment
         os.remove(cls.test_file)
         os.remove(cls.expected_output_file)
-        os.remove("tests/expected_output0_seg.png")
-        os.remove("tests/expected_output0_depth.png")
+        os.remove("tests/expected_output0rendered_day0_seg.png")
+        os.remove("tests/expected_output0rendered_day0_depth.png")
 
     def test_unit_system_metric(self):
         # Check if the unit system is now set to metric
@@ -80,7 +82,7 @@ class BlenderScriptTest(unittest.TestCase):
 
     def test_render_output(self):
         # Verify that the rendering output matches the expected file
-        self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output0.png"))
+        self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output0rendered_day0.png"))
 
 
 if __name__ == "__main__":

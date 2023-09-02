@@ -2,11 +2,16 @@ import random
 import bpy
 import os
 import math
+
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
 from src.growth_simulator.growth_manager import CropHealth
 from src.controllers.weather_controller import WeatherController
+from src.machine_learning.text_prompt_manager import TextPromptManager
+from src.machine_learning.text_prompt_definition import CropType, SoilType
+
+
 
 class CropController:
     
@@ -28,6 +33,14 @@ class CropController:
         self.all_plants = []
         self.weed_likelihood = int(config["weed_likelihood"]) * 100
  
+        self.crop_health = {
+            "healthy": (0.2, 0.8, 0.2, 1),  # Green in RGBA
+            "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
+            "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
+        }
+        self.x_offset = 0 - (self.crop_count/self.rows)*2
+        self.x_offset = max(self.x_offset, -20)
+        self.y_offset = 5
         self.weed_spacing = 1 # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.model_names = {
@@ -58,7 +71,7 @@ class CropController:
             self.generation_seed = None
         self.procedural_generation_seed_setter()
 
-    def setup_crops(self, day):
+    def setup_crops(self):
         bpy.ops.object.select_all(action='DESELECT')
         for obj in bpy.context.scene.objects:
             if obj.name not in self.model_names.values():
@@ -68,18 +81,15 @@ class CropController:
         groundcon = GroundController(self.config)
         groundcon.get_ground_stages()
         
-        if day == 0:
-            self.initialise_crops()
-            # self.grow_crops()
-        else:
-            # self.initialise_crops()
-            self.grow_crops()    
+
+        self.initialise_crops()
+
 
     def initialise_crops(self):
         curr_row = 0
         curr_col = 0
         curr_crop = 0
-        location = [0, 0, 0]
+        location = [self.x_offset, 0, 0]
 
         for _ in range(self.crop_count):
             crop_model = self.add_crop(self.crop_type[0], location, 0)
@@ -93,8 +103,8 @@ class CropController:
             if curr_col == self.rows:
                 curr_col = 0
                 curr_row += 1
-                location[1] += 1 / self.crop_data["density"]
-                location[0] = 0
+                location[1] += (1 / self.crop_data["density"]) + self.y_offset
+                location[0] = + self.x_offset
             else:
                 location[0] += self.row_widths / self.crop_data["density"]
             
@@ -113,9 +123,17 @@ class CropController:
         location[1] = location[1] - random.uniform(-.5, .5)
         crop.set_location([location[0], location[1], location[2]])
         self.counter += 1
-        self.all_crops.append(crop) # add crop objects to manipulate later
         self.all_plants.append(crop)
         return crop
+
+    def update_plant_health(self, weather_data, days):
+        # for crop in self.all_crops:
+        #     # Day needs to be to the growth manager
+        #     growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
+        #     health_status = growth_manager.evaluate_plant_health(weather_data)
+        #     crop.set_color(self.crop_health[health_status])
+        return True
+
 
     def add_weed(self, location):
         if bool(random.getrandbits(1)):
@@ -131,9 +149,18 @@ class CropController:
 
     # If X of weed is within X of crop weed radius and Y of weed is within Y of crop weed radius then add it to the crop
     def populate_area_weeds(self, weed):
-        for crop_model in self.all_crops:
-            if ((crop_model.get_location()[0] + self.weed_effect_area < weed.get_location()[0]) >
-                    crop_model.get_location()[0] - self.weed_effect_area and
-                    crop_model.get_location()[1] + self.weed_effect_area < weed.get_location()[1] >
-                    crop_model.get_location()[1] - self.weed_effect_area):
-                crop_model.add_weed(weed)
+        for crop in self.all_crops:
+            if ((crop.get_location()[0] + self.weed_effect_area < weed.get_location()[0]) >
+                    crop.get_location()[0] - self.weed_effect_area and
+                    crop.get_location()[1] + self.weed_effect_area < weed.get_location()[1] >
+                    crop.get_location()[1] - self.weed_effect_area):
+                crop.add_weed(weed)
+
+    def update_text_prompt_manager(self, manager: TextPromptManager):
+        for crop in CropType:
+            if str(crop) == self.crop_type[0]:
+                manager.crop_type = crop
+
+        for soil in SoilType:
+            if str(soil) == self.config["ground_type"]:
+                manager.soil_type = soil
