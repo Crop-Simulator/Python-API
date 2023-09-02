@@ -23,7 +23,7 @@ class BlenderScriptTest(unittest.TestCase):
             "density": 1,
         },
         "output" : {
-            "num_images": 1,
+            "num_images_per_day": 1,
             "directory" : test_directory,
             "file_name": test_output,
             "camera_angle": "top_down",

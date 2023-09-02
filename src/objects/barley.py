@@ -23,13 +23,13 @@ class Barley:
         self.name = self.barley_object.name
         self.config = config
         self.days_per_stage = self.config["growth_simulator"]["days_per_stage"]
-        self.growth_manager = GrowthManager(self.config, self.barley_object, self.days_per_stage, self.weather_data)
+        self.growth_manager = GrowthManager(self.config, self.barley_object, self, self.days_per_stage, self.weather_data)
         self.crop_health = {
-            "healthy": (0.2, 0.8, 0.2, 1),  # Green in RGBA
-            "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
-            "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
+            CropHealth.UNHEALTHY.value : (0.6, 0.8, 0.2, 0.2),  # Yellow-green in RGBA
+            CropHealth.DEAD.value : (0.0, 0.0, 0.0, 0.2),  # Brown in RGBA
         }
-        self.set_color(self.crop_health[self.growth_manager.status])
+        if not self.growth_manager.status == CropHealth.HEALTHY.value:
+            self.set_color(self.crop_health[self.growth_manager.status])
 
     def set_model_stage(self, stage):
         duplicate = bpy.context.scene.objects.get(self.growth_stage[stage])
@@ -92,6 +92,7 @@ class Barley:
         self.stage = self.growth_manager.progress_stage()
         self.set_model_stage(self.stage)
         self.set_location(location)
+
         self.growth_manager.evaluate_plant_health()
         self.health = self.growth_manager.update_health_status()
         if not self.growth_manager.status == CropHealth.HEALTHY.value:

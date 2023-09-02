@@ -14,7 +14,7 @@ class SceneRenderer:
         self.render_resolution_x = self.resolution_data["x"]
         self.render_resolution_y = self.resolution_data["y"]
         self.output_configs = configs["output"]
-        self.num_images = self.output_configs["num_images"]
+        self.num_images = self.output_configs["num_images_per_day"]
         self.directory = self.output_configs["directory"]
         self.output_file = self.output_configs["file_name"]
         self.camera_angle = self.output_configs["camera_angle"]
@@ -34,7 +34,7 @@ class SceneRenderer:
         }
         self.curr_image = 0
 
-    def render_scene(self):
+    def render_scene(self, day):
         print("rendering...")
         current_working_directory = str(os.getcwd())
         image_directory = current_working_directory + "/" + self.directory
@@ -44,7 +44,7 @@ class SceneRenderer:
         self.cameracon.setup_camera()
 
 
-        while self.curr_image < (self.num_images + self.total_days):
+        while self.curr_image < (self.num_images + day):
             distance = 20
 
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angle])

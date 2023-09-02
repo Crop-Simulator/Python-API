@@ -49,10 +49,7 @@ class CropController:
         self.lat = self.config["latitude"]
         self.lon = self.config["longitude"]
         self.barley_type = self.config["barley_type"]
-        self.crop_health = {
-            CropHealth.UNHEALTHY.value : (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
-            CropHealth.DEAD.value : (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
-        }
+
         self.weather_controller = WeatherController()
         self.weather_data = self.weather_controller.get_merged_weather_data(self.barley_type, self.planting_date, self.lat, self.lon)
         try:
@@ -62,6 +59,7 @@ class CropController:
         self.procedural_generation_seed_setter()
 
     def setup_crops(self, day):
+        bpy.ops.object.select_all(action='DESELECT')
         for obj in bpy.context.scene.objects:
             if obj.name not in self.model_names.values():
                 obj.select_set(True)
@@ -72,16 +70,10 @@ class CropController:
         
         if day == 0:
             self.initialise_crops()
+            # self.grow_crops()
         else:
-            self.grow_crops()
-
-        
-        collection = bpy.data.collections.get(self.collection_name)
-        for obj in bpy.context.scene.objects:
-            if obj.name in self.model_names.values():
-                target = collection.objects.get(obj.name)
-                collection.objects.unlink(target)
-
+            # self.initialise_crops()
+            self.grow_crops()    
 
     def initialise_crops(self):
         curr_row = 0

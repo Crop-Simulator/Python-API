@@ -75,9 +75,9 @@ class WeatherController:
     def get_weather_for_growth_period(self, barley_type, planting_date, lat, lon):
         planting_date = datetime.strptime(planting_date, "%Y-%m-%d")
         if barley_type == "spring":
-            harvest_date = planting_date + timedelta(days=10)  # Approx. 6 months
+            harvest_date = planting_date + timedelta(days=20)  # Approx. 6 months
         elif barley_type == "winter":
-            harvest_date = planting_date + timedelta(days=10)  # Approx. 9 months
+            harvest_date = planting_date + timedelta(days=20)  # Approx. 9 months
         return self.get_historical_weather(planting_date.strftime("%Y-%m-%d"), harvest_date.strftime("%Y-%m-%d"), lat, lon)
 
     def extract_daily_data(self, data):
@@ -158,9 +158,9 @@ class WeatherController:
 
     def get_merged_weather_data(self, barley_type, start_date, lat, lon):
         if barley_type == "spring":
-            period = 10
+            period = 20
         elif barley_type == "winter":
-            period = 10
+            period = 20
         end_date = (datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=period)).strftime("%Y-%m-%d")
         weather_data = self.get_weather_for_growth_period(barley_type, start_date, lat, lon)
         daily_weather_data = self.extract_daily_data(weather_data)
