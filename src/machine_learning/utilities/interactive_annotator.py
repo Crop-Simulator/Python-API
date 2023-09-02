@@ -21,8 +21,7 @@ layer_ground = None
 layer_weed = None
 flag_redo_extract_ground = False
 flag_redo_merge_layers = True
-IMAGE_WINDOW_NAME = "PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase " \
-                    "[X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit"
+IMAGE_WINDOW_NAME = "PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase [X]Reset [Space]Save and next [Ecs/Q]uit"
 
 
 def flag_redraw():
@@ -151,6 +150,10 @@ def read_config_or_create_default(config_path):
             "crop": "4, 255, 204",
             "weed": "7, 250, 4",
         }
+        config["DISPLAY"] = {
+            "width": "800",
+            "mode": "0",
+        }
         config["TOOL SETTING"] = {
             "lower h": "35",
             "lower s": "40",
@@ -223,6 +226,8 @@ def get_next_image(config, config_path, all_images, current_image_index):
 
         # update config file
         config["PROGRESS"]["last processed image index"] = str(current_image_index)
+
+
         with open(config_path, 'w') as configfile:
             config.write(configfile)
             print(f"[CONFIG] The last processed image record has been updated to {all_images[current_image_index]}")
@@ -280,16 +285,26 @@ def interactive_annotator(image_path):
     cv2.setMouseCallback(IMAGE_WINDOW_NAME, callback_draw_mask)
 
     # Trackbars
-    cv2.createTrackbar("Disp Width", "Tools Window", 800, 2000, trackbar_parameters.callback_display_width)
-    cv2.createTrackbar("Disp Mode", "Tools Window", 0, 3, trackbar_parameters.callback_display_mode)
-    cv2.createTrackbar('Lower H', "Tools Window", 35, 179, trackbar_parameters.callback_lower_h)
-    cv2.createTrackbar('Lower S', "Tools Window", 40, 255, trackbar_parameters.callback_lower_s)
-    cv2.createTrackbar('Lower V', "Tools Window", 40, 255, trackbar_parameters.callback_lower_v)
-    cv2.createTrackbar('Upper H', "Tools Window", 85, 179, trackbar_parameters.callback_upper_h)
-    cv2.createTrackbar('Upper S', "Tools Window", 255, 255, trackbar_parameters.callback_upper_s)
-    cv2.createTrackbar('Upper V', "Tools Window", 255, 255, trackbar_parameters.callback_upper_v)
-    cv2.createTrackbar('Smoothing', "Tools Window", 1, 30, trackbar_parameters.callback_closing_size)
-    cv2.createTrackbar('Brush Size', "Tools Window", 50, 300, trackbar_parameters.callback_brush_size)
+    cv2.createTrackbar("Disp Width", "Tools Window", int(config["DISPLAY"]["width"]), 2000,
+                       trackbar_parameters.callback_display_width)
+    cv2.createTrackbar("Disp Mode", "Tools Window", int(config["DISPLAY"]["mode"]), 3,
+                       trackbar_parameters.callback_display_mode)
+    cv2.createTrackbar('Lower H', "Tools Window", int(config["TOOL SETTING"]["lower h"]), 179,
+                       trackbar_parameters.callback_lower_h)
+    cv2.createTrackbar('Lower S', "Tools Window", int(config["TOOL SETTING"]["lower s"]), 255,
+                       trackbar_parameters.callback_lower_s)
+    cv2.createTrackbar('Lower V', "Tools Window", int(config["TOOL SETTING"]["lower v"]), 255,
+                       trackbar_parameters.callback_lower_v)
+    cv2.createTrackbar('Upper H', "Tools Window", int(config["TOOL SETTING"]["upper h"]), 179,
+                       trackbar_parameters.callback_upper_h)
+    cv2.createTrackbar('Upper S', "Tools Window", int(config["TOOL SETTING"]["upper s"]), 255,
+                       trackbar_parameters.callback_upper_s)
+    cv2.createTrackbar('Upper V', "Tools Window", int(config["TOOL SETTING"]["upper v"]), 255,
+                       trackbar_parameters.callback_upper_v)
+    cv2.createTrackbar('Smoothing', "Tools Window", int(config["TOOL SETTING"]["smoothing"]), 30,
+                       trackbar_parameters.callback_closing_size)
+    cv2.createTrackbar('Brush Size', "Tools Window", int(config["TOOL SETTING"]["brush size"]), 300,
+                       trackbar_parameters.callback_brush_size)
 
     # Image window resize
     target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
