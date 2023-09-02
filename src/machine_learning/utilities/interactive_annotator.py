@@ -1,4 +1,4 @@
-import cv2, os, configparser
+import cv2, os, configparser, sys
 import numpy as np
 from enum import Enum, auto
 
@@ -25,7 +25,7 @@ IMAGE_WINDOW_NAME = "PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase "
                     "[X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit"
 
 
-def redraw():
+def flag_redraw():
     global flag_redo_extract_ground, flag_redo_merge_layers
     flag_redo_extract_ground = True
     flag_redo_merge_layers = True
@@ -54,35 +54,35 @@ class TrackbarParameters:
 
     def callback_display_mode(self, val):
         self.display_mode = val
-        redraw()
+        flag_redraw()
 
     def callback_lower_h(self, val):
         self.lower_h = val
-        redraw()
+        flag_redraw()
 
     def callback_lower_s(self, val):
         self.lower_s = val
-        redraw()
+        flag_redraw()
 
     def callback_lower_v(self, val):
         self.lower_v = val
-        redraw()
+        flag_redraw()
 
     def callback_upper_h(self, val):
         self.upper_h = val
-        redraw()
+        flag_redraw()
 
     def callback_upper_s(self, val):
         self.upper_s = val
-        redraw()
+        flag_redraw()
 
     def callback_upper_v(self, val):
         self.upper_v = val
-        redraw()
+        flag_redraw()
 
     def callback_closing_size(self, val):
         self.smoothing = val
-        redraw()
+        flag_redraw()
 
     def callback_brush_size(self, val):
         self.brush_size = val
@@ -142,6 +142,10 @@ def read_config_or_create_default(config_path):
     config = configparser.ConfigParser()
 
     if not os.path.exists(config_path):
+        config["WORK DIRECTORY"] = {
+            "source image folder": "../demo_data/test_extract",
+            "output image folder": "",
+        }
         config["TOOL SETTING"] = {
             "lower h": "35",
             "lower s": "40",
@@ -152,18 +156,54 @@ def read_config_or_create_default(config_path):
             "smoothing": "1",
             "brush size": "50",
         }
-        config["WORK DIRECTORY"] = {
-            "source image folder": "../demo_data/test_extract",
+        config["PROGRESS"] = {
             "last processed image index": "0",
+            "sorted image list": "",
         }
         with open(config_path, 'w') as configfile:
             config.write(configfile)
-        print(f"{config_path} created with default values.")
+            print(f"[CONFIG] {config_path} created with default values.")
     else:
         config.read(config_path)
-        print(f"{config_path} loaded")
+        print(f"[CONFIG] {config_path} loaded")
 
     return config
+
+
+def check_progress(config, config_path):
+
+    # Get a sorted list of all image filenames in the folder
+    all_images = sorted([img for img
+                         in os.listdir(config["WORK DIRECTORY"]["source image folder"])
+                         if img.lower().endswith((".png", ".jpg", ".jpeg"))])
+    all_images_str = ", ".join(all_images)
+
+    last_processed_image_index = int(config['PROGRESS']['last processed image index'])
+
+    # Compare with the list stored in config, and reset "last processed image index" if list changed
+    if all_images_str != config["PROGRESS"]["sorted image list"]:
+        config["PROGRESS"]["sorted image list"] = all_images_str
+        config["PROGRESS"]["last processed image index"] = "0"
+        last_processed_image_index = 0
+        with open(config_path, 'w') as configfile:
+            config.write(configfile)
+            print(f"[CONFIG] Image list has changed since last execution. {config_path} updated with new image list")
+
+    # Exit if all images processed
+    elif last_processed_image_index >= len(all_images) - 1:
+        print(f"[CONFIG] All images in the source folder "
+              f"{config['WORK DIRECTORY']['source image folder']} has been processed. ")
+        sys.exit("Please select another folder and restart the programme.")
+
+    # Continue on previous progress
+    else:
+        print(f"[CONFIG] Detected previous progress. The last processed image is "
+              f"{all_images[last_processed_image_index]}.")
+        print(f"[CONFIG] Start working on {all_images[last_processed_image_index + 1]}")
+
+    return all_images, last_processed_image_index
+
+# def get_next_image():
 
 
 def interactive_annotator(image_path):
@@ -174,6 +214,8 @@ def interactive_annotator(image_path):
     config_path = "interactive_annotator_config.ini"
     config = read_config_or_create_default(config_path)
 
+    # Check progress
+    all_images, last_processed_image_index = check_progress(config, config_path)
 
 
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
