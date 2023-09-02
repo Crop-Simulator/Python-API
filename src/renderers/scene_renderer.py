@@ -49,7 +49,8 @@ class SceneRenderer:
 
         for i in range(self.num_images):
             distance = 20
-
+            if self.camera_angles[i] == "straight_on":
+                distance = 10
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angles[i]])
 
             current_file = self.output_file + str(i) + "rendered_day" + str(day)

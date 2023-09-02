@@ -54,7 +54,7 @@ class GrowthManager():
             weed_threshold = len(self.barley.get_weeds())
             growth_threshold = days_passed * self.growth_coefficient * self.days_per_stage + weed_threshold
             progression_probability = random.randint(0, self.days_per_stage) > growth_threshold
-            return progression_probability # if return 1, progress, else no progress
+            return progression_probability #if return 1, progress, else no progress
         else:
             return False
 
