@@ -3,7 +3,7 @@ import os
 import logging
 
 
-def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "jpg") -> None:
+def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "png") -> None:
     """
         Extracts frames from a video file at a specified frame interval and saves them as images.
 

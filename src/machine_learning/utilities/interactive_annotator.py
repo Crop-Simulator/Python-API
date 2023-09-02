@@ -198,7 +198,7 @@ def check_progress(config, config_path):
     elif last_processed_image_index >= len(all_images) - 1:
         print(f"[CONFIG] All images in the source folder "
               f"{config['WORK DIRECTORY']['source image folder']} has been processed. ")
-        sys.exit("Please select another folder and restart the programme.")
+        sys.exit("Annotation completed. Please select another folder in config and restart the programme.")
 
     # Continue on previous progress
     else:
@@ -226,6 +226,7 @@ def get_next_image(config, config_path, all_images, current_image_index):
         with open(config_path, 'w') as configfile:
             config.write(configfile)
             print(f"[CONFIG] The last processed image record has been updated to {all_images[current_image_index]}")
+            print(f"[WORKFLOW] Start working on image {all_images[next_image_index]}")
 
         return image, next_image_index
 
@@ -251,7 +252,8 @@ def save_annotated_image(config, image_shape, image_name):
 
     # Save image
     os.makedirs(config["WORK DIRECTORY"]["output image folder"], exist_ok=True)
-    output_path = os.path.join(config["WORK DIRECTORY"]["output image folder"], "ANNOTATED_" + image_name + ".png")
+    filename, extension = os.path.splitext(image_name)
+    output_path = os.path.join(config["WORK DIRECTORY"]["output image folder"], filename + ".png")
     cv2.imwrite(output_path, annotated_image)
 
     return annotated_image, output_path
@@ -371,7 +373,22 @@ def interactive_annotator(image_path):
             print(f"[WORKFLOW] Progress [{current_image_index + 1}/{len(all_images)}]. "
                   f"Annotated image saved to {output_path}. ")
 
-            # TODO: switch to next image
+            # switch to next image
+            image, current_image_index = get_next_image(config, config_path, all_images, current_image_index)
+
+            # resize window if aspect ratio changed
+            if image_aspect_ratio != image.shape[1] / image.shape[0]:
+                image_aspect_ratio = image.shape[1] / image.shape[0]
+                target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
+                cv2.resizeWindow(IMAGE_WINDOW_NAME, target_window_width, int(target_window_width / image_aspect_ratio))
+
+            # Convert the image from BGR to HSV (Hue, Saturation, Value)
+            image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+            # Reset layers
+            layer_weed = np.zeros_like(image[:, :, 0])
+            flag_redraw()
+
 
         # if window closed, break
         if cv2.getWindowProperty("Tools Window", cv2.WND_PROP_VISIBLE) < 1 or \
