@@ -13,13 +13,13 @@ latitude: 35.6895
 longitude: 139.6917  
 barley_type: 'spring' #spring or winter
 
-generation_seed: 12
+# generation_seed: 12
 
 output:
-  num_images_per_day: 1
+  num_images_per_day: 2
   directory: 'output_images'
   file_name: 'barley'
-  camera_angle: 'birds_eye'
+  camera_angles: ['birds_eye', 'top_down']
 resolution: 
   x: 512
   y: 512
