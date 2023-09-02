@@ -44,11 +44,11 @@ def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, ou
             break
 
         # Generate the output file path
-        output_path = os.path.join(output_dir, f"{output_count}_frame_{frame_number}.{output_format}")
+        output_path = os.path.join(output_dir, f"{output_count}_frame{frame_number}.{output_format}")
 
         # Save the frame
         cv2.imwrite(output_path, frame)
-        logger.debug(f"Saved frame {output_count}_frame_{frame_number}.{output_format}")
+        logger.debug(f"Saved frame {output_count}_frame{frame_number}.{output_format}")
 
         # Increment the counters
         output_count += 1
@@ -92,6 +92,10 @@ def slice_image(image, chunk_size_x: int = 512, chunk_size_y: int = 512):
 
 
 def scale_image_to_fill(image, fill_size_x: int = 512, fill_size_y: int = 512):
+    """
+        Scale image to fill a specific size, such that one side of the image is equal to fill size, and other side of
+        image is equal or larger than the other side of
+    """
     image_size_x, image_size_y = image.shape[1], image.shape[0]
 
     if image_size_x / image_size_y >= fill_size_x / fill_size_y:

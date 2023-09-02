@@ -144,7 +144,12 @@ def read_config_or_create_default(config_path):
     if not os.path.exists(config_path):
         config["WORK DIRECTORY"] = {
             "source image folder": "../demo_data/test_extract",
-            "output image folder": "",
+            "output image folder": "../demo_data/test_annotation",
+        }
+        config["ANNOTATION COLOURS BGR"] = {
+            "ground": "255, 194, 0",
+            "crop": "4, 255, 204",
+            "weed": "7, 250, 4",
         }
         config["TOOL SETTING"] = {
             "lower h": "35",
@@ -183,8 +188,8 @@ def check_progress(config, config_path):
     # Compare with the list stored in config, and reset "last processed image index" if list changed
     if all_images_str != config["PROGRESS"]["sorted image list"]:
         config["PROGRESS"]["sorted image list"] = all_images_str
-        config["PROGRESS"]["last processed image index"] = "0"
-        last_processed_image_index = 0
+        config["PROGRESS"]["last processed image index"] = "-1"
+        last_processed_image_index = -1
         with open(config_path, 'w') as configfile:
             config.write(configfile)
             print(f"[CONFIG] Image list has changed since last execution. {config_path} updated with new image list")
@@ -211,18 +216,45 @@ def get_next_image(config, config_path, all_images, current_image_index):
         sys.exit("Please select another folder and restart the programme.")
 
     else:
+        # open image
+        next_image_index = current_image_index + 1
+        image_path = os.path.join(config["WORK DIRECTORY"]["source image folder"], all_images[next_image_index])
+        image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+
         # update config file
         config["PROGRESS"]["last processed image index"] = str(current_image_index)
         with open(config_path, 'w') as configfile:
             config.write(configfile)
             print(f"[CONFIG] The last processed image record has been updated to {all_images[current_image_index]}")
 
-        # open image
-        next_image_index = current_image_index + 1
-        image_path = os.path.join(config["WORK DIRECTORY"]["source image folder"], all_images[next_image_index])
-        image = cv2.imread(image_path, cv2.IMREAD_COLOR)
-
         return image, next_image_index
+
+
+def save_annotated_image(config, image_shape, image_name):
+    global layer_ground, layer_weed
+
+    # Start with image filled with crop colour
+    annotated_image = np.full(image_shape,
+                              tuple(map(int, config["ANNOTATION COLOURS BGR"]["crop"].split(', '))), dtype=np.uint8)
+
+    # Find the pixels where the layer_weed is 255 (i.e., weed pixels)
+    weed_indices = np.where(layer_weed == 255)
+    # Add weed annotation
+    annotated_image[weed_indices[0], weed_indices[1], :] = \
+        tuple(map(int, config["ANNOTATION COLOURS BGR"]["weed"].split(', ')))
+
+    # Find the pixels where the layer_ground is 0 (i.e., ground pixels)
+    ground_indices = np.where(layer_ground == 0)
+    # Add ground annotation
+    annotated_image[ground_indices[0], ground_indices[1], :] = \
+        tuple(map(int, config["ANNOTATION COLOURS BGR"]["ground"].split(', ')))
+
+    # Save image
+    os.makedirs(config["WORK DIRECTORY"]["output image folder"], exist_ok=True)
+    output_path = os.path.join(config["WORK DIRECTORY"]["output image folder"], "ANNOTATED_" + image_name + ".png")
+    cv2.imwrite(output_path, annotated_image)
+
+    return annotated_image, output_path
 
 
 def interactive_annotator(image_path):
@@ -332,27 +364,14 @@ def interactive_annotator(image_path):
             # press "q" or "esc" to quit
             break
         elif key == 32:
-            # press "space" to save
-
-            # annotation colour
-            ANNOTATION_BGR_GROUND = (255, 194, 0)
-            ANNOTATION_BGR_CROP = (4, 255, 204)
-            ANNOTATION_BGR_WEED = (7, 250, 4)
-
-            # Start with image filled with crop colour
-            annotated_image = np.full(image.shape, ANNOTATION_BGR_CROP, dtype=np.uint8)
-
-            # Find the pixels where the layer_weed is 255 (i.e., weed pixels)
-            weed_indices = np.where(layer_weed == 255)
-            # Add weed annotation
-            annotated_image[weed_indices[0], weed_indices[1], :] = ANNOTATION_BGR_WEED
-
-            # Find the pixels where the layer_ground is 0 (i.e., ground pixels)
-            ground_indices = np.where(layer_ground == 0)
-            # Add ground annotation
-            annotated_image[ground_indices[0], ground_indices[1], :] = ANNOTATION_BGR_GROUND
-
+            # press "space" to save and preview annotated image
+            annotated_image, output_path = save_annotated_image(config, image.shape, all_images[current_image_index])
             cv2.imshow("Tools Window", annotated_image)
+
+            print(f"[WORKFLOW] Progress [{current_image_index + 1}/{len(all_images)}]. "
+                  f"Annotated image saved to {output_path}. ")
+
+            # TODO: switch to next image
 
         # if window closed, break
         if cv2.getWindowProperty("Tools Window", cv2.WND_PROP_VISIBLE) < 1 or \
