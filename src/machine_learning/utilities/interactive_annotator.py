@@ -1,4 +1,4 @@
-import cv2
+import cv2, os, configparser
 import numpy as np
 from enum import Enum, auto
 
@@ -138,11 +138,44 @@ def extract_ground(image_hsv):
     return ground
 
 
+def read_config_or_create_default(config_path):
+    config = configparser.ConfigParser()
+
+    if not os.path.exists(config_path):
+        config["TOOL SETTING"] = {
+            "lower h": "35",
+            "lower s": "40",
+            "lower v": "40",
+            "upper h": "85",
+            "upper s": "255",
+            "upper v": "255",
+            "smoothing": "1",
+            "brush size": "50",
+        }
+        config["WORK DIRECTORY"] = {
+            "source image folder": "../demo_data/test_extract",
+            "last processed image index": "0",
+        }
+        with open(config_path, 'w') as configfile:
+            config.write(configfile)
+        print(f"{config_path} created with default values.")
+    else:
+        config.read(config_path)
+        print(f"{config_path} loaded")
+
+    return config
+
+
 def interactive_annotator(image_path):
     global layer_ground, layer_weed, image_aspect_ratio, tool_mode, trackbar_parameters, \
         flag_redo_extract_ground, flag_redo_merge_layers, IMAGE_WINDOW_NAME
 
-    # Load the image
+    # Load config file, and create one if none exists
+    config_path = "interactive_annotator_config.ini"
+    config = read_config_or_create_default(config_path)
+
+
+
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     image_aspect_ratio = image.shape[1] / image.shape[0]
 
@@ -276,4 +309,4 @@ def interactive_annotator(image_path):
 
 
 # Test the function
-interactive_annotator("../demo_data/test_extract/1_frame_0.jpg")
+interactive_annotator("../demo_data/test_extract/2_frame_600.jpg")
