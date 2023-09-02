@@ -21,6 +21,8 @@ layer_ground = None
 layer_weed = None
 flag_redo_extract_ground = False
 flag_redo_merge_layers = True
+IMAGE_WINDOW_NAME = "PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase " \
+                    "[X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit"
 
 
 def redraw():
@@ -46,9 +48,9 @@ class TrackbarParameters:
         self.brush_size = None
 
     def callback_display_width(self, val):
-        global image_aspect_ratio
+        global image_aspect_ratio, IMAGE_WINDOW_NAME
         self.display_width = val
-        cv2.resizeWindow("PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase [X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit", val, int(val / image_aspect_ratio))
+        cv2.resizeWindow(IMAGE_WINDOW_NAME, val, int(val / image_aspect_ratio))
 
     def callback_display_mode(self, val):
         self.display_mode = val
@@ -138,7 +140,7 @@ def extract_ground(image_hsv):
 
 def interactive_annotator(image_path):
     global layer_ground, layer_weed, image_aspect_ratio, tool_mode, trackbar_parameters, \
-        flag_redo_extract_ground, flag_redo_merge_layers
+        flag_redo_extract_ground, flag_redo_merge_layers, IMAGE_WINDOW_NAME
 
     # Load the image
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
@@ -153,13 +155,13 @@ def interactive_annotator(image_path):
 
     cv2.namedWindow("Tools Window", cv2.WINDOW_NORMAL)
 
-    cv2.namedWindow("PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase [X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit", cv2.WINDOW_NORMAL)
-    cv2.setMouseCallback("PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase [X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit", callback_draw_mask)
+    cv2.namedWindow(IMAGE_WINDOW_NAME, cv2.WINDOW_NORMAL)
+    cv2.setMouseCallback(IMAGE_WINDOW_NAME, callback_draw_mask)
 
     # Image window resize
     cv2.createTrackbar("Disp Width", "Tools Window", 800, 2000, trackbar_parameters.callback_display_width)
     target_window_width = cv2.getTrackbarPos("Disp Width", "Tools Window")
-    cv2.resizeWindow("PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase [X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit", target_window_width, int(target_window_width / image_aspect_ratio))
+    cv2.resizeWindow(IMAGE_WINDOW_NAME, target_window_width, int(target_window_width / image_aspect_ratio))
 
     cv2.createTrackbar("Disp Mode", "Tools Window", 0, 3, trackbar_parameters.callback_display_mode)
 
@@ -223,7 +225,7 @@ def interactive_annotator(image_path):
             flag_redo_merge_layers = False
 
         # Display the segmented view
-        cv2.imshow("PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase [X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit", layer_merged_display_bgr)
+        cv2.imshow(IMAGE_WINDOW_NAME, layer_merged_display_bgr)
 
         # keyboard event
         key = cv2.waitKey(1) & 0xFF
@@ -267,7 +269,7 @@ def interactive_annotator(image_path):
 
         # if window closed, break
         if cv2.getWindowProperty("Tools Window", cv2.WND_PROP_VISIBLE) < 1 or \
-                cv2.getWindowProperty("PRESS KEY: [B]rush [E]raser [R]ectangle [G]RectangleErase [X]Reset [Space]Save and next [<-]Back [Ecs/Q]uit", cv2.WND_PROP_VISIBLE) < 1:
+                cv2.getWindowProperty(IMAGE_WINDOW_NAME, cv2.WND_PROP_VISIBLE) < 1:
             break
 
     cv2.destroyAllWindows()
