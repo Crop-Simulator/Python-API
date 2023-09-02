@@ -44,17 +44,9 @@ class TyperLaunchAPI:
         scenerender = SceneRenderer(config, collection_name)
         cropcon.setup_crops()
         scenerender.setup_render()
-        # planting_date = config["planting_date"]
-        # lat = config["latitude"]
-        # lon = config["longitude"]
-        # barley_type = config["barley_type"]
-        # api_key = os.environ["WEATHER_API"]
-        # weather_controller = WeatherController()
-        # weather_data = weather_controller.get_merged_weather_data(barley_type, planting_date, lat, lon)
         growth_sim_data = config["growth_simulator"]
         for day in range(growth_sim_data["total_days"]):
             cropcon.grow_crops()
-            # cropcon.update_plant_health(weather_data, day)
             cropcon.update_text_prompt_manager(text_prompt_manager)
             if day % growth_sim_data["days_per_render"] == 0:
                 scenerender.update_scene(day, text_prompt_manager)
