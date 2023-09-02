@@ -204,21 +204,21 @@ def interactive_annotator(image_path):
                 layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = \
                         image[ground_indices[0], ground_indices[1], :] // 3
 
-            elif trackbar_parameters.display_mode == 1:
+            # do nothing when mode==1, i.e., show original image for reference
+
+            elif trackbar_parameters.display_mode == 2:
                 # Replace weed with red
                 layer_merged_display_bgr[weed_indices[0], weed_indices[1], :] = (100, 100, 220)
 
                 # replace ground with grey
                 layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = (127,127,127)
 
-            elif trackbar_parameters.display_mode == 2:
+            elif trackbar_parameters.display_mode == 3:
                 # Replace weed with black
                 layer_merged_display_bgr[weed_indices[0], weed_indices[1], :] = (0, 0, 0)
 
                 # replace ground with red
                 layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = (100,100,220)
-
-            # do nothing when mode==3, i.e., show original image for reference
 
             flag_redo_merge_layers = False
 
