@@ -1,17 +1,23 @@
-import cv2, os, configparser, sys
-import numpy as np
 from enum import Enum, auto
+
+import configparser
+import cv2
+import numpy as np
+import os
+import sys
 
 # Variables related to config
 config_path = "interactive_annotator_config.ini"
 config = {}
 flag_preferences_changed = False
 
+
 class ToolMode(Enum):
     ERASER = auto()
     BRUSH = auto()
     RECTANGLE = auto()
     RECTANGLE_ERASE = auto()
+
 
 # State variables for drawing
 drawing = False  # true if mouse is pressed
@@ -209,6 +215,7 @@ def read_config_or_create_default():
         config.read(config_path)
         print(f"[CONFIG] {config_path} loaded")
 
+
 def check_progress():
     global config, config_path
 
@@ -380,11 +387,11 @@ def interactive_annotator():
             # Different display mode:
             if trackbar_parameters.display_mode == 0:
                 # Replace weed with red
-                layer_merged_display_bgr[weed_indices[0], weed_indices[1], :] = (100,100,220)
+                layer_merged_display_bgr[weed_indices[0], weed_indices[1], :] = (100, 100, 220)
 
                 # Darken the ground area
                 layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = \
-                        image[ground_indices[0], ground_indices[1], :] // 3
+                    image[ground_indices[0], ground_indices[1], :] // 3
 
             # do nothing when mode==1, i.e., show original image for reference
 
@@ -393,14 +400,14 @@ def interactive_annotator():
                 layer_merged_display_bgr[weed_indices[0], weed_indices[1], :] = (100, 100, 220)
 
                 # replace ground with grey
-                layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = (127,127,127)
+                layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = (127, 127, 127)
 
             elif trackbar_parameters.display_mode == 3:
                 # Replace weed with black
                 layer_merged_display_bgr[weed_indices[0], weed_indices[1], :] = (0, 0, 0)
 
                 # replace ground with red
-                layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = (100,100,220)
+                layer_merged_display_bgr[ground_indices[0], ground_indices[1], :] = (100, 100, 220)
 
             flag_redo_merge_layers = False
 
@@ -447,7 +454,6 @@ def interactive_annotator():
             # Reset layers
             layer_weed = np.zeros_like(image[:, :, 0])
             flag_redraw()
-
 
         # if window closed, break
         if cv2.getWindowProperty("Tools Window", cv2.WND_PROP_VISIBLE) < 1 or \
