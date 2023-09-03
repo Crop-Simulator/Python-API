@@ -35,6 +35,8 @@ class SceneRenderer:
             "worms_eye": (150, 0, 0),
 
         }
+        self.close_camera_angles = ["straight_on", "high_angle", "above_shot"]
+        self.closest_camera_angle = ["low_angle", "worms_eye", "hero_shot"]
         self.curr_image = 0
 
     def setup_render(self):
@@ -48,9 +50,12 @@ class SceneRenderer:
         image_directory = current_working_directory + "/" + self.directory
 
         for i in range(self.num_images):
-            distance = 20
-            if self.camera_angles[i] == "straight_on":
+            if self.camera_angles[i] in self.close_camera_angles:
                 distance = 10
+            elif self.camera_angles[i] in self.closest_camera_angle:
+                distance = -1
+            else:
+                distance = 20
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angles[i]])
 
             current_file = self.output_file + str(i) + "rendered_day" + str(day)

@@ -46,7 +46,8 @@ class TyperLaunchAPI:
         scenerender.setup_render()
         growth_sim_data = config["growth_simulator"]
         for day in range(growth_sim_data["total_days"]):
-            cropcon.grow_crops()
+            if day != 0:
+                cropcon.grow_crops()
             cropcon.update_text_prompt_manager(text_prompt_manager)
             if day % growth_sim_data["days_per_render"] == 0:
                 scenerender.update_scene(day, text_prompt_manager)

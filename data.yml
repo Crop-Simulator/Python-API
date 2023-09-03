@@ -1,10 +1,11 @@
 crop:
   type: ["barley"]
   percentage_share: [1.0]
-  total_number: 50
+  total_number: 100
   num_rows: 10
-  row_widths: 5
-  density: 1 #Crops per unit^2 -- Lower number == less dense
+  row_widths: 3
+  density: 1 #Crops per unit^2 -- Lower number == less dense (CANNOT BE 0)
+  barley_position_randomness: 0.8 #0.0-1.0
 
 weed_likelihood: 0.0 #0.0-1.0
 
@@ -16,10 +17,10 @@ barley_type: 'spring' #spring or winter
 # generation_seed: 12 #enable seed for reproducible generation
 
 output:
-  num_images_per_day: 2
+  num_images_per_day: 3 #should provide same number of camera angles
   directory: 'output_images'
   file_name: 'barley'
-  camera_angles: ['birds_eye', 'straight_on'] #number of camera angles should match 'num_images_per_day'
+  camera_angles: ['top_down', 'birds_eye', 'straight_on'] #number of camera angles should match 'num_images_per_day'
 resolution: 
   x: 512
   y: 512
