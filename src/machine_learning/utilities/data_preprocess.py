@@ -3,7 +3,9 @@ import os
 import logging
 
 
-def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, output_format: str = "jpg", jpg_quality: int = 95) -> None:
+def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1,
+                   output_format: str = "jpg", jpg_quality: int = 95,
+                   scale_and_slice_to_512: bool = False) -> None:
     """
         Extracts frames from a video file at a specified frame interval and saves them as images.
 
@@ -45,16 +47,33 @@ def extract_frames(video_path: str, output_dir: str, frame_interval: int = 1, ou
         if not success:
             break
 
-        # Generate the output file path
-        output_path = os.path.join(output_dir, f"{output_count}_frame{frame_number}.{output_format}")
+        # save as 512x512 images
+        if scale_and_slice_to_512:
+            frame = scale_image_to_fill(frame)
+            chunks = slice_image(frame)
 
-        # Save the frame
-        if output_format.lower() in ("jpg", "jpeg"):
-            cv2.imwrite(output_path, frame, [int(cv2.IMWRITE_JPEG_QUALITY), jpg_quality])
+            for index, chunk in enumerate(chunks):
+                # Generate the output file path
+                output_path = os.path.join(output_dir, f"{output_count}_frame{frame_number}_chunk{index}.{output_format}")
+
+                if output_format.lower() in ("jpg", "jpeg"):
+                    cv2.imwrite(output_path, chunk, [int(cv2.IMWRITE_JPEG_QUALITY), jpg_quality])
+                else:
+                    cv2.imwrite(output_path, chunk)
+
+                logger.debug(f"Saved frame to {output_path}")
+
+        # save without scaling
         else:
-            cv2.imwrite(output_path, frame)
+            # Generate the output file path
+            output_path = os.path.join(output_dir, f"{output_count}_frame{frame_number}.{output_format}")
 
-        logger.debug(f"Saved frame {output_count}_frame{frame_number}.{output_format}")
+            if output_format.lower() in ("jpg", "jpeg"):
+                cv2.imwrite(output_path, frame, [int(cv2.IMWRITE_JPEG_QUALITY), jpg_quality])
+            else:
+                cv2.imwrite(output_path, frame)
+
+            logger.debug(f"Saved frame to {output_path}")
 
         # Increment the counters
         output_count += 1
@@ -119,11 +138,11 @@ def scale_image_to_fill(image, fill_size_x: int = 512, fill_size_y: int = 512):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    os.makedirs("../demo_data/test_scale", exist_ok=True)
-
     video_path = "../demo_data/barley_10_days_old.mp4"
-    output_dir = "../demo_data/test_extract"
-    frame_interval = 300  # Extract 1 frame per 300 frames (roughly 10 secs)
-    extract_frames(video_path, output_dir, frame_interval, "jpg", 50)
+    output_dir = "../demo_data/test_lora_train_data"
+    os.makedirs(output_dir, exist_ok=True)
+
+    frame_interval = 30  # Extract 1 frame per 300 frames (roughly 10 secs)
+    extract_frames(video_path, output_dir, frame_interval, "jpg", 50, True)
 
 # ruff: noqa
