@@ -18,7 +18,9 @@ class CropController:
         self.collection_name = collection
         self.crop_size = 0.5
         self.counter = 1
+        self.weed_likelihood = self.config["weed_likelihood"]
         self.crop_data = config["crop"]
+        self.barley_position_randomness = self.crop_data["barley_position_randomness"]
         self.crop_type = self.crop_data["type"]
         self.percentage_share = self.crop_data["percentage_share"]
         self.crop_count = self.crop_data["total_number"]
@@ -36,9 +38,8 @@ class CropController:
             "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
             "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
         }
-        self.x_offset = 0 - (self.crop_count/self.rows)*2
-        self.x_offset = max(self.x_offset, -20)
-        self.y_offset = 5
+        self.x_offset = -(self.row_widths * self.rows) * 0.5 / self.crop_data["density"]
+        self.y_offset = -(self.crop_count / self.rows) * 0.5
         self.weed_spacing = 1 # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.model_names = {
@@ -87,7 +88,7 @@ class CropController:
         curr_row = 0
         curr_col = 0
         curr_crop = 0
-        location = [self.x_offset, 0, 0]
+        location = [self.x_offset, self.y_offset, -3]
 
         for _ in range(self.crop_count):
             crop_model = self.add_crop(self.crop_type[0], location, 0)
@@ -101,14 +102,15 @@ class CropController:
             if curr_col == self.rows:
                 curr_col = 0
                 curr_row += 1
-                location[1] += (1 / self.crop_data["density"]) + self.y_offset
-                location[0] = + self.x_offset
+                location[1] += (1 / self.crop_data["density"])
+                location[0] = +self.x_offset
             else:
-                location[0] += self.row_widths / self.crop_data["density"]
+                location[0] += self.row_widths / self.crop_data["density"] + self.row_widths
 
     def grow_crops(self):
         for crop in self.all_crops:
             crop.grow(crop.location)
+            self.add_weed(crop.location)
 
     def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)
@@ -117,24 +119,15 @@ class CropController:
         crop = None
         if crop_type == "barley":
             crop = Barley(self.config, stage, "healthy", self.weather_data)
-        location[0] = location[0] - random.uniform(-.5, .5)
-        location[1] = location[1] - random.uniform(-.5, .5)
+        location[0] = location[0] - random.uniform(-self.barley_position_randomness, self.barley_position_randomness)
+        location[1] = location[1] - random.uniform(-self.barley_position_randomness, self.barley_position_randomness)
         crop.set_location([location[0], location[1], location[2]])
         self.counter += 1
         self.all_plants.append(crop)
         return crop
 
-    def update_plant_health(self, weather_data, days):
-        # for crop in self.all_crops:
-        #     # Day needs to be to the growth manager
-        #     growth_manager = GrowthManager(self.config, crop, self.days_per_stage)
-        #     health_status = growth_manager.evaluate_plant_health(weather_data)
-        #     crop.set_color(self.crop_health[health_status])
-        return True
-
-
     def add_weed(self, location):
-        if bool(random.getrandbits(1)):
+        if bool(random.randint(0, 100) <= self.weed_likelihood * 100):
             weed = Weed()
             location[0] = location[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
             location[1] = location[1] - random.uniform(-self.weed_spacing, self.weed_spacing)

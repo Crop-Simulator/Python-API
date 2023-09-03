@@ -11,23 +11,25 @@ class GrowthManager():
     IRRADIANCE_THRESHOLD = 250
     LOW_IRRADIANCE_DAYS_LIMIT = 5
     PRECIPITATION_THRESHOLD = 0.1
-    MIN_TEMPERATURE_THRESHOLD = 37.9
+    MIN_TEMPERATURE_THRESHOLD = 37.9 #0 degrees
 
     def __init__(self, config, model, barley, weather_data):
-        self.GDD_PER_STAGE = 5
+
         self.stage = 0
         self.gdd = 0
         self.barley = barley
         self.model = model
         self.name = self.model.name
-        self.probability_of_success = 0.8       # probability of success on day for that stage
         self.config = config["growth_simulator"]
+        self.gdd_per_stage = self.config["gdd"]
         self.growth_coefficient = self.config["growth_coefficient"]
         self.p_progression = self.config["p_progression"]
         self.days_per_stage = self.config["days_per_stage"]
         self.effect_of_irradiance = self.config["effect_of_irradiance"]
         self.effect_of_temperature = self.config["effect_of_temperature"]
         self.effect_of_precipitation = self.config["effect_of_precipitation"]
+        self.effect_of_weeds = self.config["effect_of_weeds"]
+
         self.weather_data = weather_data
         self.status = CropHealth.HEALTHY.value
         self.days_passed_since_last_stage = 0
@@ -51,10 +53,10 @@ class GrowthManager():
 
     def stochastic_growth(self, days_passed):
         if self.barley.health != CropHealth.DEAD.value:
-            weed_threshold = len(self.barley.get_weeds())
-            growth_threshold = days_passed * self.growth_coefficient * self.days_per_stage + weed_threshold
-            progression_probability = random.randint(0, self.days_per_stage) > growth_threshold
-            return progression_probability # if return 1, progress, else no progress
+            weed_threshold = len(self.barley.get_weeds()) * self.effect_of_weeds
+            growth_threshold = days_passed * self.days_per_stage * self.growth_coefficient/(weed_threshold + 1)
+            progression_probability = random.randint(0, self.days_per_stage) < growth_threshold
+            return progression_probability #if return 1, progress, else no progress
         else:
             return False
 
@@ -67,7 +69,7 @@ class GrowthManager():
         # only grow if reached growth degree days and not at final stage
         # and has reached growth day probability
         max_stages = 10
-        if can_grow and self.gdd >= self.GDD_PER_STAGE and self.stage < max_stages:
+        if can_grow and self.gdd >= self.gdd_per_stage and self.stage < max_stages:
             self.stage += 1
             self.days_passed_since_last_stage = 0
         return self.stage
@@ -96,6 +98,8 @@ class GrowthManager():
 
         elif self.days_total_precipitation >= self.PRECIPITATION_THRESHOLD:
             self.health_points += self.effect_of_precipitation
+        elif random.getrandbits(1) == 1:
+                self.health_points += 0.1
         return self.status
 
     def update_health_status(self):
