@@ -189,13 +189,13 @@ def read_config_or_create_default():
             "mode": "0",
         }
         config["TOOL SETTING"] = {
-            "lower h": "35",
-            "lower s": "40",
-            "lower v": "40",
-            "upper h": "85",
+            "lower h": "31",
+            "lower s": "6",
+            "lower v": "5",
+            "upper h": "90",
             "upper s": "255",
             "upper v": "255",
-            "smoothing": "1",
+            "smoothing": "4",
             "brush size": "50",
         }
         config["PROGRESS"] = {
@@ -309,7 +309,7 @@ def save_annotated_image(image_shape, image_name):
     return annotated_image, output_path
 
 
-def interactive_annotator(image_path):
+def interactive_annotator():
     global layer_ground, layer_weed, image_aspect_ratio, tool_mode, trackbar_parameters, \
         flag_redo_extract_ground, flag_redo_merge_layers, IMAGE_WINDOW_NAME, config_path, config
 
@@ -457,5 +457,6 @@ def interactive_annotator(image_path):
     cv2.destroyAllWindows()
 
 
-# Test the function
-interactive_annotator("../demo_data/test_extract/2_frame_600.jpg")
+if __name__ == "__main__":
+    # Test the function
+    interactive_annotator()
