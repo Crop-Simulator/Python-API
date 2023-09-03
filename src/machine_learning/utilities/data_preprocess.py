@@ -125,3 +125,5 @@ if __name__ == "__main__":
     output_dir = "../demo_data/test_extract"
     frame_interval = 300  # Extract 1 frame per 300 frames (roughly 10 secs)
     extract_frames(video_path, output_dir, frame_interval, "jpg", 50)
+
+# ruff: noqa

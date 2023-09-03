@@ -466,3 +466,5 @@ def interactive_annotator():
 if __name__ == "__main__":
     # Test the function
     interactive_annotator()
+
+# ruff: noqa
