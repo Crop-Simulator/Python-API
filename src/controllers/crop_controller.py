@@ -18,6 +18,7 @@ class CropController:
         self.collection_name = collection
         self.crop_size = 0.5
         self.counter = 1
+        self.weed_likelihood = self.config["weed_likelihood"]
         self.crop_data = config["crop"]
         self.barley_position_randomness = self.crop_data["barley_position_randomness"]
         self.crop_type = self.crop_data["type"]
@@ -39,7 +40,7 @@ class CropController:
         }
         # self.x_offset = -(self.crop_count/self.rows)*2
         self.x_offset = -(self.row_widths * self.rows) * 0.5 / self.crop_data["density"]
-        self.y_offset = -(self.crop_count / self.rows) * 0.5 * self.row_widths
+        self.y_offset = -(self.crop_count / self.rows) * 0.5
         self.weed_spacing = 1 # The bounding area value in for spacing between weed and crop
         self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
         self.model_names = {
@@ -102,14 +103,15 @@ class CropController:
             if curr_col == self.rows:
                 curr_col = 0
                 curr_row += 1
-                location[1] += (1 / self.crop_data["density"]) + self.row_widths
+                location[1] += (1 / self.crop_data["density"]) 
                 location[0] = +self.x_offset
             else:
-                location[0] += self.row_widths / self.crop_data["density"]
+                location[0] += self.row_widths / self.crop_data["density"] + self.row_widths
 
     def grow_crops(self):
         for crop in self.all_crops:
             crop.grow(crop.location)
+            self.add_weed(crop.location)
 
     def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)
@@ -126,7 +128,7 @@ class CropController:
         return crop
 
     def add_weed(self, location):
-        if bool(random.getrandbits(1)):
+        if bool(random.randint(0, 100) <= self.weed_likelihood * 100):
             weed = Weed()
             location[0] = location[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
             location[1] = location[1] - random.uniform(-self.weed_spacing, self.weed_spacing)

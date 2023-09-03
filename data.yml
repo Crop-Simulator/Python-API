@@ -1,13 +1,13 @@
 crop:
   type: ["barley"]
   percentage_share: [1.0]
-  total_number: 100
+  total_number: 500
   num_rows: 10
-  row_widths: 3
+  row_widths: 5
   density: 1 #Crops per unit^2 -- Lower number == less dense (CANNOT BE 0)
-  barley_position_randomness: 0.8 #0.0-1.0
+  barley_position_randomness: 0.4 #0.0-1.0
 
-weed_likelihood: 0.0 #0.0-1.0
+weed_likelihood: 0.3 #0.0-1.0
 
 planting_date: '2023-02-01'  
 latitude: 35.6895  
@@ -17,10 +17,12 @@ barley_type: 'spring' #spring or winter
 # generation_seed: 12 #enable seed for reproducible generation
 
 output:
-  num_images_per_day: 3 #should provide same number of camera angles
+  num_images_per_day: 5 #should provide same number of camera angles
   directory: 'output_images'
   file_name: 'barley'
-  camera_angles: ['top_down', 'birds_eye', 'straight_on'] #number of camera angles should match 'num_images_per_day'
+  camera_angles: ['top_down', 'birds_eye', 'above_shot', 'straight_on', 'hero_shot'] #number of camera angles should match 'num_images_per_day'
+  brightness: 0.5 #0.0-1.0
+  manual_camera_distance: 10 #manually adjust camera distance, otherwise will be calculated automatically
 resolution: 
   x: 512
   y: 512
@@ -28,11 +30,11 @@ ground_type: "loam"
 
 growth_simulator:
   days_per_render: 1
-  total_days: 10
+  total_days: 200
   days_per_stage: 30         # days needed for each growth stage
   p_progression: 0.8         # probability of growth on given day
   p_death: 0.1
-  growth_coefficient: 0.1    # importance of growth on previous day
+  growth_coefficient: 1    # speed of growth
   gdd_coefficient: 1         # importance of gdd to growth
   effect_of_irradiance: 0.1  # importance of irradiance to growth [0-1]
   effect_of_precipitation: 0.5 # importance of precipitation to growth [0-1]

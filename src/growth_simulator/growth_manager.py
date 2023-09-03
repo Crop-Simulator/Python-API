@@ -20,7 +20,6 @@ class GrowthManager():
         self.barley = barley
         self.model = model
         self.name = self.model.name
-        self.probability_of_success = 0.8       # probability of success on day for that stage
         self.config = config["growth_simulator"]
         self.growth_coefficient = self.config["growth_coefficient"]
         self.p_progression = self.config["p_progression"]
@@ -28,6 +27,7 @@ class GrowthManager():
         self.effect_of_irradiance = self.config["effect_of_irradiance"]
         self.effect_of_temperature = self.config["effect_of_temperature"]
         self.effect_of_precipitation = self.config["effect_of_precipitation"]
+    
         self.weather_data = weather_data
         self.status = CropHealth.HEALTHY.value
         self.days_passed_since_last_stage = 0
@@ -52,8 +52,8 @@ class GrowthManager():
     def stochastic_growth(self, days_passed):
         if self.barley.health != CropHealth.DEAD.value:
             weed_threshold = len(self.barley.get_weeds())
-            growth_threshold = days_passed * self.growth_coefficient * self.days_per_stage + weed_threshold
-            progression_probability = random.randint(0, self.days_per_stage) > growth_threshold
+            growth_threshold = days_passed * self.days_per_stage * self.growth_coefficient/(weed_threshold + 1)
+            progression_probability = random.randint(0, self.days_per_stage) < growth_threshold
             return progression_probability #if return 1, progress, else no progress
         else:
             return False

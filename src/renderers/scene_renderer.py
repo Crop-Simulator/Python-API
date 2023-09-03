@@ -11,8 +11,6 @@ from src.machine_learning.text_prompt_definition import camera_angle_interpret
 class SceneRenderer:
     def __init__(self, configs, collection):
         self.collection = collection
-        self.cameracon = CameraController("Photo Taker", (0, 0, 0), (1.57057, 0.00174533, 1.57057), self.collection)
-        self.lightcon = LightController()
         self.resolution_data = configs["resolution"]
         self.render_resolution_x = self.resolution_data["x"]
         self.render_resolution_y = self.resolution_data["y"]
@@ -21,8 +19,11 @@ class SceneRenderer:
         self.directory = self.output_configs["directory"]
         self.output_file = self.output_configs["file_name"]
         self.camera_angles = self.output_configs["camera_angles"]
+        
+        self.brightness = self.output_configs["brightness"]
         self.growth_simulator = configs["growth_simulator"]
         self.total_days = self.growth_simulator["total_days"]
+        self.sun_direction = (0, 0, self.brightness)
         self.render_samples = 10
         self.preset_camera_angles = {
             "top_down": (0, 0, 0),
@@ -38,6 +39,9 @@ class SceneRenderer:
         self.close_camera_angles = ["straight_on", "high_angle", "above_shot"]
         self.closest_camera_angle = ["low_angle", "worms_eye", "hero_shot"]
         self.curr_image = 0
+        
+        self.cameracon = CameraController("Photo Taker", (0, 0, 0), (1.57057, 0.00174533, 1.57057), self.collection)
+        self.lightcon = LightController(sun_direction=self.sun_direction)
 
     def setup_render(self):
         self.lightcon.add_light()
@@ -66,7 +70,7 @@ class SceneRenderer:
             bpy.context.scene.render.filepath = os.path.join(image_directory, current_file)
             bpy.ops.render.render(use_viewport=True, write_still=True)
             text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
-            with open(os.path.join(image_directory, self.output_file + str(i) + ".txt"), "w") as file:
+            with open(os.path.join(image_directory, self.output_file + str(i) + "rendered_day" + str(day) + ".txt"), "w") as file:
                 file.write(text_prompt_manager.prompt_for_generation())
 
             segmentation = Segmentation({
