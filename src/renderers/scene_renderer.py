@@ -47,6 +47,10 @@ class SceneRenderer:
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
+    
+    def reset_camera_position(self):
+        self.cameracon.camera_location = (0, 0, 0)
+        self.cameracon.camera_rotation = (0, 0, 0)
 
     def update_scene(self, day, text_prompt_manager):
         print("rendering...EPOCH: ", day)
@@ -54,12 +58,14 @@ class SceneRenderer:
         image_directory = current_working_directory + "/" + self.directory
 
         for i in range(self.num_images):
+            
+            distance = 20
             if self.camera_angles[i] in self.close_camera_angles:
                 distance = 10
             elif self.camera_angles[i] in self.closest_camera_angle:
                 distance = -1
-            else:
-                distance = 20
+
+            self.reset_camera_position()
             self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angles[i]])
 
             current_file = self.output_file + str(i) + "rendered_day" + str(day)
@@ -68,6 +74,10 @@ class SceneRenderer:
             bpy.context.scene.render.resolution_x = self.render_resolution_x
             bpy.context.scene.render.resolution_y = self.render_resolution_y
             bpy.context.scene.render.filepath = os.path.join(image_directory, current_file)
+            bpy.data.scenes['Scene'].render.border_min_x = 0.25
+            bpy.data.scenes['Scene'].render.border_max_x = 0.75
+            bpy.data.scenes['Scene'].render.border_min_y = 0.25
+            bpy.data.scenes['Scene'].render.border_max_y = 0.75
             bpy.ops.render.render(use_viewport=True, write_still=True)
             text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
             with open(os.path.join(image_directory, self.output_file + str(i) + "rendered_day" + str(day) + ".txt"), "w") as file:
