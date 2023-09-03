@@ -88,7 +88,6 @@ class Barley:
         self.barley_object.active_material = material
 
     def grow(self, location):
-        # if self.stage > 7:
         self.set_location((1000, 1000, 1000))
         self.growth_manager.progress_day()
         self.stage = self.growth_manager.progress_stage()

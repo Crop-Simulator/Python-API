@@ -21,13 +21,15 @@ class BlenderScriptTest(unittest.TestCase):
             "num_rows": 2,
             "row_widths": 5,
             "density": 1,
+            "barley_position_randomness": 0.4,
         },
-        "weed_likelihood": 0.0,
+        "weed_likelihood": 1.0,
         "output" : {
             "num_images_per_day": 1,
             "directory" : test_directory,
             "file_name": test_output,
-            "camera_angle": "top_down",
+            "brightness": 0.5,
+            "camera_angles": ["top_down"],
 
         },
         "planting_date": "2023-02-01",
@@ -41,8 +43,8 @@ class BlenderScriptTest(unittest.TestCase):
         },
         "ground_type": "loam",
         "growth_simulator": {
-            "days_per_render": 5,
-            "total_days": 3,
+            "days_per_render": 1,
+            "total_days": 1,
             "days_per_stage": 30,
             "p_progression": 0.8,
             "p_death": 0.1,
@@ -53,6 +55,8 @@ class BlenderScriptTest(unittest.TestCase):
             "effect_of_precipitation": 0.1,
             "maximum_temperature": 40,
             "minimum_temperature": 0,
+            "effect_of_weeds": 0.1,
+            "gdd": 1,
         },
     }
 

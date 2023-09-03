@@ -19,7 +19,7 @@ class SceneRenderer:
         self.directory = self.output_configs["directory"]
         self.output_file = self.output_configs["file_name"]
         self.camera_angles = self.output_configs["camera_angles"]
-        
+
         self.brightness = self.output_configs["brightness"]
         self.growth_simulator = configs["growth_simulator"]
         self.total_days = self.growth_simulator["total_days"]
@@ -39,7 +39,7 @@ class SceneRenderer:
         self.close_camera_angles = ["straight_on", "high_angle", "above_shot"]
         self.closest_camera_angle = ["low_angle", "worms_eye", "hero_shot"]
         self.curr_image = 0
-        
+
         self.cameracon = CameraController("Photo Taker", (0, 0, 0), (1.57057, 0.00174533, 1.57057), self.collection)
         self.lightcon = LightController(sun_direction=self.sun_direction)
 
@@ -47,7 +47,7 @@ class SceneRenderer:
         self.lightcon.add_light()
         self.lightcon.add_sky()
         self.cameracon.setup_camera()
-    
+
     def reset_camera_position(self):
         self.cameracon.camera_location = (0, 0, 0)
         self.cameracon.camera_rotation = (0, 0, 0)
@@ -58,7 +58,7 @@ class SceneRenderer:
         image_directory = current_working_directory + "/" + self.directory
 
         for i in range(self.num_images):
-            
+
             distance = 20
             if self.camera_angles[i] in self.close_camera_angles:
                 distance = 10
@@ -66,7 +66,8 @@ class SceneRenderer:
                 distance = -1
 
             self.reset_camera_position()
-            self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0), camera_angles = self.preset_camera_angles[self.camera_angles[i]])
+            self.cameracon.update_camera(distance = distance, angle_rotation=(0, 0, 0),
+                                         camera_angles = self.preset_camera_angles[self.camera_angles[i]])
 
             current_file = self.output_file + str(i) + "rendered_day" + str(day)
 
@@ -74,10 +75,10 @@ class SceneRenderer:
             bpy.context.scene.render.resolution_x = self.render_resolution_x
             bpy.context.scene.render.resolution_y = self.render_resolution_y
             bpy.context.scene.render.filepath = os.path.join(image_directory, current_file)
-            bpy.data.scenes['Scene'].render.border_min_x = 0.25
-            bpy.data.scenes['Scene'].render.border_max_x = 0.75
-            bpy.data.scenes['Scene'].render.border_min_y = 0.25
-            bpy.data.scenes['Scene'].render.border_max_y = 0.75
+            bpy.data.scenes["Scene"].render.border_min_x = 0.25
+            bpy.data.scenes["Scene"].render.border_max_x = 0.75
+            bpy.data.scenes["Scene"].render.border_min_y = 0.25
+            bpy.data.scenes["Scene"].render.border_max_y = 0.75
             bpy.ops.render.render(use_viewport=True, write_still=True)
             text_prompt_manager.camera_angle = camera_angle_interpret(self.cameracon.get_photography_camera_angle())
             with open(os.path.join(image_directory, self.output_file + str(i) + "rendered_day" + str(day) + ".txt"), "w") as file:

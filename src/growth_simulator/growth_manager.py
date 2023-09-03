@@ -14,7 +14,7 @@ class GrowthManager():
     MIN_TEMPERATURE_THRESHOLD = 37.9 #0 degrees
 
     def __init__(self, config, model, barley, weather_data):
-        
+
         self.stage = 0
         self.gdd = 0
         self.barley = barley
@@ -29,7 +29,7 @@ class GrowthManager():
         self.effect_of_temperature = self.config["effect_of_temperature"]
         self.effect_of_precipitation = self.config["effect_of_precipitation"]
         self.effect_of_weeds = self.config["effect_of_weeds"]
-    
+
         self.weather_data = weather_data
         self.status = CropHealth.HEALTHY.value
         self.days_passed_since_last_stage = 0
@@ -98,8 +98,7 @@ class GrowthManager():
 
         elif self.days_total_precipitation >= self.PRECIPITATION_THRESHOLD:
             self.health_points += self.effect_of_precipitation
-        else:
-            if random.randint(0, 10) > 5:
+        elif random.getrandbits(1) == 1:
                 self.health_points += 0.1
         return self.status
 
