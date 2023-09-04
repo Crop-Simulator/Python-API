@@ -2,7 +2,7 @@ import bpy
 import mathutils
 
 class LightController:
-    def __init__(self, sky_type="PREETHAM", turbidity=5.0, ground_albedo=0.4, sun_direction=(0.0, 0.0, 0.1)):
+    def __init__(self, sky_type="PREETHAM", turbidity=5.0, ground_albedo=0.4, sun_direction=(0.0, 0.0, 0.5)):
         self.sky_type = sky_type
         self.turbidity = turbidity
         self.ground_albedo = ground_albedo
@@ -21,8 +21,7 @@ class LightController:
     def add_light(self, light_location=(10, 5, 0)):
         # create light datablock, set attributes
         light_data = bpy.data.lights.new(name="light", type="AREA")
-        light_data.energy = 0
-        light_data.color = (1, 0, 0)
+        light_data.energy = 50
 
         # create new object with our light datablock
         light_object = bpy.data.objects.new(name="light", object_data=light_data)

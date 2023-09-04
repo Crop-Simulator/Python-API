@@ -12,7 +12,7 @@ class BlenderScriptTest(unittest.TestCase):
     test_file = "test_data.yml"
     test_output = "expected_output"
     test_directory = "tests"
-    expected_output_file = os.getcwd() + "/" + test_directory + "/" + test_output + "0.png"
+    expected_output_file = os.getcwd() + "/" + test_directory + "/" + test_output + "0rendered_day0.png"
     test_data = {
         "crop": {
             "type": ["barley"],
@@ -21,11 +21,16 @@ class BlenderScriptTest(unittest.TestCase):
             "num_rows": 2,
             "row_widths": 5,
             "density": 1,
+            "barley_position_randomness": 0.4,
         },
+        "weed_likelihood": 1.0,
         "output" : {
-            "num_images": 1,
+            "num_images_per_day": 1,
             "directory" : test_directory,
             "file_name": test_output,
+            "brightness": 0.5,
+            "camera_angles": ["top_down"],
+
         },
         "planting_date": "2023-02-01",
         "latitude": 35.6895,
@@ -37,6 +42,22 @@ class BlenderScriptTest(unittest.TestCase):
             "y": 512,
         },
         "ground_type": "loam",
+        "growth_simulator": {
+            "days_per_render": 1,
+            "total_days": 1,
+            "days_per_stage": 30,
+            "p_progression": 0.8,
+            "p_death": 0.1,
+            "growth_coefficient": 0.1,
+            "gdd_coefficient": 1,
+            "effect_of_irradiance": 0.1,
+            "effect_of_temperature": 0.1,
+            "effect_of_precipitation": 0.1,
+            "maximum_temperature": 40,
+            "minimum_temperature": 0,
+            "effect_of_weeds": 0.1,
+            "gdd": 1,
+        },
     }
 
     @classmethod
@@ -54,7 +75,8 @@ class BlenderScriptTest(unittest.TestCase):
         # Clean up test environment
         os.remove(cls.test_file)
         os.remove(cls.expected_output_file)
-        os.remove("tests/expected_output0_seg.png")
+        os.remove("tests/expected_output0rendered_day0_seg.png")
+        os.remove("tests/expected_output0rendered_day0_depth.png")
 
     def test_unit_system_metric(self):
         # Check if the unit system is now set to metric
@@ -70,7 +92,7 @@ class BlenderScriptTest(unittest.TestCase):
 
     def test_render_output(self):
         # Verify that the rendering output matches the expected file
-        self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output0.png"))
+        self.assertTrue(filecmp.cmp(self.expected_output_file, "tests/expected_output0rendered_day0.png"))
 
 
 if __name__ == "__main__":

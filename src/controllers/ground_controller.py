@@ -3,6 +3,7 @@ import bpy
 import mathutils
 
 from src.utils import get_project_root
+from src.controllers.segmentation import SegmentationClass
 
 
 class GroundController:
@@ -28,12 +29,13 @@ class GroundController:
             raise ValueError(f"Unknown ground type {self.ground_type}")
 
     def get_ground_stages(self):
-        ground_stages = [obj for obj in bpy.data.objects if obj.name.startswith("stage") and obj.name.endswith(".ground")]
+        ground_stages = bpy.data.objects["ground"]
         # ground_size = self.total_number/self.num_rows*self.row_widths
-        for obj in ground_stages:
-            self.collection.objects.link(obj)
-            obj.location = (1, 0.5, -5)
-            obj.scale = mathutils.Vector((10, 10, 1))
+
+        ground_stages.location = (1, 0.5, -5)
+        ground_stages.scale = mathutils.Vector((10, 10, 1))
+        ground_stages["segmentation_id"] = SegmentationClass.SOIL.value
+        self.collection.objects.link(ground_stages)
 
         file_path = self.get_texture_file()
         texture_image = bpy.data.images.load(file_path)
@@ -58,12 +60,10 @@ class GroundController:
 
 
         # Assign it to object
-        if "stage9.ground" in bpy.data.objects:  # replace with your object's name
-            obj = bpy.data.objects["stage9.ground"]
-            if obj.data.materials:
-                # assign to 1st material slot
-                obj.data.materials[0] = material
-            else:
-                # no slots
-                obj.data.materials.append(material)
+        if ground_stages.data.materials:
+            # assign to 1st material slot
+            ground_stages.data.materials[0] = material
+        else:
+            # no slots
+            ground_stages.data.materials.append(material)
 

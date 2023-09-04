@@ -1,10 +1,14 @@
 import random
 import bpy
+import math
 
-from .light_controller import LightController
 from .ground_controller import GroundController
 from src.objects.barley import Barley
 from src.objects.weed import Weed
+from src.controllers.weather_controller import WeatherController
+from src.machine_learning.text_prompt_manager import TextPromptManager
+from src.machine_learning.text_prompt_definition import CropType, SoilType
+
 
 
 class CropController:
@@ -14,29 +18,52 @@ class CropController:
         self.collection_name = collection
         self.crop_size = 0.5
         self.counter = 1
+        self.weed_likelihood = self.config["weed_likelihood"]
         self.crop_data = config["crop"]
+        self.barley_position_randomness = self.crop_data["barley_position_randomness"]
         self.crop_type = self.crop_data["type"]
         self.percentage_share = self.crop_data["percentage_share"]
-        self.number_of_crops = self.crop_data["total_number"]
-        self.number_of_rows = self.crop_data["num_rows"]
+        self.crop_count = self.crop_data["total_number"]
+        self.rows = self.crop_data["num_rows"]
+        self.columns = math.ceil(self.crop_count / self.rows)
         self.row_widths = self.crop_data["row_widths"]
+        self.growth_simulator = config["growth_simulator"]
+        self.days_per_stage = self.growth_simulator["days_per_stage"]
         self.all_crops = []
         self.all_plants = []
-        self.weed_spacing = 0.2  # The bounding area value in for spacing between weed and crop
-        self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
-        self.growth_stage = {
-            "stage10": "stage10.009",
-            "stage9": "stage9.009",
-            "stage8": "stage8.009",
-            "stage7": "stage7.009",
-            "stage6": "stage6.009",
-            "stage5": "stage5.009",
-            "stage4": "stage4.009",
-            "stage3": "stage3.009",
-            "stage2": "stage2.009",
-            "stage1": "stage1.009",
-            "stage0" : "stage0.009",
+        self.weed_likelihood = int(config["weed_likelihood"]) * 100
+
+        self.crop_health = {
+            "healthy": (0.2, 0.8, 0.2, 1),  # Green in RGBA
+            "unhealthy": (0.6, 0.8, 0.2, 1),  # Yellow-green in RGBA
+            "dead": (0.0, 0.0, 0.0, 1.0),  # Brown in RGBA
         }
+        self.x_offset = -(self.row_widths * self.rows) * 0.5 / self.crop_data["density"]
+        self.y_offset = -(self.crop_count / self.rows) * 0.5
+        self.weed_spacing = 1 # The bounding area value in for spacing between weed and crop
+        self.weed_effect_area = 0.3  # The radius of a crop to be affected by a weed
+        self.model_names = {
+            "stage0" : "stage0.stand",
+            "stage1": "stage1.stand",
+            "stage2": "stage2.stand",
+            "stage3": "stage3.stand",
+            "stage4": "stage4.stand",
+            "stage5": "stage5.stand",
+            "stage6": "stage6.stand",
+            "stage7": "stage7.stand",
+            "stage8": "stage8.stand",
+            "stage9": "stage9.stand",
+            "stage10": "stage10.stand",
+            "ground" : "ground",
+            "weed" : "weed",
+        }
+        self.planting_date = self.config["planting_date"]
+        self.lat = self.config["latitude"]
+        self.lon = self.config["longitude"]
+        self.barley_type = self.config["barley_type"]
+
+        self.weather_controller = WeatherController()
+        self.weather_data = self.weather_controller.get_merged_weather_data(self.barley_type, self.planting_date, self.lat, self.lon)
         try:
             self.generation_seed = config["generation_seed"]
         except KeyError:
@@ -44,81 +71,67 @@ class CropController:
         self.procedural_generation_seed_setter()
 
     def setup_crops(self):
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in bpy.context.scene.objects:
-            if obj.name not in self.growth_stage.values():
+            if obj.name not in self.model_names.values():
                 obj.select_set(True)
         bpy.ops.object.delete()
-
-        lightcon = LightController()
-        lightcon.add_light()
 
         groundcon = GroundController(self.config)
         groundcon.get_ground_stages()
 
-        self.setup_crop_positions()
 
-        collection = bpy.data.collections.get(self.collection_name)
-        for obj in bpy.context.scene.objects:
-            if obj.name in self.growth_stage.values():
-                target = collection.objects.get(obj.name)
-                collection.objects.unlink(target)
+        self.initialise_crops()
 
-    def setup_crop_positions(self):
+
+    def initialise_crops(self):
         curr_row = 0
-        curr_crop_type = 0
+        curr_col = 0
         curr_crop = 0
-        location = [0, 0, 0]
+        location = [self.x_offset, self.y_offset, -3]
 
-        for crop in range(self.number_of_crops):
-            # when the crop is divisible by the number of rows
-            # add a row and reset the location
-            if crop % self.number_of_rows == 0:
-                curr_row += 1
-
-            # calculate the number of crops to add based on the percentage share
-            num_crops = int(self.number_of_crops * self.percentage_share[curr_crop_type])
-
-            # when the current crop is divisible by the number of crops
-            # reset the crop type
-            if curr_crop % num_crops == 0 and crop != 0:
-                curr_crop = 0
-                if not curr_crop_type >= len(self.crop_type) - 1:
-                    curr_crop_type += 1
-
-            crop_model = self.add_crop(self.crop_type[curr_crop_type], location)
+        for _ in range(self.crop_count):
+            crop_model = self.add_crop(self.crop_type[0], location, 0)
             self.all_crops.append(crop_model)  # add crop objects to manipulate later
             self.add_weed(location)
 
-            if curr_row + 1 >= self.number_of_rows:
-                location[1] += 1 / self.crop_data["density"]
-                location[0] = 0
-            else:
-                location[0] += self.row_widths / self.crop_data["density"]
+            # move along row to next crop position
             curr_crop += 1
-            curr_row += 1
+            curr_col += 1
+            # change row if at end of row
+            if curr_col == self.rows:
+                curr_col = 0
+                curr_row += 1
+                location[1] += (1 / self.crop_data["density"])
+                location[0] = +self.x_offset
+            else:
+                location[0] += self.row_widths / self.crop_data["density"] + self.row_widths
+
+    def grow_crops(self):
+        for crop in self.all_crops:
+            crop.grow(crop.location)
+            self.add_weed(crop.location)
 
     def procedural_generation_seed_setter(self):
         random.seed(self.generation_seed)
 
-    def add_crop(self, crop_type, loc):
+    def add_crop(self, crop_type, location, stage):
         crop = None
         if crop_type == "barley":
-            crop = Barley(7, "healthy")
-        loc[0] = loc[0] - random.uniform(-.5, .5)
-        loc[1] = loc[1] - random.uniform(-.5, .5)
-        crop.set_location([loc[0], loc[1], loc[2]])
+            crop = Barley(self.config, stage, "healthy", self.weather_data)
+        location[0] = location[0] - random.uniform(-self.barley_position_randomness, self.barley_position_randomness)
+        location[1] = location[1] - random.uniform(-self.barley_position_randomness, self.barley_position_randomness)
+        crop.set_location([location[0], location[1], location[2]])
         self.counter += 1
-        bpy.context.collection.objects.link(crop.barley_object)
-        self.all_crops.append(crop) # add crop objects to manipulate later
         self.all_plants.append(crop)
         return crop
 
-    def add_weed(self, loc):
-        if bool(random.getrandbits(1)):
+    def add_weed(self, location):
+        if bool(random.randint(0, 100) <= self.weed_likelihood * 100):
             weed = Weed()
-            loc[0] = loc[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
-            loc[1] = loc[1] - random.uniform(-self.weed_spacing, self.weed_spacing)
-            weed.set_location([loc[0], loc[1], loc[2]])
+            location[0] = location[0] - random.uniform(-self.weed_spacing, self.weed_spacing)
+            location[1] = location[1] - random.uniform(-self.weed_spacing, self.weed_spacing)
+            weed.set_location([location[0], location[1], location[2]])
             bpy.context.collection.objects.link(weed.weed_object)
             self.all_plants.append(weed) # add objects to manipulate later
             self.populate_area_weeds(weed)
@@ -133,3 +146,12 @@ class CropController:
                     crop.get_location()[1] + self.weed_effect_area < weed.get_location()[1] >
                     crop.get_location()[1] - self.weed_effect_area):
                 crop.add_weed(weed)
+
+    def update_text_prompt_manager(self, manager: TextPromptManager):
+        for crop in CropType:
+            if str(crop) == self.crop_type[0]:
+                manager.crop_type = crop
+
+        for soil in SoilType:
+            if str(soil) == self.config["ground_type"]:
+                manager.soil_type = soil

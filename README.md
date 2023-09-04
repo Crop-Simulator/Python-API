@@ -67,3 +67,46 @@ To run a single unit test file use
 ```commandline
 poetry run pytest tests/test_launch.py
 ```
+
+## Interactive Annotator
+
+A semi-automation tool for conducting pixel-level segmentation annotation. Currently, supports "ground", "crop", and "weed" types.
+
+### Start Annotator
+
+```commandline
+poetry run python .\src\machine_learning\utilities\interactive_annotator.py
+```
+
+### Initialisation and Configuration
+Upon first execution, it will generate a `interactive_annotator_config.ini` file besides it and quit.
+Open the `ini` file, change the "source image folder" and "output image folder" to your desired paths.
+
+### Usage
+The annotator automatically extracts ground pixels, and then you need to manually mark weed pixels out of crop pixels using various tools provided.
+
+Keyboard operations (this guideline also appears in the title of window)
+- `b`: switch to brush
+- `e`: switch to eraser
+- `r`: switch to rectangle fill
+- `g`: switch to rectangle erase
+- `x`: clear all annotation
+- `space`: save current annotation and proceed to next
+- `esc/q`: quit
+
+### Settings
+
+The annotator has a dedicated `Tools Window` for change various settings:
+- `Disp Width`: zoom in or out of the image
+- `Disp Mode`: switch between different display modes:
+  - `0`: overlay mode: ground pixels darken, weed pixels in red
+  - `1`: original image
+  - `2`: ground in grey, weed in red
+  - `3`: high contrast: ground in red, weed in black
+- `Lower/Upper HSV`: adjust the parameters for extracting ground pixels
+- `Smoothing`: 0 means no smoothing
+- `Brush Size`: in pixels
+
+The settings and your progress will be memorised when you press `space` to save and continue, so that you can enjoy your favourite settings and continue your work upon next run.
+
+
