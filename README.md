@@ -110,3 +110,16 @@ The annotator has a dedicated `Tools Window` for change various settings:
 The settings and your progress will be memorised when you press `space` to save and continue, so that you can enjoy your favourite settings and continue your work upon next run.
 
 
+## LoRA
+
+### Usage
+
+Put the LoRA model to the `<stable_diffusion_webui_path>/models/Lora` folder. When generating images, put `&lt;lora:[model_name]:[weight]&gt;`, e.g., `&lt;lora:cropsim:0.5&gt;`, into positive prompt, where `model_name` is the filename of LoRA model without extension name, and `weight` is a number within 0 to 1, where 0 means the LoRA won't have any effect. 
+
+### Training
+
+LoRA model can be trained with [Kohya's GUI](https://github.com/bmaltais/kohya_ss). This is currently the most popular solution for LoRA training in the StableDiffusion community. There are many training guidelines available on web, such as:
+- [The Ultimate Stable Diffusion LoRA Guide (Downloading, Usage, Training)](https://aituts.com/stable-diffusion-lora/)
+- [How To Train Own Stable Diffusion LoRA Models – Full Tutorial!](https://techtactician.com/how-to-train-stable-diffusion-lora-models/)
+
+According to our experiments, training on 100 images for 5 epochs can achieve a reasonable photorealistic result. Note that more epochs are not always better, where over-trained LoRA may output blurry images that contain no recognisable objects.
